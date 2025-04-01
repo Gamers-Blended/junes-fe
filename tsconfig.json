@@ -1,0 +1,7 @@
+{
+  "files": [], // empty as this is a "root" config, referencing other configs
+  "references": [
+    { "path": "./tsconfig.app.json" }, // config for frontend app
+    { "path": "./tsconfig.node.json" } // Vite's server-side code
+  ]
+}
