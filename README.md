@@ -1,5 +1,7 @@
 # Junes Online Video Game Store
 
+Front End service for Junes dummy online video game store.
+
 This is a dummy online web site that sells video games.
 
 ## Expanding the ESLint configuration
