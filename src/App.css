@@ -4,3 +4,47 @@
   padding: 2rem;
   text-align: center;
 }
+
+.navbar {
+  background-color: #00c698;
+  color: black;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed; /* Stick to viewport */
+  top: 0; /* Align to top */
+  left: 0; /* Align to left */
+  width: 100%; /* Full width */
+  z-index: 100; /* Ensure it's above other content */
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 2em;
+  transform: translateY(-4px);
+}
+
+.nav-search-bar-container {
+  flex-grow: 1;
+  margin-left: 20px;
+}
+
+.nav-search-bar {
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: none;
+  width: 80%;
+}
+
+.nav-options-container {
+  display: flex;
+  align-items: center;
+  padding-right: 2em;
+}
+
+.nav-options-span {
+  font-size: 1em;
+  margin-right: 10px;
+}
+
