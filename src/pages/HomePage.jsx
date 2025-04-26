@@ -1,4 +1,61 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import loginIcon from "../assets/loginIcon.png";
+import shoppingCartIcon from "../assets/shoppingCartIcon.png";
+
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
+const PromoCarousel = () => {
+  const [imageUrls, setImageUrls] = useState([]);
+
+  useEffect(() => {
+    const fetchImageUrls = async () => {
+      const publicUrls = [
+        "https://pub-8ed9659ed0df4340b16dabcac054d6ac.r2.dev/a_015003.jpg",
+        "https://pub-8ed9659ed0df4340b16dabcac054d6ac.r2.dev/a_043578.jpg",
+        "https://pub-8ed9659ed0df4340b16dabcac054d6ac.r2.dev/a_265871.jpg",
+        "https://pub-8ed9659ed0df4340b16dabcac054d6ac.r2.dev/a_979945.jpg",
+      ];
+      setImageUrls(publicUrls);
+    };
+
+    fetchImageUrls();
+  }, []);
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    arrows: true,
+  };
+
+  if (imageUrls.length > 0) {
+    return (
+      <div className="promo-carousel">
+        <Slider {...settings}>
+          {imageUrls.map((imageUrl, index) => (
+            <div key={index}>
+              <img
+                src={imageUrl}
+                alt={`Product Image ${index + 1}`}
+                width="1200"
+                height="500"
+              />
+            </div>
+          ))}
+        </Slider>
+      </div>
+    );
+  }
+
+  // If imageUrls is empty, show a loading message
+  return <p>Loading images...</p>;
+};
 
 function HomePage() {
   return (
@@ -15,10 +72,14 @@ function HomePage() {
         </div>
 
         <div className="nav-options-container">
-          <span className="nav-options-span">Log In</span>
-          <span className="nav-options-span">Cart</span>
+          <img src={loginIcon} alt="Log In" className="nav-options-icon" />
+          <img src={shoppingCartIcon} alt="Cart" className="nav-options-icon" />
           <span className="nav-options-span">EN | SGD</span>
         </div>
+      </div>
+
+      <div>
+        <PromoCarousel />
       </div>
     </div>
   );
