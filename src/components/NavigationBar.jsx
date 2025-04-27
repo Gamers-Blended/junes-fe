@@ -1,12 +1,25 @@
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext.tsx";
+
 import loginIcon from "../assets/loginIcon.png";
+import myAccountIcon from "../assets/accountCircleIcon.png";
 import shoppingCartIcon from "../assets/shoppingCartIcon.png";
 
 const NavigationBar = () => {
   const navigate = useNavigate();
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
+
+  const handleLoginLogout = () => {
+    setIsLoggedIn(!isLoggedIn);
+  };
 
   const handleLoginClick = () => {
-    navigate("/login");
+    if (isLoggedIn) {
+      navigate("/myaccount");
+    } else {
+      navigate("/login");
+    }
   };
 
   return (
@@ -23,8 +36,8 @@ const NavigationBar = () => {
 
         <div className="nav-options-container">
           <img
-            src={loginIcon}
-            alt="Log In"
+            src={isLoggedIn ? myAccountIcon : loginIcon}
+            alt={isLoggedIn ? "My Account" : "Log In"}
             className="nav-options-icon"
             onClick={handleLoginClick}
           />
