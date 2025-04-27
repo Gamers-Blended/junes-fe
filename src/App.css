@@ -46,6 +46,7 @@
 .nav-options-icon {
   width: 30px;
   margin-right: 15px;
+  cursor: pointer;
 }
 
 .nav-options-span {
