@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import loginIcon from "../assets/loginIcon.png";
-import shoppingCartIcon from "../assets/shoppingCartIcon.png";
+import NavigationBar from "../components/NavigationBar";
 
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -13,7 +12,7 @@ const PromoCarousel = () => {
 
   useEffect(() => {
     const fetchImageUrls = async () => {
-      const publicUrls = [
+      const fetchedUrls = [
         {
           src: "https://pub-8ed9659ed0df4340b16dabcac054d6ac.r2.dev/a_015003.jpg",
           link: "/products/1",
@@ -31,7 +30,7 @@ const PromoCarousel = () => {
           link: "/products/4",
         },
       ];
-      setImageUrls(publicUrls);
+      setImageUrls(fetchedUrls);
     };
 
     fetchImageUrls();
@@ -82,28 +81,10 @@ const PromoCarousel = () => {
 function HomePage() {
   return (
     <div>
-      {/* Navigation Bar */}
-      <div className="navbar">
-        <div className="logo">Junes</div>
-        <div className="nav-search-bar-container">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="nav-search-bar"
-          />
-        </div>
-
-        <div className="nav-options-container">
-          <img src={loginIcon} alt="Log In" className="nav-options-icon" />
-          <img src={shoppingCartIcon} alt="Cart" className="nav-options-icon" />
-          <span className="nav-options-span">EN | SGD</span>
-        </div>
-      </div>
-
-      <div>
-        <PromoCarousel />
-      </div>
+      <NavigationBar />
+      <PromoCarousel />
     </div>
   );
 }
+
 export default HomePage;
