@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import loginIcon from "../assets/loginIcon.png";
 import shoppingCartIcon from "../assets/shoppingCartIcon.png";
 
@@ -8,14 +9,27 @@ import "slick-carousel/slick/slick-theme.css";
 
 const PromoCarousel = () => {
   const [imageUrls, setImageUrls] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchImageUrls = async () => {
       const publicUrls = [
-        "https://pub-8ed9659ed0df4340b16dabcac054d6ac.r2.dev/a_015003.jpg",
-        "https://pub-8ed9659ed0df4340b16dabcac054d6ac.r2.dev/a_043578.jpg",
-        "https://pub-8ed9659ed0df4340b16dabcac054d6ac.r2.dev/a_265871.jpg",
-        "https://pub-8ed9659ed0df4340b16dabcac054d6ac.r2.dev/a_979945.jpg",
+        {
+          src: "https://pub-8ed9659ed0df4340b16dabcac054d6ac.r2.dev/a_015003.jpg",
+          link: "/products/1",
+        },
+        {
+          src: "https://pub-8ed9659ed0df4340b16dabcac054d6ac.r2.dev/a_043578.jpg",
+          link: "/products/2",
+        },
+        {
+          src: "https://pub-8ed9659ed0df4340b16dabcac054d6ac.r2.dev/a_265871.jpg",
+          link: "/products/3",
+        },
+        {
+          src: "https://pub-8ed9659ed0df4340b16dabcac054d6ac.r2.dev/a_979945.jpg",
+          link: "/products/4",
+        },
       ];
       setImageUrls(publicUrls);
     };
@@ -34,14 +48,22 @@ const PromoCarousel = () => {
     arrows: true,
   };
 
+  const handleImageClick = (link) => {
+    navigate(link);
+  };
+
   if (imageUrls.length > 0) {
     return (
       <div className="promo-carousel">
         <Slider {...settings}>
-          {imageUrls.map((imageUrl, index) => (
-            <div key={index}>
+          {imageUrls.map((image, index) => (
+            <div
+              key={index}
+              className="promo-carousel-slide"
+              onClick={() => handleImageClick(image.link)}
+            >
               <img
-                src={imageUrl}
+                src={image.src}
                 alt={`Product Image ${index + 1}`}
                 width="1200"
                 height="500"
