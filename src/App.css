@@ -5,6 +5,7 @@
   text-align: center;
 }
 
+/* NAVIGATION BAR */
 .navbar {
   background-color: #00c698;
   color: black;
@@ -54,6 +55,7 @@
   margin-right: 10px;
 }
 
+/* CAROUSEL */
 .slick-slide > div { /* Target the immediate child div of the slick-slide */
   justify-content: center;
 }
@@ -78,4 +80,18 @@
 
 .promo-carousel-slide {
   cursor: pointer;
+}
+
+/* DEBUG WINDOW */
+.debug-window {
+  position: fixed;
+  left: 0;
+  background-color: #f8f8f8;
+  padding: 20px;
+  border: 1px solid black;
+  z-index: 1000;
+}
+
+.debug-window-button {
+  margin-left: 10px;
 }

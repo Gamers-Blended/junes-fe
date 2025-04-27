@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "./AuthContext.tsx";
+import { useAuth } from "./AuthContext";
+import DebugWindow from "./DebugWindow";
 
 import loginIcon from "../assets/loginIcon.png";
 import myAccountIcon from "../assets/accountCircleIcon.png";
@@ -9,10 +10,6 @@ import shoppingCartIcon from "../assets/shoppingCartIcon.png";
 const NavigationBar = () => {
   const navigate = useNavigate();
   const { isLoggedIn, setIsLoggedIn } = useAuth();
-
-  const handleLoginLogout = () => {
-    setIsLoggedIn(!isLoggedIn);
-  };
 
   const handleLoginClick = () => {
     if (isLoggedIn) {
@@ -45,6 +42,8 @@ const NavigationBar = () => {
           <span className="nav-options-span">EN | SGD</span>
         </div>
       </div>
+
+      <DebugWindow />
     </div>
   );
 };
