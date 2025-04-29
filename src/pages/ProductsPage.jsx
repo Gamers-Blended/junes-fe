@@ -1,6 +1,5 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import NavigationBar from "../components/NavigationBar";
 
 const ProductPage = () => {
   // Get route parameters
@@ -21,7 +20,6 @@ const ProductPage = () => {
 
   return (
     <div>
-      <NavigationBar />
       <h1>{product.name}</h1>
       <p>{product.description}</p>
     </div>

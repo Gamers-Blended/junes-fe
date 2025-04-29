@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import NavigationBar from "../components/NavigationBar";
 
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -81,7 +80,6 @@ const PromoCarousel = () => {
 function HomePage() {
   return (
     <div>
-      <NavigationBar />
       <PromoCarousel />
     </div>
   );

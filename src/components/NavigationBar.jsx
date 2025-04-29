@@ -19,6 +19,10 @@ const NavigationBar = () => {
     }
   };
 
+  const handleCartClick = () => {
+    navigate("/cart");
+  };
+
   return (
     <div>
       <div className="navbar">
@@ -38,7 +42,12 @@ const NavigationBar = () => {
             className="nav-options-icon"
             onClick={handleLoginClick}
           />
-          <img src={shoppingCartIcon} alt="Cart" className="nav-options-icon" />
+          <img
+            src={shoppingCartIcon}
+            alt="Cart"
+            className="nav-options-icon"
+            onClick={handleCartClick}
+          />
           <span className="nav-options-span">EN | SGD</span>
         </div>
       </div>
