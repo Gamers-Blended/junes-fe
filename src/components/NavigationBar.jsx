@@ -6,6 +6,7 @@ import DebugWindow from "./DebugWindow";
 import loginIcon from "../assets/loginIcon.png";
 import myAccountIcon from "../assets/accountCircleIcon.png";
 import shoppingCartIcon from "../assets/shoppingCartIcon.png";
+import wishListIcon from "../assets/heartIcon.png";
 
 const NavigationBar = () => {
   const navigate = useNavigate();
@@ -21,6 +22,10 @@ const NavigationBar = () => {
 
   const handleCartClick = () => {
     navigate("/cart");
+  };
+
+  const handleWishlistClick = () => {
+    navigate("/wishlist");
   };
 
   return (
@@ -47,6 +52,12 @@ const NavigationBar = () => {
             alt="Cart"
             className="nav-options-icon"
             onClick={handleCartClick}
+          />
+          <img
+            src={wishListIcon}
+            about="Wishlist"
+            className="nav-options-icon"
+            onClick={handleWishlistClick}
           />
           <span className="nav-options-span">EN | SGD</span>
         </div>
