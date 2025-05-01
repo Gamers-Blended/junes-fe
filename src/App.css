@@ -5,6 +5,28 @@
   text-align: center;
 }
 
+/* PAGES */
+.home-page-container {
+  position: relative;
+  margin-top: 50px; /* Add space for navbar */
+}
+
+
+/* COMPONENTS */
+/* DEBUG WINDOW */
+.debug-window {
+  position: fixed;
+  left: 0;
+  background-color: #f8f8f8;
+  padding: 20px;
+  border: 1px solid black;
+  z-index: 1000;
+}
+
+.debug-window-button {
+  margin-left: 10px;
+}
+
 /* NAVIGATION BAR */
 .navbar {
   background-color: #00c698;
@@ -17,7 +39,7 @@
   top: 0; /* Align to top */
   left: 0; /* Align to left */
   width: 100%; /* Full width */
-  z-index: 100; /* Ensure it's above other content */
+  z-index: 100;
 }
 
 .logo {
@@ -56,6 +78,12 @@
 }
 
 /* CAROUSEL */
+.promo-carousel {
+  position: relative;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
 .slick-slide > div { /* Target the immediate child div of the slick-slide */
   justify-content: center;
 }
@@ -82,22 +110,10 @@
   cursor: pointer;
 }
 
-/* DEBUG WINDOW */
-.debug-window {
-  position: fixed;
-  left: 0;
-  background-color: #f8f8f8;
-  padding: 20px;
-  border: 1px solid black;
-  z-index: 1000;
-}
-
-.debug-window-button {
-  margin-left: 10px;
-}
-
 /* PRODUCT SLIDER */
 .product-slider-container {
+  position: relative;
+  width: 100%;
   margin-top: 30px;
 }
 

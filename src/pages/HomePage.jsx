@@ -71,7 +71,7 @@ const PromoCarousel = () => {
               <img
                 src={image.src}
                 alt={`Product Image ${index + 1}`}
-                width="1200"
+                width="1300"
                 height="500"
               />
             </div>
@@ -116,7 +116,7 @@ function HomePage() {
   ];
 
   return (
-    <div>
+    <div className="home-page-container">
       <PromoCarousel />
       <ProductSlider items={recommendedItems} />
     </div>
