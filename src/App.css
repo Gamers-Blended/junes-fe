@@ -95,3 +95,39 @@
 .debug-window-button {
   margin-left: 10px;
 }
+
+/* PRODUCT SLIDER */
+.product-slider-container {
+  margin-top: 30px;
+}
+
+.product-slider-header {
+  background-color: #00c698;
+  height: 50px;
+}
+
+.product-slider-header h2 {
+  line-height: 50px; /* Same as parent's height */
+  margin: 0;
+}
+
+.product-slider-items-container {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.product-slider-items {
+  display: flex;
+}
+
+.product-slider-card {
+  margin: 0 10px;
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.product-slider-image {
+  max-width: 100px;
+  height: 140px;
+}

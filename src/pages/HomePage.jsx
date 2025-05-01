@@ -5,6 +5,14 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
+import ProductSlider from "../components/ProductSlider";
+
+import FatalFameMobwNSW from "../assets/products/fatal-frame-maiden-of-black-water-asia-nsw.jpg";
+import FatalFameMobwPS4 from "../assets/products/fatal-frame-maiden-of-black-water-asia-ps4.jpg";
+import FatalFameMotLENSW from "../assets/products/fatal-frame-mask-of-the-lunar-eclipse-asia-nsw.jpg";
+import FatalFameMotLEPS4 from "../assets/products/fatal-frame-mask-of-the-lunar-eclipse-asia-ps4.jpg";
+import FinalFantasyPixelRemasterNSW from "../assets/products/final-fantasy-ivi-pixel-remaster-collection-asia-nsw.jpg";
+
 const PromoCarousel = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const navigate = useNavigate();
@@ -78,9 +86,39 @@ const PromoCarousel = () => {
 };
 
 function HomePage() {
+  // Recommended items to user
+  const recommendedItems = [
+    {
+      title: "Fatal Frame: Mask of the Lunar Eclipse",
+      price: "S$70.00",
+      imageSrc: FatalFameMotLENSW,
+    },
+    {
+      title: "Fatal Frame: Mask of the Lunar Eclipse",
+      price: "S$70.00",
+      imageSrc: FatalFameMotLEPS4,
+    },
+    {
+      title: "Fatal Frame: Maiden of Black Water",
+      price: "S$60.00",
+      imageSrc: FatalFameMobwNSW,
+    },
+    {
+      title: "Fatal Frame: Maiden of Black Water",
+      price: "S$60.00",
+      imageSrc: FatalFameMobwPS4,
+    },
+    {
+      title: "Final Fantasy Pixel Remaster Collection",
+      price: "S$70.00",
+      imageSrc: FinalFantasyPixelRemasterNSW,
+    },
+  ];
+
   return (
     <div>
       <PromoCarousel />
+      <ProductSlider items={recommendedItems} />
     </div>
   );
 }
