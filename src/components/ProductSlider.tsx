@@ -56,7 +56,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ items }) => {
         {isLoading && (
           <div className='product-slider-loading-placeholder'>
             <div className='product-slider-loading-spinner'></div>
-            <div className='product-slider-loading-text'>Loading...</div>
+            <div className='product-slider-loading-text'>Loading items...</div>
           </div>
         )}
 
