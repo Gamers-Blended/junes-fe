@@ -129,9 +129,38 @@
 }
 
 .product-slider-items-container {
+  position: relative;
   margin-top: 20px;
   display: flex;
   align-items: center;
+}
+
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slider-arrow img {
+  width: 100%;
+  height: 100%;
+}
+
+.slider-arrow.prev {
+  left: -90px; /* Position outside container */
+}
+
+.slider-arrow.next {
+  right: -90px; /* Position outside container */
 }
 
 .product-slider-items {

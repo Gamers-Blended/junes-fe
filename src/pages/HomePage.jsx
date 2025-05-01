@@ -6,12 +6,22 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 import ProductSlider from "../components/ProductSlider";
-
-import FatalFameMobwNSW from "../assets/products/fatal-frame-maiden-of-black-water-asia-nsw.jpg";
-import FatalFameMobwPS4 from "../assets/products/fatal-frame-maiden-of-black-water-asia-ps4.jpg";
-import FatalFameMotLENSW from "../assets/products/fatal-frame-mask-of-the-lunar-eclipse-asia-nsw.jpg";
-import FatalFameMotLEPS4 from "../assets/products/fatal-frame-mask-of-the-lunar-eclipse-asia-ps4.jpg";
-import FinalFantasyPixelRemasterNSW from "../assets/products/final-fantasy-ivi-pixel-remaster-collection-asia-nsw.jpg";
+import ApolloJusticeAceAttorneyTrilogyUSNSW from "../assets/products/apollo-justice-ace-attorney-trilogy-us-nsw.jpg";
+import AtelierMarieRemakeASIANSW from "../assets/products/atelier-marie-remake-the-alchemist-of-salburg-asia-nsw.jpg";
+import BatenKaitosRemasterASIANSW from "../assets/products/baten-kaitos-i-ii-hd-remaster-asia-nsw.jpg";
+import ChronoCrossTrdeASIANSW from "../assets/products/chrono-cross-the-radical-dreamers-edition-asia-nsw.jpg";
+import FatalFameMobwASIANSW from "../assets/products/fatal-frame-maiden-of-black-water-asia-nsw.jpg";
+import FatalFameMobwASIAPS4 from "../assets/products/fatal-frame-maiden-of-black-water-asia-ps4.jpg";
+import FatalFameMotleASIANSW from "../assets/products/fatal-frame-mask-of-the-lunar-eclipse-asia-nsw.jpg";
+import FatalFameMotleASIAPS4 from "../assets/products/fatal-frame-mask-of-the-lunar-eclipse-asia-ps4.jpg";
+import FinalFantasyPixelRemasterASIANSW from "../assets/products/final-fantasy-ivi-pixel-remaster-collection-asia-nsw.jpg";
+import FinalFantasyXIASIANSW from "../assets/products/final-fantasy-ix-asia-nsw.jpg";
+import FinalFantasyVIIVIIITwinEURNSW from "../assets/products/final-fantasy-vii-final-fantasy-viii-remastered-twin-pack-eur-nsw.jpg";
+import GrandiaASIANSW from "../assets/products/grandia-hd-collection-asia-nsw.jpg";
+import AceAttorneyTrilogyJPNSW from "../assets/products/gyakuten-saiban-123-naruhodo-selection-jp-nsw.jpg";
+import NinjaGaidenCollectionASIANSW from "../assets/products/ninja-gaiden-master-collection-asia-nsw.jpg";
+import NinjaGaidenCollectionASIAPS4 from "../assets/products/ninja-gaiden-master-collection-asia-ps4.jpg";
+import SagaFrontierASIANSW from "../assets/products/saga-frontier-remastered-asia-nsw.jpg";
 
 const PromoCarousel = () => {
   const [imageUrls, setImageUrls] = useState([]);
@@ -89,29 +99,84 @@ function HomePage() {
   // Recommended items to user
   const recommendedItems = [
     {
-      title: "Fatal Frame: Mask of the Lunar Eclipse",
+      title: "Apollo Justice Ace Attorney Trilogy",
+      price: "S$40.00",
+      imageSrc: ApolloJusticeAceAttorneyTrilogyUSNSW,
+    },
+    {
+      title: "Atelier Marie Remake: The Alchemist of Salburg",
       price: "S$70.00",
-      imageSrc: FatalFameMotLENSW,
+      imageSrc: AtelierMarieRemakeASIANSW,
+    },
+    {
+      title: "Baten Kaitos I & II HD Remaster",
+      price: "S$60.00",
+      imageSrc: BatenKaitosRemasterASIANSW,
+    },
+    {
+      title: "Chrono Cross: The Radical Dreamers Edition",
+      price: "S$70.00",
+      imageSrc: ChronoCrossTrdeASIANSW,
     },
     {
       title: "Fatal Frame: Mask of the Lunar Eclipse",
       price: "S$70.00",
-      imageSrc: FatalFameMotLEPS4,
+      imageSrc: FatalFameMotleASIANSW,
+    },
+    {
+      title: "Fatal Frame: Mask of the Lunar Eclipse",
+      price: "S$70.00",
+      imageSrc: FatalFameMotleASIAPS4,
     },
     {
       title: "Fatal Frame: Maiden of Black Water",
       price: "S$60.00",
-      imageSrc: FatalFameMobwNSW,
+      imageSrc: FatalFameMobwASIANSW,
     },
     {
       title: "Fatal Frame: Maiden of Black Water",
       price: "S$60.00",
-      imageSrc: FatalFameMobwPS4,
+      imageSrc: FatalFameMobwASIAPS4,
     },
     {
       title: "Final Fantasy Pixel Remaster Collection",
       price: "S$70.00",
-      imageSrc: FinalFantasyPixelRemasterNSW,
+      imageSrc: FinalFantasyPixelRemasterASIANSW,
+    },
+    {
+      title: "Final Fantasy XI",
+      price: "S$40.00",
+      imageSrc: FinalFantasyXIASIANSW,
+    },
+    {
+      title: "Final Fantasy VII Final Fantasy VIII Remastered Twin Pack",
+      price: "S$40.00",
+      imageSrc: FinalFantasyVIIVIIITwinEURNSW,
+    },
+    {
+      title: "Grandia HD Collection",
+      price: "S$50.00",
+      imageSrc: GrandiaASIANSW,
+    },
+    {
+      title: "Ace Attorney Trilogy",
+      price: "S$40.00",
+      imageSrc: AceAttorneyTrilogyJPNSW,
+    },
+    {
+      title: "Ninja Gaiden Master Collection",
+      price: "S$40.00",
+      imageSrc: NinjaGaidenCollectionASIANSW,
+    },
+    {
+      title: "Ninja Gaiden Master Collection",
+      price: "S$40.00",
+      imageSrc: NinjaGaidenCollectionASIAPS4,
+    },
+    {
+      title: "Saga Frontier Remastered",
+      price: "S$40.00",
+      imageSrc: SagaFrontierASIANSW,
     },
   ];
 
