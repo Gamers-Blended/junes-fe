@@ -163,6 +163,10 @@
   right: -90px; /* Position outside container */
 }
 
+.slider-arrow:hover {
+  opacity: 0.8;
+}
+
 .product-slider-items {
   display: flex;
 }
