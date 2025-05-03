@@ -224,6 +224,11 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  transition: height 0.3s ease-in-out;
+}
+
+.product-card-container:hover {
+  height: 300px;
 }
 
 /* Make items unclickable when loading */
@@ -257,8 +262,49 @@
   position: absolute;
   font-size: 0.9em;
   font-weight: bold;
-  bottom: 20px;
+  top: 230px;
   align-self: center;
   margin: 0;
   color: #4CA0FF;
+}
+
+.product-card-buttons {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 0 10px 10px;
+  opacity: 0;
+  visibility: hidden; /* Remove from layout/accessibility when not visible */
+  transition: opacity 0.3s ease-in-out, visibility 0s 0.3s;
+}
+
+.product-card-container:hover .product-card-buttons {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease-in-out, visibility 0s;
+}
+
+.product-card-button {
+  width: 100px;
+  padding: 8px 0;
+  border: 1px solid black;
+  border-radius: 4px;
+  font-size: 0.7em;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+  background-color: white;
+
+}
+
+.product-card-button.add-to-cart-button {
+  background-color: #00DCB0;
+}
+
+.product-card-button:hover {
+  filter: brightness(90%);
 }
