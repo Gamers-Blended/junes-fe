@@ -1,5 +1,7 @@
 import React from 'react';
 
+import heartGreenIcon from "../assets/heartGreenIcon.png";
+
 interface ProductCardProps {
     item: {
         title: string;
@@ -14,6 +16,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading }) => {
     // Title will only show up to wordLimit characters
     const trimmedTitle = item.title.length > wordLimit ? `${item.title.substring(0, wordLimit)}...` : item.title;
 
+    const handleAddToWishList: Function = (title:string) => {
+        console.log(`${title} added to wish list`);
+    }
     const handleQuickShop: Function = (title:string) => {
         console.log(`Quick shop for ${title}`);
     }
@@ -25,6 +30,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading }) => {
     return (
         <div className={`product-card-container ${isLoading ? 'disabled' : ''}`}>
             <div className='product-card-image-container'>
+                <img
+                    src={heartGreenIcon}
+                    className="product-card-icon"
+                    onClick={handleAddToWishList(item.title)}
+                    alt="Wishlist Icon"
+                />
                 <img className='product-card-image' src={item.imageSrc} alt={item.title} />
             </div>
             <p className='product-card-title'>{trimmedTitle}</p>
