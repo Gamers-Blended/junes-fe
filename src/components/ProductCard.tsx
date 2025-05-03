@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import NotificationPopup from './NotificationPopup';
 
 import heartGreenIcon from "../assets/heartGreenIcon.png";
 import heartGreenFilledIcon from "../assets/heartGreenFilledIcon.png";
@@ -16,6 +17,8 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: initialIsLiked = false }) => {
     const [isLiked, setIsLiked] = useState<boolean>(initialIsLiked);
+    const [showNotification, setShowNotification] = useState<boolean>(false);
+    const [notificationMessage, setNotificationMessage] = useState<string>('');
     const wordLimit = 40;
     // Title will only show up to wordLimit characters
     const trimmedTitle = item.title.length > wordLimit ? `${item.title.substring(0, wordLimit)}...` : item.title;
@@ -23,8 +26,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
     const handleAddToWishList = () => {
         const newLikedState = !isLiked;
         setIsLiked(newLikedState);
+
+        const message = newLikedState ? `${item.title} added to Wish List!` : `${item.title} removed from Wish List!`;
         console.log(`${item.title} ${newLikedState ? 'added to' : 'removed from'} wish list`);
+
+        setNotificationMessage(message);
+        setShowNotification(true);
     }
+
+    const handleCloseNotification = () => {
+        setShowNotification(false);
+    }
+
     const handleQuickShop = () => {
         console.log(`Quick shop for ${item.title}`);
     }
@@ -59,7 +72,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
                 </button>
             </div>
 
-                
+            <NotificationPopup
+            message={notificationMessage}
+            isVisible={showNotification}
+            onClose={handleCloseNotification}
+            duration={3000} // 3 seconds
+            />
         </div>
     );
 };
