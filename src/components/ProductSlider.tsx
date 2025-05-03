@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ProductCard from './ProductCard';
 
 import arrowLeftIcon from "../assets/arrowLeftIcon.png";
 import arrowRightIcon from "../assets/arrowRightIcon.png";
@@ -67,11 +68,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ items }) => {
         )}
         <div className='product-slider-items'>
           {visibleItems.map((item, index) => (
-            <div key={index} className={`product-slider-card ${isLoading ? 'disabled' : ''}`}>
-              <img className='product-slider-image' src={item.imageSrc} alt={item.title} />
-              <h3>{item.title}</h3>
-              <p>{item.price}</p>
-            </div>
+           <ProductCard key={index} item={item} isLoading={isLoading} />
           ))}
         </div>
         
