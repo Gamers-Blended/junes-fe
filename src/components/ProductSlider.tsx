@@ -5,6 +5,7 @@ import arrowLeftIcon from "../assets/arrowLeftIcon.png";
 import arrowRightIcon from "../assets/arrowRightIcon.png";
 
 interface GameItem {
+  id: string;
   title: string;
   price: string;
   imageSrc: string;

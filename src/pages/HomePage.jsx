@@ -23,81 +23,97 @@ function HomePage() {
   // Recommended items to user
   const recommendedItems = [
     {
+      id: "1",
       title: "Apollo Justice Ace Attorney Trilogy",
       price: "S$40.00",
       imageSrc: ApolloJusticeAceAttorneyTrilogyUSNSW,
     },
     {
+      id: "2",
       title: "Atelier Marie Remake: The Alchemist of Salburg",
       price: "S$70.00",
       imageSrc: AtelierMarieRemakeASIANSW,
     },
     {
+      id: "3",
       title: "Baten Kaitos I & II HD Remaster",
       price: "S$60.00",
       imageSrc: BatenKaitosRemasterASIANSW,
     },
     {
+      id: "4",
       title: "Chrono Cross: The Radical Dreamers Edition",
       price: "S$70.00",
       imageSrc: ChronoCrossTrdeASIANSW,
     },
     {
+      id: "5",
       title: "Fatal Frame: Mask of the Lunar Eclipse",
       price: "S$70.00",
       imageSrc: FatalFameMotleASIANSW,
     },
     {
+      id: "6",
       title: "Fatal Frame: Mask of the Lunar Eclipse",
       price: "S$70.00",
       imageSrc: FatalFameMotleASIAPS4,
     },
     {
+      id: "7",
       title: "Fatal Frame: Maiden of Black Water",
       price: "S$60.00",
       imageSrc: FatalFameMobwASIANSW,
     },
     {
+      id: "8",
       title: "Fatal Frame: Maiden of Black Water",
       price: "S$60.00",
       imageSrc: FatalFameMobwASIAPS4,
     },
     {
+      id: "9",
       title: "Final Fantasy Pixel Remaster Collection",
       price: "S$70.00",
       imageSrc: FinalFantasyPixelRemasterASIANSW,
     },
     {
+      id: "10",
       title: "Final Fantasy XI",
       price: "S$40.00",
       imageSrc: FinalFantasyXIASIANSW,
     },
     {
+      id: "11",
       title: "Final Fantasy VII Final Fantasy VIII Remastered Twin Pack",
       price: "S$40.00",
       imageSrc: FinalFantasyVIIVIIITwinEURNSW,
     },
     {
+      id: "12",
       title: "Grandia HD Collection",
       price: "S$50.00",
       imageSrc: GrandiaASIANSW,
     },
     {
+      id: "13",
       title: "Ace Attorney Trilogy",
       price: "S$40.00",
       imageSrc: AceAttorneyTrilogyJPNSW,
     },
     {
+      id: "14",
       title: "Ninja Gaiden Master Collection",
       price: "S$40.00",
       imageSrc: NinjaGaidenCollectionASIANSW,
     },
     {
+      id: "15",
       title: "Ninja Gaiden Master Collection",
       price: "S$40.00",
       imageSrc: NinjaGaidenCollectionASIAPS4,
     },
     {
+      id: "16",
       title: "Saga Frontier Remastered",
       price: "S$40.00",
       imageSrc: SagaFrontierASIANSW,
