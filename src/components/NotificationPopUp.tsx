@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 
-interface NotificationPopupProps {
+interface NotificationPopUpProps {
   message: string;
   isVisible: boolean;
   onClose: () => void;
   duration?: number; // Milliseconds
 }
 
-const NotificationPopup: React.FC<NotificationPopupProps> = ({ message, isVisible, onClose, duration = 3000 }) => {
+const NotificationPopUp: React.FC<NotificationPopUpProps> = ({ message, isVisible, onClose, duration = 3000 }) => {
   useEffect(() => {
     if (isVisible) {
       const timer = setTimeout(() => {
@@ -30,4 +30,4 @@ return (
 );
 };
 
-export default NotificationPopup;
+export default NotificationPopUp;

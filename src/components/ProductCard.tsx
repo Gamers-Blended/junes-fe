@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import NotificationPopup from './NotificationPopup';
+import NotificationPopUp from './NotificationPopUp';
 
 import heartGreenIcon from "../assets/heartGreenIcon.png";
 import heartGreenFilledIcon from "../assets/heartGreenFilledIcon.png";
@@ -43,7 +43,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
     }
 
     const handleAddToCart = () => {
-        console.log(`Add to cart for ${item.title}`);
+        const message = `${item.title} added to cart!`;
+        console.log(`${item.title} added to cart!`);
+
+        setNotificationMessage(message);
+        setShowNotification(true);
     }
 
     const heartIcon = isLiked ? heartGreenFilledIcon : heartGreenIcon;
@@ -72,7 +76,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
                 </button>
             </div>
 
-            <NotificationPopup
+            <NotificationPopUp
             message={notificationMessage}
             isVisible={showNotification}
             onClose={handleCloseNotification}
