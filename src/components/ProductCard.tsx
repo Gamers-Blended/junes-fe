@@ -19,6 +19,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
     const [isLiked, setIsLiked] = useState<boolean>(initialIsLiked);
     const [showNotification, setShowNotification] = useState<boolean>(false);
     const [notificationMessage, setNotificationMessage] = useState<string>('');
+    const [showQuickShop, setShowQuickShop] = useState<boolean>(false);
     const wordLimit = 40;
     // Title will only show up to wordLimit characters
     const trimmedTitle = item.title.length > wordLimit ? `${item.title.substring(0, wordLimit)}...` : item.title;
@@ -39,6 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
     }
 
     const handleQuickShop = () => {
+        setShowQuickShop(true);
         console.log(`Quick shop for ${item.title}`);
     }
 
@@ -51,6 +53,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
     }
 
     const heartIcon = isLiked ? heartGreenFilledIcon : heartGreenIcon;
+
+    const QuickShopWindow = () => {
+        const handleClose = () => {
+            setShowQuickShop(false);
+        };
+
+        return (
+            <div className="quick-shop-window-container">
+                <div className="quick-shop-content">
+                    <button className='quick-shop-close-button' onClick={handleClose}>X</button>
+                    <h2>{item.title}</h2>
+                    <p>{item.price}</p>
+                    <button className="product-card-button add-to-cart-button" onClick={handleAddToCart}>Add to Cart</button>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className={`product-card-container ${isLoading ? 'disabled' : ''}`}>
@@ -82,6 +101,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
             onClose={handleCloseNotification}
             duration={3000} // 3 seconds
             />
+
+            { showQuickShop && <QuickShopWindow/> }
+            
         </div>
     );
 };
