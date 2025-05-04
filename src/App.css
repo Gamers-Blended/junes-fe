@@ -351,6 +351,22 @@
   width: 30px;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Prevent scrolling when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
 /* NOTIFICATION POP UP */
 .notification-popup-container {
   position: fixed;

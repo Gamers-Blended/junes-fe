@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NotificationPopUp from './NotificationPopUp';
 
 import heartGreenIcon from "../assets/heartGreenIcon.png";
@@ -58,6 +58,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
         const handleClose = () => {
             setShowQuickShop(false);
         };
+
+        // Lock body scroll when modal is open
+        useEffect(() => {
+            // Add class to prevent scrolling
+            document.body.classList.add('modal-open');
+
+            // Clean up function to remove class when component unmounts
+            return () => {
+                document.body.classList.remove('modal-open');
+            };   
+        }, []);
 
         return (
             <div className="quick-shop-window-container">
