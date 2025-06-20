@@ -4,6 +4,34 @@ Front End service for Junes dummy online video game store.
 
 This is a dummy online web site that sells video games.
 
+# Prerequisites
+- Node.js ≥ 18.18.0  
+  (Run `node --version` to check)  
+- npm ≥ 9.x, yarn ≥ 1.22, or pnpm ≥ 8.x  
+  (Run `npm --version` or `yarn --version`)  
+  
+# Running the Project Locally
+
+1. Clone the repository
+```
+git clone https://github.com/Gamers-Blended/junes-fe.git
+cd junes-fe
+```
+
+2. Install dependencies
+```
+npm install
+```
+
+3. Start development server
+```
+npm run dev
+```
+
+4. Open in your browser
+Open the default<br>
+[http://localhost:5173](http://localhost:5173)
+
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
