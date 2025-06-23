@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import DebugWindow from "./DebugWindow";
@@ -10,7 +9,7 @@ import wishListIcon from "../assets/heartIcon.png";
 
 const NavigationBar = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   const handleLoginClick = () => {
     if (isLoggedIn) {

@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "docs": "typedoc src/App.tsx src/components --out docs"
   },
   "dependencies": {
     "react": "^19.0.0",

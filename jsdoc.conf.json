@@ -1,0 +1,20 @@
+{
+  "source": {
+    "include": ["./src/"],
+    "includePattern": "\\.(js|jsx|ts|tsx)$",
+    "exclude": [
+      "node_modules/", 
+      "build/", 
+      "dist/", 
+      "public/",
+      "src/main.tsx",
+      "src/index.tsx",
+      "src/vite-env.d.ts"
+    ]
+  },
+  "opts": {
+    "destination": "./docs/",
+    "recurse": true
+  },
+  "plugins": ["plugins/markdown"]
+}
