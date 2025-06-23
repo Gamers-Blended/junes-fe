@@ -24,105 +24,107 @@ function HomePage() {
   const recommendedItems = [
     {
       id: "1",
-      title: "Apollo Justice Ace Attorney Trilogy",
+      name: "Apollo Justice Ace Attorney Trilogy",
       price: "S$40.00",
-      imageSrc: ApolloJusticeAceAttorneyTrilogyUSNSW,
+      productImageUrl: ApolloJusticeAceAttorneyTrilogyUSNSW,
     },
     {
       id: "2",
-      title: "Atelier Marie Remake: The Alchemist of Salburg",
+      name: "Atelier Marie Remake: The Alchemist of Salburg",
       price: "S$70.00",
-      imageSrc: AtelierMarieRemakeASIANSW,
+      productImageUrl: AtelierMarieRemakeASIANSW,
     },
     {
       id: "3",
-      title: "Baten Kaitos I & II HD Remaster",
+      name: "Baten Kaitos I & II HD Remaster",
       price: "S$60.00",
-      imageSrc: BatenKaitosRemasterASIANSW,
+      productImageUrl: BatenKaitosRemasterASIANSW,
     },
     {
       id: "4",
-      title: "Chrono Cross: The Radical Dreamers Edition",
+      name: "Chrono Cross: The Radical Dreamers Edition",
       price: "S$70.00",
-      imageSrc: ChronoCrossTrdeASIANSW,
+      productImageUrl: ChronoCrossTrdeASIANSW,
     },
     {
       id: "5",
-      title: "Fatal Frame: Mask of the Lunar Eclipse",
+      name: "Fatal Frame: Mask of the Lunar Eclipse",
       price: "S$70.00",
-      imageSrc: FatalFameMotleASIANSW,
+      productImageUrl: FatalFameMotleASIANSW,
     },
     {
       id: "6",
-      title: "Fatal Frame: Mask of the Lunar Eclipse",
+      name: "Fatal Frame: Mask of the Lunar Eclipse",
       price: "S$70.00",
-      imageSrc: FatalFameMotleASIAPS4,
+      productImageUrl: FatalFameMotleASIAPS4,
     },
     {
       id: "7",
-      title: "Fatal Frame: Maiden of Black Water",
+      name: "Fatal Frame: Maiden of Black Water",
       price: "S$60.00",
-      imageSrc: FatalFameMobwASIANSW,
+      productImageUrl: FatalFameMobwASIANSW,
     },
     {
       id: "8",
-      title: "Fatal Frame: Maiden of Black Water",
+      name: "Fatal Frame: Maiden of Black Water",
       price: "S$60.00",
-      imageSrc: FatalFameMobwASIAPS4,
+      productImageUrl: FatalFameMobwASIAPS4,
     },
     {
       id: "9",
-      title: "Final Fantasy Pixel Remaster Collection",
+      name: "Final Fantasy Pixel Remaster Collection",
       price: "S$70.00",
-      imageSrc: FinalFantasyPixelRemasterASIANSW,
+      productImageUrl: FinalFantasyPixelRemasterASIANSW,
     },
     {
       id: "10",
-      title: "Final Fantasy XI",
+      name: "Final Fantasy XI",
       price: "S$40.00",
-      imageSrc: FinalFantasyXIASIANSW,
+      productImageUrl: FinalFantasyXIASIANSW,
     },
     {
       id: "11",
-      title: "Final Fantasy VII Final Fantasy VIII Remastered Twin Pack",
+      name: "Final Fantasy VII Final Fantasy VIII Remastered Twin Pack",
       price: "S$40.00",
-      imageSrc: FinalFantasyVIIVIIITwinEURNSW,
+      productImageUrl: FinalFantasyVIIVIIITwinEURNSW,
     },
     {
       id: "12",
-      title: "Grandia HD Collection",
+      name: "Grandia HD Collection",
       price: "S$50.00",
-      imageSrc: GrandiaASIANSW,
+      productImageUrl: GrandiaASIANSW,
     },
     {
       id: "13",
-      title: "Ace Attorney Trilogy",
+      name: "Ace Attorney Trilogy",
       price: "S$40.00",
-      imageSrc: AceAttorneyTrilogyJPNSW,
+      productImageUrl: AceAttorneyTrilogyJPNSW,
     },
     {
       id: "14",
-      title: "Ninja Gaiden Master Collection",
+      name: "Ninja Gaiden Master Collection",
       price: "S$40.00",
-      imageSrc: NinjaGaidenCollectionASIANSW,
+      productImageUrl: NinjaGaidenCollectionASIANSW,
     },
     {
       id: "15",
-      title: "Ninja Gaiden Master Collection",
+      name: "Ninja Gaiden Master Collection",
       price: "S$40.00",
-      imageSrc: NinjaGaidenCollectionASIAPS4,
+      productImageUrl: NinjaGaidenCollectionASIAPS4,
     },
     {
       id: "16",
-      title: "Saga Frontier Remastered",
+      name: "Saga Frontier Remastered",
       price: "S$40.00",
-      imageSrc: SagaFrontierASIANSW,
+      productImageUrl: SagaFrontierASIANSW,
     },
   ];
 
   return (
     <div className="home-page-container">
       <PromoCarousel />
+
+      {/* Feed ProductSlider with ProductSliderItem list retrieved from API */}
       <ProductSlider items={recommendedItems} />
     </div>
   );

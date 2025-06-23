@@ -7,9 +7,10 @@ import heartGreenFilledIcon from "../assets/heartGreenFilledIcon.png";
 interface ProductCardProps {
     item: {
         id: string;
-        title: string;
+        name: string;
+        slug: string;
         price: string;
-        imageSrc: string;
+        productImageUrl: string;
     },
     isLoading: boolean;
     isLiked?: boolean; // Optional
@@ -22,14 +23,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
     const [showQuickShop, setShowQuickShop] = useState<boolean>(false);
     const wordLimit = 40;
     // Title will only show up to wordLimit characters
-    const trimmedTitle = item.title.length > wordLimit ? `${item.title.substring(0, wordLimit)}...` : item.title;
+    const trimmedTitle = item.name.length > wordLimit ? `${item.name.substring(0, wordLimit)}...` : item.name;
 
     const handleAddToWishList = () => {
         const newLikedState = !isLiked;
         setIsLiked(newLikedState);
 
-        const message = newLikedState ? `${item.title} added to Wish List!` : `${item.title} removed from Wish List!`;
-        console.log(`${item.title} ${newLikedState ? 'added to' : 'removed from'} wish list`);
+        const message = newLikedState ? `${item.name} added to Wish List!` : `${item.name} removed from Wish List!`;
+        console.log(`${item.name} ${newLikedState ? 'added to' : 'removed from'} wish list`);
 
         setNotificationMessage(message);
         setShowNotification(true);
@@ -41,12 +42,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
 
     const handleQuickShop = () => {
         setShowQuickShop(true);
-        console.log(`Quick shop for ${item.title}`);
+        console.log(`Quick shop for ${item.name}`);
     }
 
     const handleAddToCart = () => {
-        const message = `${item.title} added to cart!`;
-        console.log(`${item.title} added to cart!`);
+        const message = `${item.name} added to cart!`;
+        console.log(`${item.name} added to cart!`);
 
         setNotificationMessage(message);
         setShowNotification(true);
@@ -74,7 +75,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
             <div className="quick-shop-window-container">
                 <div className="quick-shop-content">
                     <button className='quick-shop-close-button' onClick={handleClose}>X</button>
-                    <h2>{item.title}</h2>
+                    <h2>{item.name}</h2>
                     <p>{item.price}</p>
                     <button className="product-card-button add-to-cart-button" onClick={handleAddToCart}>Add to Cart</button>
                 </div>
@@ -91,7 +92,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
                     onClick={handleAddToWishList}
                     alt={isLiked ? "Remove from Wishlist" : "Add to Wishlist"}
                 />
-                <img className='product-card-image' src={item.imageSrc} alt={item.title} />
+                <img className='product-card-image' src={item.productImageUrl} alt={item.name} />
             </div>
             <p className='product-card-title'>{trimmedTitle}</p>
             <p className='product-card-price'>{item.price}</p>

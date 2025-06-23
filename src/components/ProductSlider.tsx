@@ -4,17 +4,23 @@ import ProductCard from './ProductCard';
 import arrowLeftIcon from "../assets/arrowLeftIcon.png";
 import arrowRightIcon from "../assets/arrowRightIcon.png";
 
-interface GameItem {
+interface ProductSliderItem {
   id: string;
-  title: string;
+  name: string;
+  slug: string;
   price: string;
-  imageSrc: string;
+  productImageUrl: string;
 }
 
 interface ProductSliderProps {
-  items: GameItem[];
+  items: ProductSliderItem[];
 }
 
+/**
+ * Component that displays visibleItemsCount products with arrows
+ * @para items - A list of ProductSliderItem to display
+ * @returns ProductSlider component with the given list of ProductSliderItem
+ */
 const ProductSlider: React.FC<ProductSliderProps> = ({ items }) => {
   const [startIndex, setStartIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
