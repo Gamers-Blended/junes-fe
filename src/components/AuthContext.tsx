@@ -4,17 +4,20 @@ import React, { useState, useEffect, createContext, useContext } from 'react';
 interface AuthContextProps {
     isLoggedIn: boolean;
     setIsLoggedIn: (isLoggedIn: boolean) => void;
+    userID: number;
 }
 
-// Create AuthContext
+// Create AuthContext with initial value including userID
 const AuthContext = createContext<AuthContextProps>({
     isLoggedIn: false,
     setIsLoggedIn: () => {}, // Empty function that will be overwritten by provider
+    userID: 1, // Hard-coded to 1
 });
 
 // Create Provider component
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userID] = useState<number>(1); // Hard-coded to 1
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -32,7 +35,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     }, [isLoggedIn])
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
+        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, userID }}>
             {children}
         </AuthContext.Provider>
     );
