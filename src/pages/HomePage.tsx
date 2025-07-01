@@ -17,7 +17,6 @@ interface ProductSliderItem {
 
 interface PageResponse {
   content: ProductSliderItem[],
-  totalPages: number;
   totalElements: number;
   size: number;
   number: number; // current page number
@@ -30,12 +29,11 @@ interface PageResponse {
 function HomePage() {
   const [recommendedItems, setRecommendedItems] = useState<ProductSliderItem[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [totalPages, setTotalPages] = useState<number>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [hasPreviousPage, setHasPreviousPage] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { userID } = useAuth();
+  const { userID, isLoggedIn } = useAuth();
 
   const api = axios.create({
         baseURL: 'http://localhost:8080/junes/api/v1',
@@ -47,9 +45,25 @@ function HomePage() {
       setIsLoading(true);
       setError(null); // Clear any previous errors
 
-      console.info(`Fetching data for recommended products for page ${pageNumber} for userID ${userID}...`)
+      let response;
 
-      const response = await api.get<PageResponse>(`/frontpage/recommended?userID=${userID}&page=${pageNumber}`);
+      if (isLoggedIn) {
+        console.info(`Fetching data for recommended products for page ${pageNumber} for userID ${userID}...`)
+
+        response = await api.get<PageResponse>(`/frontpage/recommended?userID=${userID}&page=${pageNumber}`);
+      } else {
+          console.info(`Fetching data for recommended products for page ${pageNumber} for guest user...`)
+
+          const requestData = {
+            pageNumber: pageNumber,
+            historyCache: ["item1"] // TODO: retrieve from history cache
+          };
+
+          response = await api.post<PageResponse>(`/frontpage/recommended/no-user?page=${pageNumber}`, requestData, {headers: {
+              'Content-Type': 'application/json'
+          }});
+      }
+
       const urlPrefix = "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/";
 
       // Append prefix to each productImageUrl
@@ -60,7 +74,6 @@ function HomePage() {
 
       setRecommendedItems(updatedData);
       setCurrentPage(response.data.number);
-      setTotalPages(response.data.totalPages);
       setHasNextPage(!response.data.last);
       setHasPreviousPage(!response.data.first);
 
@@ -68,19 +81,6 @@ function HomePage() {
       console.log("Updated state - Has Next:", !response.data.last);
       console.log("Updated state - Has Previous:", !response.data.first);
       console.log("Fetched data: ", updatedData)
-      // let response;
-
-      // if (isLoggedIn) {
-      //   response = await api.get<ProductSliderItem[]>(`/frontpage/recommended?userID=${userID}&pageNumber=${pageNumber}`);
-      // } else {
-      //   const requestData = {
-      //     pageNumber: pageNumber,
-      //     historyCache: ["item1"]
-      //   };
-      //   response = await api.post<ProductSliderItem[]>(`/frontpage/recommended/no-user`, requestData, {headers: {
-      //       'Content-Type': 'application/json'
-      //     }});
-      // }
 
     } catch (error) {
       console.error('Error fetching data for recommended products (user logged in):', error);
