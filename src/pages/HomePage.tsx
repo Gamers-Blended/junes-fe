@@ -13,6 +13,18 @@ interface ProductSliderItem {
   productImageUrl: string;
 }
 
+interface PageResponse {
+  content: ProductSliderItem[],
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number; // current page number
+  numberOfElements: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+}
+
 function HomePage() {
   const [recommendedItems, setRecommendedItems] = useState<ProductSliderItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -26,22 +38,23 @@ function HomePage() {
         timeout: 10000,
     });
   
-    const fetchData = async () => {
+    const fetchRecommendedItems = async () => {
       try {
         setLoading(true);
-        console.info("Fetching data for recommended products...")
+        console.info(`Fetching data for recommended products for page ${pageNumber}...`)
 
-        const response = await api.get<ProductSliderItem[]>(`/frontpage/recommended?userID=${userID}&pageNumber=${pageNumber}`);
+        const response = await api.get<PageResponse>(`/frontpage/recommended?userID=${userID}&pageNumber=${pageNumber}`);
         const urlPrefix = "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/";
 
         // Append prefix to each productImageUrl
-        const updatedData = response.data.map((item) => ({
+        const updatedData = response.data.content.map((item) => ({
           ...item,
           productImageUrl: item.productImageUrl ? `${urlPrefix}${item.productImageUrl}` : "",
         }));
 
         setRecommendedItems(updatedData);
-        console.log("Fetched data: {}", recommendedItems)
+
+        console.log("Fetched data: ", updatedData)
         // let response;
 
         // if (isLoggedIn) {
@@ -64,7 +77,7 @@ function HomePage() {
       }
     };
 
-    fetchData();
+    fetchRecommendedItems();
 
   }, []); // Runs once component mounts
   
