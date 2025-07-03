@@ -14,6 +14,9 @@ function HomePage() {
         title="Preorders"
       />
       
+      <ProductSlider
+        title="Best Sellers"
+      />
     </div>
   );
 }
