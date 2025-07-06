@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
 
 import ps4Image from "../assets/selectorBox/ps4.png";
 import ps5Image from "../assets/selectorBox/ps5.png";
@@ -7,16 +8,26 @@ import ns2Image from "../assets/selectorBox/ns2.png";
 import xboxImage from "../assets/selectorBox/xbox.png";
 import pcImage from "../assets/selectorBox/pc.png";
 
+interface PlatformCard {
+    src: string;
+    alt: string;
+    route: string;
+}
 
 const ProductSelector: React.FC = () => {
-    const platforms = [
-        { src: ps4Image, alt: 'PlayStation 4', badge: 'PlayStation 4' },
-        { src: ps5Image, alt: 'PlayStation 5', badge: 'PlayStation 5' },
-        { src: nsImage, alt: 'Nintendo Switch', badge: 'Nintendo Switch' },
-        { src: ns2Image, alt: 'Nintendo Switch 2', badge: 'Nintendo Switch 2' },
-        { src: xboxImage, alt: 'Xbox', badge: 'Xbox' },
-        { src: pcImage, alt: 'PC', badge: 'PC' }
+    const navigate = useNavigate();
+    const platforms: PlatformCard[] = [
+        { src: ps4Image, alt: 'PlayStation 4', route: 'ps4' },
+        { src: ps5Image, alt: 'PlayStation 5', route: 'ps5' },
+        { src: nsImage, alt: 'Nintendo Switch', route: 'ns' },
+        { src: ns2Image, alt: 'Nintendo Switch 2', route: 'ns2' },
+        { src: xboxImage, alt: 'Xbox', route: 'xbox' },
+        { src: pcImage, alt: 'PC', route: 'pc' }
     ];
+
+    const handleImageClick = (link: string) => {
+        navigate('products/listings/' + link);
+    };
 
     return (
         <div className='product-selector-container'>
@@ -26,7 +37,10 @@ const ProductSelector: React.FC = () => {
             <div className='product-selector-gridbox'>
                 {platforms.map((platform, index) => (
                     <div key={index} className='product-selector-platform-box'>
-                        <div className='product-selector-platform-image-container'>
+                        <div 
+                            className='product-selector-platform-image-container'
+                            onClick={() => handleImageClick(platform.route)}
+                        >
                             <img src={platform.src} alt={platform.alt}/>
                         </div>
                     </div>        
