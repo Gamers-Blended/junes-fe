@@ -27,9 +27,9 @@ const ProductSelector: React.FC = () => {
                 {platforms.map((platform, index) => (
                     <div key={index} className='product-selector-platform-box'>
                         <div className='product-selector-platform-image-container'>
-                            <img src={platform.src} alt={platform.alt} className='product-selector-image'/>
+                            <img src={platform.src} alt={platform.alt}/>
                         </div>
-                    </div>
+                    </div>        
                 ))}
             </div>
         </div>
