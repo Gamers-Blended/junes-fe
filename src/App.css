@@ -382,3 +382,45 @@ body.modal-open {
   opacity: 1;
   transition: opacity 0.3s ease-in-out;
 }
+
+/* PRODUCT SELECTOR */
+.product-selector-container {
+  min-height: 100vh;
+  margin-top: 30px;
+}
+
+.product-selector-gridbox {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); 
+  gap: 1.5rem; 
+  margin-top: 30px;
+}
+
+.product-selector-platform-box {
+  border-radius: 0.5rem; 
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms; 
+  transition-duration: 300ms; 
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
+
+}
+
+.product-selector-platform-box :hover {
+  --transform-scale-x: 1.05;
+  --transform-scale-y: 1.05;
+ }
+
+ .product-selector-platform-image-container {
+  aspect-ratio: 1;
+ }
+
+ .product-selector-image {
+  object-fit: cover; 
+  width: 100%; 
+  height: 100%; 
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms; 
+  transition-duration: 300ms; 
+ }

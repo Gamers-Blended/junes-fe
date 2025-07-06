@@ -1,5 +1,6 @@
 import PromoCarousel from "../components/PromoCarousel";
 import ProductSlider from "../components/ProductSlider";
+import ProductSelector from "../components/ProductSelector";
 
 function HomePage() {
   return (
@@ -17,6 +18,8 @@ function HomePage() {
       <ProductSlider
         title="Best Sellers"
       />
+
+      <ProductSelector/>
     </div>
   );
 }
