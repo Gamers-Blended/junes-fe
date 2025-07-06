@@ -390,10 +390,10 @@ body.modal-open {
 }
 
 .product-selector-gridbox {
+  background-color: #C2E0B4;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr)); 
   gap: 1.5rem; 
-  margin-top: 30px;
 }
 
 .product-selector-platform-box {
@@ -404,6 +404,7 @@ body.modal-open {
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   cursor: pointer;
+  margin: 20px;
 }
 
 .product-selector-platform-box:hover {
