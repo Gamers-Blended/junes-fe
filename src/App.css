@@ -439,3 +439,7 @@ body.modal-open {
   margin-top: 30px;
   transition: 'background-color 0.2s ease';
 }
+
+.footer-back-to-top:hover {
+  background-color: #00c698;
+}
