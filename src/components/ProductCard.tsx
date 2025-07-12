@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import NotificationPopUp from './NotificationPopUp';
+import QuickShopWindow from './QuickShopWindow';
 
 import heartGreenIcon from "../assets/heartGreenIcon.png";
 import heartGreenFilledIcon from "../assets/heartGreenFilledIcon.png";
@@ -72,14 +73,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
         }, []);
 
         return (
-            <div className="quick-shop-window-container">
-                <div className="quick-shop-content">
-                    <button className='quick-shop-close-button' onClick={handleClose}>X</button>
-                    <h2>{item.name}</h2>
-                    <p>{item.price}</p>
-                    <button className="product-card-button add-to-cart-button" onClick={handleAddToCart}>Add to Cart</button>
-                </div>
-            </div>
+            <QuickShopWindow/>
+            // <div className="quick-shop-window-container">
+            //     <div className="quick-shop-content">
+            //         <button className='quick-shop-close-button' onClick={handleClose}>X</button>
+            //         <h2>{item.name}</h2>
+            //         <p>{item.price}</p>
+            //         <button className="product-card-button add-to-cart-button" onClick={handleAddToCart}>Add to Cart</button>
+            //     </div>
+            // </div>
         )
     }
 
