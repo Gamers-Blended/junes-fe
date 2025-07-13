@@ -180,10 +180,13 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                                 </div>
                             </div>
 
-                            </div>
+                            {/* Add To Cart */}
+                            <button className='add-to-cart-btn' onClick={() => onAddToCart(item)}>
+                                Add to Cart
+                            </button>
+
                         </div>
-                    
-                    <button onClick={() => onAddToCart(item)}>Add to Cart</button>
+                    </div>
                 </div>
             )}
                 

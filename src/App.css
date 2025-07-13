@@ -619,3 +619,20 @@ body.modal-open {
     flex: 1;
     margin-left: 20px;
 }
+
+/* QUICK SHOP - ADD TO CART BUTTON*/
+.add-to-cart-btn {
+  background-color: #00d4aa;
+  border: none;
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #00b896;
+}
