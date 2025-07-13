@@ -24,6 +24,13 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
     const [selectedRegion, setSelectedLanguage] = useState<string>('');
 
 
+    const handleQuantityChange = (change: number) => {
+        const newQuantity = quantity + change;
+        if (newQuantity >= 1) {
+            setQuantity(newQuantity);
+        }
+    }
+
     useEffect(() => {
         // Simulate loading time
         const timer = setTimeout(() => {
@@ -43,14 +50,54 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                     <div className='product-slider-loading-text'>Loading...</div>
                 </div>
             )}
+
+            {/* Actual Window */}
             {!isLoading && (
                 <div className="quick-shop-content">
                     <button className='quick-shop-close-button' onClick={onClose}>X</button>
-                    <h2>{item.name}</h2>
-                    <img src={item.productImageUrl} alt={item.name} />
-                    <p>Price: {item.price}</p>
+                    
+                    <div className='product-container'>
+                        <div className="product-image-section">
+                            <img className='product-image' src={item.productImageUrl} alt={item.name} />
+                        </div>
+
+                        <div className='product-info-section'>
+                            <h1 className='product-title'>{item.name}</h1>
+                            <div className='product-price'>{item.price}</div>
+
+                            <div className='product-options'>
+                                <div className='option-group'>
+                                    <div className='quantity-container'>
+                                    <label className='option-label'>Quantity</label>
+                                        <div className='quantity-selector'>
+                                            <button
+                                                className='quantity-btn'
+                                                onClick={() => handleQuantityChange(-1)}
+                                                disabled={quantity <= 1}
+                                                >
+                                                    -
+                                            </button>
+                                            <input 
+                                                className='quantity-input'
+                                                type='number'
+                                                value={quantity}
+                                                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                                            />
+                                            <button
+                                                className='quantity-btn'
+                                                onClick={() => handleQuantityChange(1)}
+                                                >
+                                                    +
+                                            </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                        </div>
+                    </div>
+                    
                     <button onClick={() => onAddToCart(item)}>Add to Cart</button>
-                    <button onClick={onClose}>Close</button>
                 </div>
             )}
                 
