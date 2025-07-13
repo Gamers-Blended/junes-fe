@@ -1,5 +1,40 @@
 import React, { useState, useEffect } from 'react';
 
+interface ProductDTO {
+    id: string;
+    name: string;
+    slug: string;
+    description: string;
+    price: number;
+    platform: string;
+    region: string;
+    edition: string;
+    publisher: string;
+    releaseDate: string;
+    series: string[];
+    genres: string[];
+    languages: string[];
+    numberOfPlayers: string[];
+    unitsSold: number;
+    stock: number;
+    productImageUrl: string;
+    imageUrlList: string[];
+    editionNotes: string;
+    createdOn: string;
+}
+
+interface ProductVariantDTO {
+    platform: string;
+    region: string;
+    edition: string;
+    price: number;
+}
+
+interface ProductDetailsResponse {
+    productDTO: ProductDTO;
+    productVariantDTOList: ProductVariantDTO[];
+}
+
 interface QuickWindowProps {
     item: {
         id: string;
@@ -23,23 +58,187 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
     const [selectedPlatform, setSelectedPlatform] = useState<string>('');
     const [selectedRegion, setSelectedRegion] = useState<string>('');
     const [selectedEdition, setSelectedEdition] = useState<string>('');
+    const [productData, setProductData] = useState<ProductDTO | null>(null);
+    const [productVariants, setProductVariants] = useState<ProductVariantDTO[]>([]);
+    const [currentPrice, setCurrentPrice] = useState<number>(0);
+    const [error, setError] = useState<string>('');
 
+    // Get unique options from variants
+    const availablePlatforms = [...new Set(productVariants.map(v => v.platform))];
+    const availableRegions = [...new Set(productVariants.map(v => v.region))];
+    const availableEditions = [...new Set(productVariants.map(v => v.edition))];
+
+    // Get available regions for selected platform
+    const availableRegionsForPlatform = selectedPlatform
+        ? [...new Set(productVariants.filter(v => v.platform === selectedPlatform).map(v => v.region))]
+        : availableRegions;
+
+    // Get available editions for selected platform and region
+    const availableEditionsForSelection = selectedPlatform && selectedRegion
+        ? [...new Set(productVariants.filter(v => v.platform === selectedPlatform && v.region === selectedRegion).map(v => v.edition))]
+        : availableEditions;
 
     const handleQuantityChange = (change: number) => {
         const newQuantity = quantity + change;
         if (newQuantity >= 1) {
             setQuantity(newQuantity);
         }
-    }
+    };
+
+    const fetchProductDetails = async () => {
+        try {
+            setIsLoading(true);
+            setError('');
+
+            const response = await fetch(`http://localhost:8080/junes/api/v1/product/details/${item.slug}`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data: ProductDetailsResponse = await response.json();
+
+            const urlPrefix = "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/";
+
+            // Append prefix to each productImageUrl
+            data.productDTO.productImageUrl = urlPrefix + data.productDTO.productImageUrl
+
+            setProductData(data.productDTO);
+            setProductVariants(data.productVariantDTOList);
+
+            // Set default selections if variants exist
+            if (data.productVariantDTOList.length > 0) {
+                console.log('First varient ' + data.productVariantDTOList[0].platform);
+                const firstVariant = data.productVariantDTOList[0];
+                setSelectedPlatform(firstVariant.platform);
+                setSelectedRegion(firstVariant.region);
+                setSelectedEdition(firstVariant.edition);
+                setCurrentPrice(firstVariant.price);
+            }
+
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to fetch product details');
+            console.error('Error fetching product details:', err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const updatePrice = (platform: string, region: string, edition: string) => {
+        const variant = productVariants.find(v => 
+            v.platform === platform && v.region === region && v.edition == edition);
+        if (variant) {
+            setCurrentPrice(variant.price);
+        }
+    };
+
+    const handlePlatformChange = (platform: string) => {
+        setSelectedPlatform(platform);
+
+        // Reset region and edition if not available for new platform
+        const availableRegionsForNewPlatform = [...new Set(productVariants.filter(v => v.platform === platform).map(v => v.region))];
+
+        // Reset to 1st new region if current region not available for new platform
+        if (!availableRegionsForNewPlatform.includes(selectedRegion)) {
+            const newRegion = availableRegionsForNewPlatform[0] || '';
+            setSelectedRegion(newRegion);
+            
+            // Reset to 1st new edition
+            const availableEditionsForNewSelection = [...new Set(productVariants.filter(v => v.platform === platform && v.region === newRegion).map(v => v.edition))];
+            const newEdition = availableEditionsForNewSelection[0] || '';
+            setSelectedEdition(newEdition);
+
+            updatePrice(platform, newRegion, newEdition);
+        } else {
+            // Currently selected region also available for new platform
+            const availableEditionsForNewSelection = [...new Set(productVariants.filter(v => v.platform === platform && v.region === selectedRegion).map(v => v.edition))];
+            
+            // Reset to 1st new edition if current edition not available for new platform and region
+            if (!availableEditionsForNewSelection.includes(selectedEdition)) {
+                const newEdition = availableEditionsForNewSelection[0] || '';
+                setSelectedEdition(newEdition);
+
+                updatePrice(platform, selectedRegion, newEdition);
+            } else {
+                // Currently selected edition also available for new platform and region
+                updatePrice(platform, selectedRegion, selectedEdition);
+            }
+        }
+    };
+
+    const handleRegionChange = (region: string) => {
+        setSelectedRegion(region);
+
+        const availableEditionsForNewSelection = [...new Set(productVariants.filter(v => v.platform === selectedPlatform && v.region === region).map(v => v.edition))];
+        // Reset to 1st new edition if current edition not available for new region
+        if (!availableEditionsForNewSelection.includes(selectedEdition)) {
+            const newEdition = availableEditionsForNewSelection[0] || '';
+            setSelectedEdition(newEdition);
+            updatePrice(selectedPlatform, region, newEdition);
+        } else {
+            updatePrice(selectedPlatform, region, selectedEdition);
+        }
+    };
+
+    const handleEditionChange = (edition: string) => {
+        setSelectedEdition(edition);
+        updatePrice(selectedPlatform, selectedRegion, edition);
+    };
+
+    const formatPlatformName = (platform: string) => {
+        switch (platform.toLowerCase()) {
+            case 'playstation_4':
+                return 'PS4';
+            case 'playstation_5':
+                return 'PS5';
+            case 'nintendo_switch':
+                return 'Switch'
+            case 'nintendo_switch2':
+                return 'Switch 2'
+            case 'xbox':
+                return 'Xbox'
+            case 'pc':
+                return 'PC'
+            default:
+                return platform.charAt(0).toUpperCase() + platform.slice(1);
+        }
+    };
+
+    const formatRegionName = (region: string) => {
+        switch (region.toLowerCase()) {
+            case 'asia':
+                return 'Asia';
+            case 'united_states':
+            case 'us':
+                return 'United States';
+            case 'europe':
+                return 'Europe';
+            default:
+                return region.charAt(0).toUpperCase() + region.slice(1);
+        }
+    };
+
+    const formatEditionName = (edition: string) => {
+        switch (edition.toLowerCase()) {
+            case 'standard':
+                return 'Standard';
+            case 'collectors':
+                return 'Collector\'s';
+            default:
+                return edition.charAt(0).toUpperCase() + edition.slice(1);
+        }
+    };
 
     useEffect(() => {
-        // Simulate loading time
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 1000); // 1 second delay
+        fetchProductDetails();
+    }, [item.slug]);
 
-        return () => clearTimeout(timer);
-    }, []);
+    // Log productData when it changes
+    useEffect(() => {
+        if (productData) {
+            console.log('productData state updated:', productData);
+        }
+    }, [productData]);
 
 
     return (
@@ -53,17 +252,19 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
             )}
 
             {/* Actual Window */}
-            {!isLoading && (
+            {!isLoading && !error && productData && productVariants.length > 0 && (
+                console.log('Rendering quick shop content', { productData, productVariants }),
+                (
                 <div className="quick-shop-content">
                     <button className='quick-shop-close-button' onClick={onClose}>X</button>
                     
                     <div className='product-container'>
                         <div className="product-image-section">
-                            <img className='product-image' src={item.productImageUrl} alt={item.name} />
+                            <img className='product-image' src={productData.productImageUrl} alt={productData.name} />
                         </div>
 
                         <div className='product-info-section'>
-                            <h1 className='product-title'>{item.name}</h1>
+                            <h1 className='product-title'>{productData.name}</h1>
 
                             <div className='product-options'>
                                 <div className='option-group'>
@@ -94,26 +295,24 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                                                 </button>
                                             </div>
                                         </div>
-                                        <div className='product-price'>S${item.price}</div>
+                                        <div className='product-price'>S${currentPrice.toFixed(2)}</div>
                                     </div>
                                 </div>
                                     
                                 {/* Platform */}
-                                <div className='option-group option-buttons'>
-                                    <label className='option-label'>Platform</label>
-                                    <button
-                                        className={`option-btn ${selectedPlatform === 'nintendo_switch' ? 'active' : ''}`}
-                                        onClick={() => setSelectedPlatform('nintendo_switch')}
-                                    >
-                                        Switch
-                                    </button>
-                                    <button 
-                                        className={`option-btn ${selectedPlatform === 'playstation_4' ? 'active' : ''}`}
-                                        onClick={() => setSelectedPlatform('playstation_4')}
-                                    >
-                                        PS4
-                                    </button>
-                                </div>
+                                {availablePlatforms.length > 0 && (
+                                    <div className='option-group option-buttons'>
+                                        <label className='option-label'>Platform</label>
+                                        {availablePlatforms.map(platform => (
+                                            <button
+                                                className={`option-btn ${selectedPlatform === platform ? 'active' : ''}`}
+                                                onClick={() => setSelectedPlatform(platform)}
+                                            >
+                                                {formatPlatformName(platform)}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}                              
 
                                 {/* Region */}
                                 <div className='option-group option-buttons'>
@@ -188,6 +387,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                         </div>
                     </div>
                 </div>
+                )
             )}
                 
             
