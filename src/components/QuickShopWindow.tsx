@@ -21,7 +21,8 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [quantity, setQuantity] = useState<number>(1);
     const [selectedPlatform, setSelectedPlatform] = useState<string>('');
-    const [selectedRegion, setSelectedLanguage] = useState<string>('');
+    const [selectedRegion, setSelectedRegion] = useState<string>('');
+    const [selectedEdition, setSelectedEdition] = useState<string>('');
 
 
     const handleQuantityChange = (change: number) => {
@@ -111,6 +112,46 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                                         onClick={() => setSelectedPlatform('playstation_4')}
                                     >
                                         PS4
+                                    </button>
+                                </div>
+
+                                {/* Region */}
+                                <div className='option-group option-buttons'>
+                                    <label className='option-label'>Region</label>
+                                    <button
+                                        className={`option-btn ${selectedRegion === 'asia' ? 'active' : ''}`}
+                                        onClick={() => setSelectedRegion('asia')}
+                                    >
+                                        Asia
+                                    </button>
+                                    <button 
+                                        className={`option-btn ${selectedRegion === 'united_states' ? 'active' : ''}`}
+                                        onClick={() => setSelectedRegion('united_states')}
+                                    >
+                                        United States
+                                    </button>
+                                    <button 
+                                        className={`option-btn ${selectedRegion === 'europe' ? 'active' : ''}`}
+                                        onClick={() => setSelectedRegion('europe')}
+                                    >
+                                        Europe
+                                    </button>
+                                </div>
+
+                                {/* Edition */}
+                                <div className='option-group option-buttons'>
+                                    <label className='option-label'>Edition</label>
+                                    <button
+                                        className={`option-btn ${selectedEdition === 'standard' ? 'active' : ''}`}
+                                        onClick={() => setSelectedEdition('standard')}
+                                    >
+                                        Standard
+                                    </button>
+                                    <button 
+                                        className={`option-btn ${selectedEdition === 'collectors' ? 'active' : ''}`}
+                                        onClick={() => setSelectedEdition('collectors')}
+                                    >
+                                        Collector's
                                     </button>
                                 </div>
                             </div>

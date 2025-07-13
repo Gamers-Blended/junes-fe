@@ -509,6 +509,8 @@ body.modal-open {
   font-size: 24px;
   font-weight: bold;
   text-align: left;
+  min-width: 110px;
+  width: 110px;
 }
 
 .quantity-container {
