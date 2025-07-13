@@ -513,6 +513,7 @@ body.modal-open {
   width: 110px;
 }
 
+/* QUICK SHOP - QUANTITY BOX*/
 .quantity-container {
   display: flex;
   flex-direction: column;
@@ -557,6 +558,7 @@ body.modal-open {
   appearance: textfield;
 }
 
+/* QUICK SHOP - OPTIONS*/
 .option-buttons {
   display: flex;
   align-items: center; /* Aligns children vertically */
@@ -582,4 +584,38 @@ body.modal-open {
   background-color: #00d4aa;
   color: black;
   border-color: #00d4aa;
+}
+
+/* QUICK SHOP - PRODUCT INF0*/
+.product-details-table {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+    font-weight: bold;
+    color: #333;
+    min-width: 150px;
+    text-align: left;
+}
+
+.detail-value {
+    color: #666;
+    text-align: right;
+    flex: 1;
+    margin-left: 20px;
 }

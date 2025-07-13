@@ -156,6 +156,30 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                                 </div>
                             </div>
 
+                            {/* Product Details */}
+                            <div className='product-details-table'>
+                                <div className='detail-row'>
+                                    <span className='detail-label'>Official Release Date</span>
+                                    <span className='detail-value'>{item.releaseDate || 'Not Available'}</span>
+                                </div>
+                                <div className='detail-row'>
+                                    <span className='detail-label'>Language</span>
+                                    <span className='detail-value'>{item.language || 'Not Available'}</span>
+                                </div>
+                                <div className='detail-row'>
+                                    <span className='detail-label'>Subtitles</span>
+                                    <span className='detail-value'>{item.subtitles || 'Not Available'}</span>
+                                </div>
+                                <div className='detail-row'>
+                                    <span className='detail-label'>Genre</span>
+                                    <span className='detail-value'>{item.genre || 'Not Available'}</span>
+                                </div>
+                                <div className='detail-row'>
+                                    <span className='detail-label'>Players</span>
+                                    <span className='detail-value'>{item.players || 'Not Available'}</span>
+                                </div>
+                            </div>
+
                             </div>
                         </div>
                     
