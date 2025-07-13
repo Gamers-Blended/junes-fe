@@ -63,37 +63,61 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
 
                         <div className='product-info-section'>
                             <h1 className='product-title'>{item.name}</h1>
-                            <div className='product-price'>{item.price}</div>
 
                             <div className='product-options'>
                                 <div className='option-group'>
-                                    <div className='quantity-container'>
-                                    <label className='option-label'>Quantity</label>
-                                        <div className='quantity-selector'>
-                                            <button
-                                                className='quantity-btn'
-                                                onClick={() => handleQuantityChange(-1)}
-                                                disabled={quantity <= 1}
-                                                >
-                                                    -
-                                            </button>
-                                            <input 
-                                                className='quantity-input'
-                                                type='number'
-                                                value={quantity}
-                                                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                                            />
-                                            <button
-                                                className='quantity-btn'
-                                                onClick={() => handleQuantityChange(1)}
-                                                >
-                                                    +
-                                            </button>
+                                
+                                    <div className='option-row'>
+
+                                        <div className='quantity-container'>
+                                            <label className='option-label'>Quantity</label>
+                                            <div className='quantity-selector'>
+                                                <button
+                                                    className='quantity-btn'
+                                                    onClick={() => handleQuantityChange(-1)}
+                                                    disabled={quantity <= 1}
+                                                    >
+                                                        -
+                                                </button>
+                                                <input 
+                                                    className='quantity-input'
+                                                    type='number'
+                                                    value={quantity}
+                                                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                                                />
+                                                <button
+                                                    className='quantity-btn'
+                                                    onClick={() => handleQuantityChange(1)}
+                                                    >
+                                                        +
+                                                </button>
                                             </div>
                                         </div>
-                                    </div>
+
+                                        <div className='product-price'>{item.price}</div>
                                     
+                                    </div>
                                 </div>
+                                    
+                                <div className='option-group'>
+                                    <label className='option-label'>Platform</label>
+                                    <div className='option-buttons'>
+                                        <button
+                                            className={`option-btn ${selectedPlatform === 'Switch' ? 'active' : ''}`}
+                                            onClick={() => setSelectedPlatform('switch')}
+                                        >
+                                            Switch
+                                        </button>
+                                        <button 
+                                            className={`option-btn ${selectedPlatform === 'PS4' ? 'active' : ''}`}
+                                            onClick={() => setSelectedPlatform('PS4')}
+                                        >
+                                            PS4
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                     

@@ -476,17 +476,17 @@ body.modal-open {
 }
 
 .product-title {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: bold;
   margin: 0 0 10px 0;
-  color: #333;
 }
 
 .product-price {
   font-size: 32px;
   font-weight: bold;
-  color: #333;
-  margin-bottom: 30px;
+  white-space: nowrap; /* Prevent price from wrapping */
+  margin-top: auto; /* Align with quantity controls */
+  padding-bottom: 10px; /* Match your label height */
 }
 
 .product-options {
@@ -495,6 +495,13 @@ body.modal-open {
 
 .option-group {
   margin-bottom: 20px;
+}
+
+.option-row {
+  display: flex;
+  align-items: flex-end; /* Keep vertical alignment */
+  width: 100%;
+  gap: 400px; /* Adjust spacing between quantity and price */
 }
 
 .option-label {
@@ -507,7 +514,7 @@ body.modal-open {
 .quantity-container {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Aligns items to the left (remove if you want full width) */
+  align-items: flex-start; /* Aligns items to the left */
   gap: 4px; /* Adjust spacing between label and selector */
 }
 
@@ -525,7 +532,7 @@ body.modal-open {
   border-radius: 0;
   padding: 5px 15px;
   cursor: pointer;
-  font-size: 25px;
+  font-size: 24px;
   outline: none;
 }
 
@@ -542,9 +549,33 @@ body.modal-open {
   padding: 5px;
   width: 70px;
   text-align: center;
-  font-size: 25px;
+  font-size: 24px;
   /* Remove number input spinners */
   -moz-appearance: textfield;
   appearance: textfield;
 }
 
+.option-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.option-btn {
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.option-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.option-btn.active {
+  background-color: #00d4aa;
+  color: white;
+  border-color: #00d4aa;
+}
