@@ -486,7 +486,7 @@ body.modal-open {
   font-weight: bold;
   white-space: nowrap; /* Prevent price from wrapping */
   margin-top: auto; /* Align with quantity controls */
-  padding-bottom: 10px; /* Match your label height */
+  padding-bottom: 5px; /* Match label height */
 }
 
 .product-options {
@@ -501,13 +501,13 @@ body.modal-open {
   display: flex;
   align-items: flex-end; /* Keep vertical alignment */
   width: 100%;
-  gap: 400px; /* Adjust spacing between quantity and price */
+  gap: 350px; /* Adjust spacing between quantity and price */
 }
 
 .option-label {
   display: block;
+  font-size: 24px;
   font-weight: bold;
-  margin-bottom: 10px;
   text-align: left;
 }
 
@@ -557,17 +557,19 @@ body.modal-open {
 
 .option-buttons {
   display: flex;
+  align-items: center; /* Aligns children vertically */
   gap: 10px;
 }
 
 .option-btn {
   padding: 10px 20px;
-  border: 1px solid #ddd;
+  border: 1px solid black;
   background: white;
   cursor: pointer;
   border-radius: 4px;
   transition: all 0.2s;
   font-size: 14px;
+  font-weight: bold;
 }
 
 .option-btn:hover {
@@ -576,6 +578,6 @@ body.modal-open {
 
 .option-btn.active {
   background-color: #00d4aa;
-  color: white;
+  color: black;
   border-color: #00d4aa;
 }

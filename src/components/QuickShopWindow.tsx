@@ -67,8 +67,8 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                             <div className='product-options'>
                                 <div className='option-group'>
                                 
+                                    {/* Quantity and price */}
                                     <div className='option-row'>
-
                                         <div className='quantity-container'>
                                             <label className='option-label'>Quantity</label>
                                             <div className='quantity-selector'>
@@ -76,8 +76,8 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                                                     className='quantity-btn'
                                                     onClick={() => handleQuantityChange(-1)}
                                                     disabled={quantity <= 1}
-                                                    >
-                                                        -
+                                                >
+                                                    -
                                                 </button>
                                                 <input 
                                                     className='quantity-input'
@@ -88,38 +88,35 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                                                 <button
                                                     className='quantity-btn'
                                                     onClick={() => handleQuantityChange(1)}
-                                                    >
-                                                        +
+                                                >
+                                                    +
                                                 </button>
                                             </div>
                                         </div>
-
-                                        <div className='product-price'>{item.price}</div>
-                                    
+                                        <div className='product-price'>S${item.price}</div>
                                     </div>
                                 </div>
                                     
-                                <div className='option-group'>
+                                {/* Platform */}
+                                <div className='option-group option-buttons'>
                                     <label className='option-label'>Platform</label>
-                                    <div className='option-buttons'>
-                                        <button
-                                            className={`option-btn ${selectedPlatform === 'Switch' ? 'active' : ''}`}
-                                            onClick={() => setSelectedPlatform('switch')}
-                                        >
-                                            Switch
-                                        </button>
-                                        <button 
-                                            className={`option-btn ${selectedPlatform === 'PS4' ? 'active' : ''}`}
-                                            onClick={() => setSelectedPlatform('PS4')}
-                                        >
-                                            PS4
-                                        </button>
-                                    </div>
+                                    <button
+                                        className={`option-btn ${selectedPlatform === 'nintendo_switch' ? 'active' : ''}`}
+                                        onClick={() => setSelectedPlatform('nintendo_switch')}
+                                    >
+                                        Switch
+                                    </button>
+                                    <button 
+                                        className={`option-btn ${selectedPlatform === 'playstation_4' ? 'active' : ''}`}
+                                        onClick={() => setSelectedPlatform('playstation_4')}
+                                    >
+                                        PS4
+                                    </button>
                                 </div>
+                            </div>
 
                             </div>
                         </div>
-                    </div>
                     
                     <button onClick={() => onAddToCart(item)}>Add to Cart</button>
                 </div>
