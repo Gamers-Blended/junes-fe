@@ -12,6 +12,11 @@ interface ProductCardProps {
         slug: string;
         price: string;
         productImageUrl: string;
+        releaseDate: string;
+        language: string;
+        subtitles: string;
+        genre: string;
+        players?: string;
     },
     isLoading: boolean;
     isLiked?: boolean; // Optional
@@ -56,7 +61,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
 
     const heartIcon = isLiked ? heartGreenFilledIcon : heartGreenIcon;
 
-    const QuickShopWindow = () => {
+    const QuickShopModal = () => {
         const handleClose = () => {
             setShowQuickShop(false);
         };
@@ -73,15 +78,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
         }, []);
 
         return (
-            <QuickShopWindow/>
-            // <div className="quick-shop-window-container">
-            //     <div className="quick-shop-content">
-            //         <button className='quick-shop-close-button' onClick={handleClose}>X</button>
-            //         <h2>{item.name}</h2>
-            //         <p>{item.price}</p>
-            //         <button className="product-card-button add-to-cart-button" onClick={handleAddToCart}>Add to Cart</button>
-            //     </div>
-            // </div>
+            <QuickShopWindow item={item} onClose={handleClose} onAddToCart={handleAddToCart}/>
         )
     }
 
@@ -116,7 +113,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
             duration={3000} // 3 seconds
             />
 
-            { showQuickShop && <QuickShopWindow/> }
+            { showQuickShop && <QuickShopModal/> }
             
         </div>
     );
