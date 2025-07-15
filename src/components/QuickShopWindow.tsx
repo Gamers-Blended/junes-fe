@@ -305,6 +305,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                                         <label className='option-label'>Platform</label>
                                         {availablePlatforms.map(platform => (
                                             <button
+                                                key={platform}
                                                 className={`option-btn ${selectedPlatform === platform ? 'active' : ''}`}
                                                 onClick={() => setSelectedPlatform(platform)}
                                             >
@@ -315,44 +316,38 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                                 )}                              
 
                                 {/* Region */}
-                                <div className='option-group option-buttons'>
-                                    <label className='option-label'>Region</label>
-                                    <button
-                                        className={`option-btn ${selectedRegion === 'asia' ? 'active' : ''}`}
-                                        onClick={() => setSelectedRegion('asia')}
-                                    >
-                                        Asia
-                                    </button>
-                                    <button 
-                                        className={`option-btn ${selectedRegion === 'united_states' ? 'active' : ''}`}
-                                        onClick={() => setSelectedRegion('united_states')}
-                                    >
-                                        United States
-                                    </button>
-                                    <button 
-                                        className={`option-btn ${selectedRegion === 'europe' ? 'active' : ''}`}
-                                        onClick={() => setSelectedRegion('europe')}
-                                    >
-                                        Europe
-                                    </button>
-                                </div>
+                                {availableRegions.length > 0 && (
+                                    <div className='option-group option-buttons'>
+                                        <label className='option-label'>Region</label>
+                                        {availableRegionsForPlatform.map(region => (
+                                            <button
+                                                key={region}
+                                                className={`option-btn ${selectedRegion === region ? 'active' : ''}`}
+                                                onClick={() => setSelectedRegion(region)}
+                                            >
+                                            {formatRegionName(region)}
+                                        </button>
+                                        ))}                                
+                                    </div>
+                                )}
+                                
 
                                 {/* Edition */}
-                                <div className='option-group option-buttons'>
-                                    <label className='option-label'>Edition</label>
-                                    <button
-                                        className={`option-btn ${selectedEdition === 'standard' ? 'active' : ''}`}
-                                        onClick={() => setSelectedEdition('standard')}
-                                    >
-                                        Standard
-                                    </button>
-                                    <button 
-                                        className={`option-btn ${selectedEdition === 'collectors' ? 'active' : ''}`}
-                                        onClick={() => setSelectedEdition('collectors')}
-                                    >
-                                        Collector's
-                                    </button>
-                                </div>
+                                {availableEditions.length > 0 && (
+                                    <div className='option-group option-buttons'>
+                                        <label className='option-label'>Edition</label>
+                                        {availableEditionsForSelection.map(editon => (
+                                            <button
+                                                key={editon}
+                                                className={`option-btn ${selectedEdition === editon ? 'active' : ''}`}
+                                                onClick={() => setSelectedEdition(editon)}
+                                            >
+                                            {formatEditionName(editon)}
+                                        </button>
+                                        ))}
+                                    </div>
+                                )}
+                                
                             </div>
 
                             {/* Product Details */}
