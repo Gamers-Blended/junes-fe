@@ -10,7 +10,7 @@ interface ProductDTO {
     region: string;
     edition: string;
     publisher: string;
-    releaseDate: string;
+    releaseDate: number[];
     series: string[];
     genres: string[];
     languages: string[];
@@ -42,11 +42,10 @@ interface QuickWindowProps {
         slug: string;
         price: string;
         productImageUrl: string;
-        releaseDate: string;
-        language: string;
-        subtitles: string;
-        genre: string;
-        players?: string;
+        releaseDate: number[];
+        languages: string[];
+        genres: string[];
+        numberOfPlayers: string[];
     },
     onClose: () => void;
     onAddToCart: (item: any) => void;
@@ -61,6 +60,10 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
     const [productData, setProductData] = useState<ProductDTO | null>(null);
     const [productVariants, setProductVariants] = useState<ProductVariantDTO[]>([]);
     const [currentPrice, setCurrentPrice] = useState<number>(0);
+    const [releaseDate, setReleaseDate] = useState<number[]>([]);
+    const [languages, setLanguages] = useState<string[]>([]);
+    const [genres, setGenres] = useState<string[]>([]);
+    const [numberOfPlayers, setNumberOfPlayers] = useState<string[]>([]);
     const [error, setError] = useState<string>('');
 
     // Get unique options from variants
@@ -85,6 +88,36 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
         }
     };
 
+    const convertDate = (dateArray: number[]) => {
+        if (!dateArray || dateArray.length === 0) return 'Not Available';
+
+        const day = dateArray[2];
+        const month = dateArray[1];
+        const year = dateArray[0];
+        const date = new Date(year, month - 1, day); // month is 0-indexed
+        return date.toLocaleDateString('en-GB', { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric' 
+            });
+    };
+
+    const formatStringArrays = (strings: string[]) => {
+        if (!strings || strings.length === 0) return 'Not Available';
+        
+        return strings
+            .map(str => str.charAt(0).toUpperCase() + str.slice(1))
+            .join(', ');
+    };
+
+    const formatNumberArrays = (numbers: string[]) => {
+        if (!numbers || !Array.isArray(numbers) || numbers.length === 0) {
+            return 'Not Available';
+        }
+        
+        return numbers.join(', ');
+    };
+
     const fetchProductDetails = async () => {
         try {
             setIsLoading(true);
@@ -105,6 +138,10 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
 
             setProductData(data.productDTO);
             setProductVariants(data.productVariantDTOList);
+            setReleaseDate(data.productDTO.releaseDate);
+            setLanguages(data.productDTO.languages);
+            setGenres(data.productDTO.genres);
+            setNumberOfPlayers(data.productDTO.numberOfPlayers);
 
             // Set default selections if variants exist
             if (data.productVariantDTOList.length > 0) {
@@ -354,23 +391,19 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                             <div className='product-details-table'>
                                 <div className='detail-row'>
                                     <span className='detail-label'>Official Release Date</span>
-                                    <span className='detail-value'>{item.releaseDate || 'Not Available'}</span>
+                                    <span className='detail-value'>{convertDate(releaseDate)}</span>
                                 </div>
                                 <div className='detail-row'>
-                                    <span className='detail-label'>Language</span>
-                                    <span className='detail-value'>{item.language || 'Not Available'}</span>
+                                    <span className='detail-label'>Language(s)</span>
+                                    <span className='detail-value'>{formatStringArrays(languages)}</span>
                                 </div>
                                 <div className='detail-row'>
-                                    <span className='detail-label'>Subtitles</span>
-                                    <span className='detail-value'>{item.subtitles || 'Not Available'}</span>
+                                    <span className='detail-label'>Genre(s)</span>
+                                    <span className='detail-value'>{formatStringArrays(genres)}</span>
                                 </div>
                                 <div className='detail-row'>
-                                    <span className='detail-label'>Genre</span>
-                                    <span className='detail-value'>{item.genre || 'Not Available'}</span>
-                                </div>
-                                <div className='detail-row'>
-                                    <span className='detail-label'>Players</span>
-                                    <span className='detail-value'>{item.players || 'Not Available'}</span>
+                                    <span className='detail-label'>Number of Player(s)</span>
+                                    <span className='detail-value'>{formatNumberArrays(numberOfPlayers)}</span>
                                 </div>
                             </div>
 
