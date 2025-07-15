@@ -344,7 +344,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                                             <button
                                                 key={platform}
                                                 className={`option-btn ${selectedPlatform === platform ? 'active' : ''}`}
-                                                onClick={() => setSelectedPlatform(platform)}
+                                                onClick={() => handlePlatformChange(platform)}
                                             >
                                                 {formatPlatformName(platform)}
                                             </button>
@@ -360,7 +360,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                                             <button
                                                 key={region}
                                                 className={`option-btn ${selectedRegion === region ? 'active' : ''}`}
-                                                onClick={() => setSelectedRegion(region)}
+                                                onClick={() => handleRegionChange(region)}
                                             >
                                             {formatRegionName(region)}
                                         </button>
@@ -377,7 +377,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                                             <button
                                                 key={editon}
                                                 className={`option-btn ${selectedEdition === editon ? 'active' : ''}`}
-                                                onClick={() => setSelectedEdition(editon)}
+                                                onClick={() => handleEditionChange(editon)}
                                             >
                                             {formatEditionName(editon)}
                                         </button>
