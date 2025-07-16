@@ -10,13 +10,11 @@ interface ProductCardProps {
         id: string;
         name: string;
         slug: string;
+        platform: string;
+        region: string;
+        edition: string;
         price: string;
         productImageUrl: string;
-        releaseDate: string;
-        language: string;
-        subtitles: string;
-        genre: string;
-        players?: string;
     },
     isLoading: boolean;
     isLiked?: boolean; // Optional

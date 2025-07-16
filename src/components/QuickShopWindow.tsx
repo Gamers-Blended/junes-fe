@@ -17,7 +17,6 @@ interface ProductDTO {
     numberOfPlayers: string[];
     unitsSold: number;
     stock: number;
-    productImageUrl: string;
     imageUrlList: string[];
     editionNotes: string;
     createdOn: string;
@@ -28,6 +27,7 @@ interface ProductVariantDTO {
     region: string;
     edition: string;
     price: number;
+    productImageUrl: string;
 }
 
 interface ProductDetailsResponse {
@@ -40,12 +40,11 @@ interface QuickWindowProps {
         id: string;
         name: string;
         slug: string;
+        platform: string;
+        region: string;
+        edition: string;
         price: string;
         productImageUrl: string;
-        releaseDate: number[];
-        languages: string[];
-        genres: string[];
-        numberOfPlayers: string[];
     },
     onClose: () => void;
     onAddToCart: (item: any) => void;
@@ -60,6 +59,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
     const [productData, setProductData] = useState<ProductDTO | null>(null);
     const [productVariants, setProductVariants] = useState<ProductVariantDTO[]>([]);
     const [currentPrice, setCurrentPrice] = useState<number>(0);
+    const [currentProductImageUrl, setCurrentProductImageUrl] = useState<string>('');
     const [releaseDate, setReleaseDate] = useState<number[]>([]);
     const [languages, setLanguages] = useState<string[]>([]);
     const [genres, setGenres] = useState<string[]>([]);
@@ -134,23 +134,31 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
             const urlPrefix = "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/";
 
             // Append prefix to each productImageUrl
-            data.productDTO.productImageUrl = urlPrefix + data.productDTO.productImageUrl
-
+            const updatedData = data.productVariantDTOList.map((item) => ({
+                ...item,
+                productImageUrl: item.productImageUrl ? `${urlPrefix}${item.productImageUrl}` : "",
+            }));
+            
             setProductData(data.productDTO);
-            setProductVariants(data.productVariantDTOList);
+            setProductVariants(updatedData);
             setReleaseDate(data.productDTO.releaseDate);
             setLanguages(data.productDTO.languages);
             setGenres(data.productDTO.genres);
             setNumberOfPlayers(data.productDTO.numberOfPlayers);
 
             // Set default selections if variants exist
-            if (data.productVariantDTOList.length > 0) {
-                console.log('First varient ' + data.productVariantDTOList[0].platform);
-                const firstVariant = data.productVariantDTOList[0];
-                setSelectedPlatform(firstVariant.platform);
+            if (updatedData.length > 0) {
+                // Try to find a variant matching the platform from props
+                const matchingVariant = data.productVariantDTOList.find(v => v.platform === item.platform);
+                const defaultVariant = matchingVariant || updatedData[0];
+
+                console.log('First varient ' + updatedData[0].productImageUrl);
+                const firstVariant = updatedData[0];
+                setSelectedPlatform(defaultVariant.platform);
                 setSelectedRegion(firstVariant.region);
                 setSelectedEdition(firstVariant.edition);
                 setCurrentPrice(firstVariant.price);
+                setCurrentProductImageUrl(firstVariant.productImageUrl);
             }
 
         } catch (err) {
@@ -161,11 +169,12 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
         }
     };
 
-    const updatePrice = (platform: string, region: string, edition: string) => {
+    const updatePriceAndProductImageUrl = (platform: string, region: string, edition: string) => {
         const variant = productVariants.find(v => 
             v.platform === platform && v.region === region && v.edition == edition);
         if (variant) {
             setCurrentPrice(variant.price);
+            setCurrentProductImageUrl(variant.productImageUrl);
         }
     };
 
@@ -185,7 +194,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
             const newEdition = availableEditionsForNewSelection[0] || '';
             setSelectedEdition(newEdition);
 
-            updatePrice(platform, newRegion, newEdition);
+            updatePriceAndProductImageUrl(platform, newRegion, newEdition);
         } else {
             // Currently selected region also available for new platform
             const availableEditionsForNewSelection = [...new Set(productVariants.filter(v => v.platform === platform && v.region === selectedRegion).map(v => v.edition))];
@@ -195,10 +204,10 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                 const newEdition = availableEditionsForNewSelection[0] || '';
                 setSelectedEdition(newEdition);
 
-                updatePrice(platform, selectedRegion, newEdition);
+                updatePriceAndProductImageUrl(platform, selectedRegion, newEdition);
             } else {
                 // Currently selected edition also available for new platform and region
-                updatePrice(platform, selectedRegion, selectedEdition);
+                updatePriceAndProductImageUrl(platform, selectedRegion, selectedEdition);
             }
         }
     };
@@ -211,26 +220,26 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
         if (!availableEditionsForNewSelection.includes(selectedEdition)) {
             const newEdition = availableEditionsForNewSelection[0] || '';
             setSelectedEdition(newEdition);
-            updatePrice(selectedPlatform, region, newEdition);
+            updatePriceAndProductImageUrl(selectedPlatform, region, newEdition);
         } else {
-            updatePrice(selectedPlatform, region, selectedEdition);
+            updatePriceAndProductImageUrl(selectedPlatform, region, selectedEdition);
         }
     };
 
     const handleEditionChange = (edition: string) => {
         setSelectedEdition(edition);
-        updatePrice(selectedPlatform, selectedRegion, edition);
+        updatePriceAndProductImageUrl(selectedPlatform, selectedRegion, edition);
     };
 
     const formatPlatformName = (platform: string) => {
         switch (platform.toLowerCase()) {
-            case 'playstation_4':
+            case 'ps4':
                 return 'PS4';
-            case 'playstation_5':
+            case 'ps5':
                 return 'PS5';
-            case 'nintendo_switch':
+            case 'nsw':
                 return 'Switch'
-            case 'nintendo_switch2':
+            case 'nsw2':
                 return 'Switch 2'
             case 'xbox':
                 return 'Xbox'
@@ -245,10 +254,9 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
         switch (region.toLowerCase()) {
             case 'asia':
                 return 'Asia';
-            case 'united_states':
             case 'us':
                 return 'United States';
-            case 'europe':
+            case 'eur':
                 return 'Europe';
             default:
                 return region.charAt(0).toUpperCase() + region.slice(1);
@@ -257,9 +265,9 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
 
     const formatEditionName = (edition: string) => {
         switch (edition.toLowerCase()) {
-            case 'standard':
+            case 'std':
                 return 'Standard';
-            case 'collectors':
+            case 'ce':
                 return 'Collector\'s';
             default:
                 return edition.charAt(0).toUpperCase() + edition.slice(1);
@@ -297,7 +305,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                     
                     <div className='product-container'>
                         <div className="product-image-section">
-                            <img className='product-image' src={productData.productImageUrl} alt={productData.name} />
+                            <img className='product-image' src={currentProductImageUrl} alt={productData.name} />
                         </div>
 
                         <div className='product-info-section'>

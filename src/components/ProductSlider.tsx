@@ -9,6 +9,9 @@ interface ProductSliderItem {
   id: string;
   name: string;
   slug: string;
+  platform: string;
+  region: string;
+  edition: string;
   price: string;
   productImageUrl: string;
 }
