@@ -25,6 +25,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
     const [showNotification, setShowNotification] = useState<boolean>(false);
     const [notificationMessage, setNotificationMessage] = useState<string>('');
     const [showQuickShop, setShowQuickShop] = useState<boolean>(false);
+    const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
     const wordLimit = 40;
     // Title will only show up to wordLimit characters
     const trimmedTitle = item.name.length > wordLimit ? `${item.name.substring(0, wordLimit)}...` : item.name;
@@ -50,11 +51,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
     }
 
     const handleAddToCart = () => {
+        setIsAddingToCart(true);
+
         const message = `${item.name} added to cart!`;
         console.log(`${item.name} added to cart!`);
 
         setNotificationMessage(message);
         setShowNotification(true);
+        setIsAddingToCart(false);
     }
 
     const heartIcon = isLiked ? heartGreenFilledIcon : heartGreenIcon;
@@ -99,8 +103,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
                 <button className="product-card-button" onClick={handleQuickShop}>
                     Quick Shop
                 </button>
-                <button className="product-card-button add-to-cart-button" onClick={handleAddToCart}>
-                    Add To Cart
+                <button className={`product-card-button add-to-cart-button ${isAddingToCart ? 'adding-to-cart' : ''}`} onClick={handleAddToCart} disabled={isAddingToCart}>
+                    {isAddingToCart ? (
+                        <div className='add-to-cart-spinner-container'>
+                            <div className='add-to-cart-spinner'></div>
+                        </div>
+                    ) : 'Add To Cart'}
                 </button>
             </div>
 
