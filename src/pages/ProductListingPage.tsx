@@ -23,7 +23,12 @@ const ProductListingPage: React.FC = () => {
     const categories = ['Games', 'Pre-Orders', 'Best Sellers', 'Consoles'];
 
     const topPreOrders: Game[] = [
-        { id: '1', name: '', slug: '', platform: '', region: '', edition: '', price: '49.99', productImageUrl: '' }
+        { id: '1', name: 'Atelier Marie Remake: The Alchemist of Salburg', slug: '', platform: '', region: '', edition: '', price: '49.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_atelier_marie_remake.jpg' },
+        { id: '2', name: 'Final Fantasy Pixel Remaster', slug: '', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' },
+        { id: '3', name: 'Final Fantasy Pixel Remaster', slug: '', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' },
+        { id: '4', name: 'Final Fantasy Pixel Remaster', slug: '', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' },
+        { id: '5', name: 'Final Fantasy Pixel Remaster', slug: '', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' }
+
     ];
 
     const formatPlatform = () => {
@@ -54,7 +59,9 @@ const ProductListingPage: React.FC = () => {
 
             <div className='product-listing-main'>
                 <div className='product-listing-sidebar'>
+
                     <div className='product-listing-categories-section'>
+
                         <div className='product-listing-section-header'>
                             Categories
                         </div>
@@ -69,8 +76,31 @@ const ProductListingPage: React.FC = () => {
                                 </li>
                             ))}
                         </ul>
+
                     </div>
+
+                    <div className='product-listing-preorders-section'>
+
+                        <div className='product-listing-preorders-section-header'>
+                            Top Pre-Orders of the Week
+                        </div>
+                        {topPreOrders.map((game, index) => (
+                            <div key={game.id} className='preorder-item'>
+                                <div className="preorder-counter">{index + 1}.</div>
+                                <div className='preorder-image'>
+                                    <img className='product-card-image' src={game.productImageUrl} alt={game.name} />
+                                </div>
+                                
+                                <div className='preorder-info'>
+                                    <div className='preorder-title'>{game.name}</div>
+                                    <div className='preorder-price'>{formatPrice(game.price)}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
                 </div>
+
             </div>
         </div>
     );
