@@ -50,11 +50,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
         console.log(`Quick shop for ${item.name}`);
     }
 
-    const handleAddToCart = () => {
+    const handleAddToCart = (productItem: ProductCardProps['item'], quantity: number = 1) => {
         setIsAddingToCart(true);
 
-        const message = `${item.name} added to cart!`;
-        console.log(`${item.name} added to cart!`);
+        const message = `${productItem.name} added to cart!`;
+        console.log(`${productItem.name} added to cart! Quantity: ${quantity}`);
 
         setNotificationMessage(message);
         setShowNotification(true);
@@ -103,7 +103,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
                 <button className="product-card-button" onClick={handleQuickShop}>
                     Quick Shop
                 </button>
-                <button className={`product-card-button add-to-cart-button ${isAddingToCart ? 'adding-to-cart' : ''}`} onClick={handleAddToCart} disabled={isAddingToCart}>
+                <button className={`product-card-button add-to-cart-button ${isAddingToCart ? 'adding-to-cart' : ''}`} onClick={() => handleAddToCart(item)} disabled={isAddingToCart}>
                     {isAddingToCart ? (
                         <div className='add-to-cart-spinner-container'>
                             <div className='add-to-cart-spinner'></div>

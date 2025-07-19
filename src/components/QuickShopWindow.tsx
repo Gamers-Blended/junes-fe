@@ -47,7 +47,7 @@ interface QuickWindowProps {
         productImageUrl: string;
     },
     onClose: () => void;
-    onAddToCart: (item: any) => void;
+    onAddToCart: (item: any, quantity: number) => void;
 }
 
 const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCart }) => {
@@ -236,6 +236,23 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
         updatePriceAndProductImageUrl(selectedPlatform, selectedRegion, edition);
     };
 
+    const handleAddToCart = () => {
+        console.log(`Adding ${quantity} of ${item.name} to cart`);
+        console.log(`Selected variant: ${selectedPlatform}, ${selectedRegion}, ${selectedEdition}`);
+
+        onAddToCart({
+            ...item,
+            platform: selectedPlatform,
+            region: selectedRegion,
+            edition: selectedEdition,
+            price: currentPrice.toString()
+        }, quantity);
+        
+        // Close the window after a short delay
+        setTimeout(onClose, 300);
+    }
+
+
     const formatPlatformName = (platform: string) => {
         switch (platform.toLowerCase()) {
             case 'ps4':
@@ -421,7 +438,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
                             </div>
 
                             {/* Add To Cart */}
-                            <button className='add-to-cart-btn' onClick={() => onAddToCart(item)}>
+                            <button className='add-to-cart-btn' onClick={handleAddToCart}>
                                 Add to Cart
                             </button>
 
