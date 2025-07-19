@@ -134,31 +134,28 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
             const urlPrefix = "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/";
 
             // Append prefix to each productImageUrl
-            const updatedData = data.productVariantDTOList.map((item) => ({
-                ...item,
-                productImageUrl: item.productImageUrl ? `${urlPrefix}${item.productImageUrl}` : "",
-            }));
+            data.productVariantDTOList.forEach((variant) => {
+                variant.productImageUrl = variant.productImageUrl ? `${urlPrefix}${variant.productImageUrl}` : "";
+            });
             
             setProductData(data.productDTO);
-            setProductVariants(updatedData);
+            setProductVariants(data.productVariantDTOList);
             setReleaseDate(data.productDTO.releaseDate);
             setLanguages(data.productDTO.languages);
             setGenres(data.productDTO.genres);
             setNumberOfPlayers(data.productDTO.numberOfPlayers);
 
             // Set default selections if variants exist
-            if (updatedData.length > 0) {
+            if (data.productVariantDTOList.length > 0) {
                 // Try to find a variant matching the platform from props
-                const matchingVariant = data.productVariantDTOList.find(v => v.platform === item.platform);
-                const defaultVariant = matchingVariant || updatedData[0];
+                const matchingVariant = data.productVariantDTOList.find(v => v.platform === item.platform && v.region === item.region && v.edition === item.edition);
+                const defaultVariant = matchingVariant || data.productVariantDTOList[0];
 
-                console.log('First varient ' + updatedData[0].productImageUrl);
-                const firstVariant = updatedData[0];
                 setSelectedPlatform(defaultVariant.platform);
-                setSelectedRegion(firstVariant.region);
-                setSelectedEdition(firstVariant.edition);
-                setCurrentPrice(firstVariant.price);
-                setCurrentProductImageUrl(firstVariant.productImageUrl);
+                setSelectedRegion(defaultVariant.region);
+                setSelectedEdition(defaultVariant.edition);
+                setCurrentPrice(defaultVariant.price);
+                setCurrentProductImageUrl(defaultVariant.productImageUrl);
             }
 
         } catch (err) {
