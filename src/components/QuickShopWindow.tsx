@@ -106,8 +106,16 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
         if (!strings || strings.length === 0) return 'Not Available';
         
         return strings
-            .map(str => str.charAt(0).toUpperCase() + str.slice(1))
-            .join(', ');
+            .map(str => {
+            // Replace underscores with spaces and split into words
+            const words = str.replace(/_/g, ' ').split(' ');
+            // Capitalize each word
+            const capitalized = words.map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            );
+            return capitalized.join(' ');
+        })
+        .join(', ');
     };
 
     const formatNumberArrays = (numbers: string[]) => {
