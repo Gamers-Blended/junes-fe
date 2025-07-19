@@ -1,10 +1,11 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
+import { Platform } from "../utils/Enums";
 
 import ps4Image from "../assets/selectorBox/ps4.png";
 import ps5Image from "../assets/selectorBox/ps5.png";
-import nsImage from "../assets/selectorBox/ns.png";
-import ns2Image from "../assets/selectorBox/ns2.png";
+import nswImage from "../assets/selectorBox/nsw.png";
+import nsw2Image from "../assets/selectorBox/nsw2.png";
 import xboxImage from "../assets/selectorBox/xbox.png";
 import pcImage from "../assets/selectorBox/pc.png";
 
@@ -17,12 +18,12 @@ interface PlatformCard {
 const ProductSelector: React.FC = () => {
     const navigate = useNavigate();
     const platforms: PlatformCard[] = [
-        { src: ps4Image, alt: 'PlayStation 4', route: 'ps4' },
-        { src: ps5Image, alt: 'PlayStation 5', route: 'ps5' },
-        { src: nsImage, alt: 'Nintendo Switch', route: 'ns' },
-        { src: ns2Image, alt: 'Nintendo Switch 2', route: 'ns2' },
-        { src: xboxImage, alt: 'Xbox', route: 'xbox' },
-        { src: pcImage, alt: 'PC', route: 'pc' }
+        { src: ps4Image, alt: 'PlayStation 4', route: Platform.PS4 },
+        { src: ps5Image, alt: 'PlayStation 5', route: Platform.PS5 },
+        { src: nswImage, alt: 'Nintendo Switch', route: Platform.NSW },
+        { src: nsw2Image, alt: 'Nintendo Switch 2', route: Platform.NSW2 },
+        { src: xboxImage, alt: 'Xbox', route: Platform.XBOX },
+        { src: pcImage, alt: 'PC', route: Platform.PC }
     ];
 
     const handleImageClick = (link: string) => {
