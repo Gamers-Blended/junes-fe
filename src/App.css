@@ -672,3 +672,68 @@ body.modal-open {
 .add-to-cart-btn:hover {
   background-color: #00b896;
 }
+
+/* PRODUCT LISTINGS */
+.product-listing-container {
+  min-height: 100vh;
+  width: 100vw;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.product-listing-header {
+  padding: 40px 0;
+  text-align: left;
+  font-size: 48px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.product-listing-main {
+  display: flex;
+  margin: 0 auto;
+  gap: 20px;
+  padding: 0px;
+}
+
+.product-listing-sidebar {
+  width: 300px;
+  background-color: #00c698;
+  height: 50px;
+}
+
+.product-listing-categories-section, .preorders-section {
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.product-listing-section-header {
+  background: #00d4aa;
+  padding: 15px;
+  font-weight: bold;
+  font-size: 30px;
+}
+
+.category-list {
+  background-color: #C2E0B4;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.category-item {
+  padding: 12px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.category-item:hover, .category-item.active {
+  background-color: #a3edad;
+  font-weight: bold;
+}
+
+.category-item:last-child {
+  border-bottom: none;
+}
