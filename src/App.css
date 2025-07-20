@@ -677,12 +677,12 @@ body.modal-open {
 /* PRODUCT LISTINGS */
 .product-listing-container {
   min-height: 100vh;
-  width: 100vw;
+  width: 100%;
   max-width: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  margin: 0 -250px;
+  margin: 0;
   padding: 0;
 }
 
@@ -806,4 +806,20 @@ body.modal-open {
 .preorder-price {
   font-weight: bold;
   font-size: 18px;
+}
+
+/* BANNER */
+.platform-banner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  max-width: 100%; /* Ensure it doesn't overflow its container */
+}
+
+.banner-image {
+  max-width: 100%;
+  height: auto; /* Maintain aspect ratio */
+  max-height: 500px;
+  width: 1000px;
 }

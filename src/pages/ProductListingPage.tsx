@@ -3,6 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Platform } from "../utils/Enums";
 import { formatPrice } from '../utils/utils';
 
+import ps4Banner from "../assets/banners/ps4-banner.jpg";
+import ps5Banner from "../assets/banners/ps5-banner.jpg";
+import nswBanner from "../assets/banners/nsw-banner.jpg";
+import nsw2Banner from "../assets/banners/nsw2-banner.jpg";
+import xboxBanner from "../assets/banners/xbox-banner.jpg";
+import pcBanner from "../assets/banners/pc-banner.jpg";
+
 interface Game {
     id: string;
     name: string;
@@ -29,7 +36,6 @@ const ProductListingPage: React.FC = () => {
         { id: '3', name: 'Final Fantasy Pixel Remaster', slug: 'final-fantasy-pixel-remaster', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' },
         { id: '4', name: 'Final Fantasy Pixel Remaster', slug: 'final-fantasy-pixel-remaster', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' },
         { id: '5', name: 'Final Fantasy Pixel Remaster', slug: 'final-fantasy-pixel-remaster', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' }
-
     ];
 
     const handlePreOrderClick = (slug: string) => {
@@ -50,6 +56,25 @@ const ProductListingPage: React.FC = () => {
                 return 'XBOX';
             case Platform.PC:
                 return 'PC';
+            default:
+                return '';
+        }
+    };
+
+    const getBanner = () => {
+        switch (platform) {
+            case Platform.PS4:
+                return ps4Banner;
+            case Platform.PS5:
+                return ps5Banner;
+            case Platform.NSW:
+                return nswBanner;
+            case Platform.NSW2:
+                return nsw2Banner;
+            case Platform.XBOX:
+                return xboxBanner;
+            case Platform.PC:
+                return pcBanner;
             default:
                 return '';
         }
@@ -104,6 +129,10 @@ const ProductListingPage: React.FC = () => {
                         ))}
                     </div>
 
+                </div>
+
+                <div className='platform-banner'>
+                    <img className='banner-image' src={getBanner()} alt={platform} />
                 </div>
 
             </div>
