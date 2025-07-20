@@ -809,11 +809,17 @@ body.modal-open {
 }
 
 /* BANNER */
+.product-listing-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .platform-banner {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   max-width: 100%; /* Ensure it doesn't overflow its container */
 }
 
@@ -822,4 +828,54 @@ body.modal-open {
   height: auto; /* Maintain aspect ratio */
   max-height: 500px;
   width: 1000px;
+}
+
+/* FILTERS */
+.filters-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.filters-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.filters-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.filter-select, .filter-input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.filter-input {
+  width: 80px;
 }

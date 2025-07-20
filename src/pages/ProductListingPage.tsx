@@ -26,9 +26,19 @@ const ProductListingPage: React.FC = () => {
     const { platform } = useParams<{ platform: string }>();
     const [selectedCategory, setSelectedCategory] = useState('Games')
     const [sortBy, setSortBy] = useState('name');
+    const [orderBy, setOrderBy] = useState('asc');
     const [priceFilter, setPriceFilter] = useState({ min: '', max: ''});
 
     const categories = ['Games', 'Pre-Orders', 'Best Sellers', 'Consoles'];
+
+    const sortOptions = [
+        { value: 'name-asc', label: 'Name (A → Z)', sortBy: 'name', orderBy: 'asc' },
+        { value: 'name-desc', label: 'Name (Z → A)', sortBy: 'name', orderBy: 'desc' },
+        { value: 'price-asc', label: 'Price ↗', sortBy: 'price', orderBy: 'asc' },
+        { value: 'price-desc', label: 'Price ↘', sortBy: 'price', orderBy: 'desc' },
+        { value: 'release-asc', label: 'Release Date ↗', sortBy: 'release', orderBy: 'asc' },
+        { value: 'release-desc', label: 'Release Date ↘', sortBy: 'release', orderBy: 'desc' }
+    ];
 
     const topPreOrders: Game[] = [
         { id: '1', name: 'Atelier Marie Remake: The Alchemist of Salburg', slug: 'atelier-marie-remake-the-alchemist-of-salburg', platform: '', region: '', edition: '', price: '49.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_atelier_marie_remake.jpg' },
@@ -79,6 +89,15 @@ const ProductListingPage: React.FC = () => {
                 return '';
         }
     };
+
+    const getCurrentSortValue = (): string => {
+        return sortBy;
+    };
+
+    const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const newSortValue = event.target.value;
+        setSortBy(newSortValue);
+    }
 
     return (
         <div className='product-listing-container'>
@@ -131,8 +150,29 @@ const ProductListingPage: React.FC = () => {
 
                 </div>
 
-                <div className='platform-banner'>
-                    <img className='banner-image' src={getBanner()} alt={platform} />
+                <div className='product-listing-content'>
+                    <div className='platform-banner'>
+                        <img className='banner-image' src={getBanner()} alt={platform} />
+                    </div>
+
+                    <div className='filters-section'>
+                        <div className='filters-row'>
+                            <div className='filter-group'>
+                                <label className='filter-label'>Sort by</label>
+                                <select
+                                    className='filter-select'
+                                    value={getCurrentSortValue()}
+                                    onChange={handleSortChange}
+                                >
+                                    {sortOptions.map(option => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
