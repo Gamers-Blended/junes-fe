@@ -765,6 +765,7 @@ body.modal-open {
   align-items: center;
   flex-direction: column;
   border-bottom: 1px solid #eee;
+  cursor: pointer;
 }
 
 .preorder-item:last-child {

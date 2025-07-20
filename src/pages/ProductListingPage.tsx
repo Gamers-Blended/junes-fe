@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Platform } from "../utils/Enums";
 import { formatPrice } from '../utils/utils';
 
@@ -15,6 +15,7 @@ interface Game {
 }
 
 const ProductListingPage: React.FC = () => {
+    const navigate = useNavigate();
     const { platform } = useParams<{ platform: string }>();
     const [selectedCategory, setSelectedCategory] = useState('Games')
     const [sortBy, setSortBy] = useState('name');
@@ -23,13 +24,17 @@ const ProductListingPage: React.FC = () => {
     const categories = ['Games', 'Pre-Orders', 'Best Sellers', 'Consoles'];
 
     const topPreOrders: Game[] = [
-        { id: '1', name: 'Atelier Marie Remake: The Alchemist of Salburg', slug: '', platform: '', region: '', edition: '', price: '49.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_atelier_marie_remake.jpg' },
-        { id: '2', name: 'Final Fantasy Pixel Remaster', slug: '', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' },
-        { id: '3', name: 'Final Fantasy Pixel Remaster', slug: '', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' },
-        { id: '4', name: 'Final Fantasy Pixel Remaster', slug: '', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' },
-        { id: '5', name: 'Final Fantasy Pixel Remaster', slug: '', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' }
+        { id: '1', name: 'Atelier Marie Remake: The Alchemist of Salburg', slug: 'atelier-marie-remake-the-alchemist-of-salburg', platform: '', region: '', edition: '', price: '49.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_atelier_marie_remake.jpg' },
+        { id: '2', name: 'Final Fantasy Pixel Remaster', slug: 'final-fantasy-pixel-remaster', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' },
+        { id: '3', name: 'Final Fantasy Pixel Remaster', slug: 'final-fantasy-pixel-remaster', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' },
+        { id: '4', name: 'Final Fantasy Pixel Remaster', slug: 'final-fantasy-pixel-remaster', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' },
+        { id: '5', name: 'Final Fantasy Pixel Remaster', slug: 'final-fantasy-pixel-remaster', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' }
 
     ];
+
+    const handlePreOrderClick = (slug: string) => {
+        navigate('/details/' + slug);
+    }
 
     const formatPlatform = () => {
         switch (platform) {
@@ -85,7 +90,7 @@ const ProductListingPage: React.FC = () => {
                             Top Pre-Orders of the Week
                         </div>
                         {topPreOrders.map((game, index) => (
-                            <div key={game.id} className='preorder-item'>
+                            <div key={game.id} className='preorder-item' onClick={() => handlePreOrderClick(game.slug)}>
                                 <div className="preorder-counter">{index + 1}.</div>
                                 <div className='preorder-image'>
                                     <img className='product-card-image' src={game.productImageUrl} alt={game.name} />
