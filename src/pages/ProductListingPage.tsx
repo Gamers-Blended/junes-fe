@@ -157,8 +157,9 @@ const ProductListingPage: React.FC = () => {
 
                     <div className='filters-section'>
                         <div className='filters-row'>
+
                             <div className='filter-group'>
-                                <label className='filter-label'>Sort by</label>
+                                <label className='filter-label'>Sort By</label>
                                 <select
                                     className='filter-select'
                                     value={getCurrentSortValue()}
@@ -171,8 +172,19 @@ const ProductListingPage: React.FC = () => {
                                     ))}
                                 </select>
                             </div>
+
+                            <div className='filter-group'>
+                                <label className='filter-label'>Items Per Page</label>
+                                <select className='filter-select'>
+                                    <option value="15">15</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option value="50">50</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
+
                 </div>
 
             </div>

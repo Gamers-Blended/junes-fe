@@ -839,21 +839,15 @@ body.modal-open {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.filters-section {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  width: 100%;
-  box-sizing: border-box;
-}
-
 .filters-row {
   display: flex;
   gap: 20px;
   align-items: center;
   flex-wrap: wrap;
+}
+
+.filter-group:last-child {
+  margin-left: auto;
 }
 
 .filter-group {
@@ -863,10 +857,8 @@ body.modal-open {
 }
 
 .filter-label {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
-  color: #666;
-  text-transform: uppercase;
 }
 
 .filter-select, .filter-input {
