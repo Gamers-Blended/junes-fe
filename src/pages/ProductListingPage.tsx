@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import { Platform } from "../utils/Enums";
 import { formatPrice } from '../utils/utils';
+import InputOptionsBox from '../components/InputOptionsBox';
 
 import ps4Banner from "../assets/banners/ps4-banner.jpg";
 import ps5Banner from "../assets/banners/ps5-banner.jpg";
@@ -199,7 +200,8 @@ const ProductListingPage: React.FC = () => {
 
                             <div className='filters-section'>
                                 <h4>Genre</h4>
-                                <div className='filter-tag'>Action</div>
+                                <InputOptionsBox/>
+                                {/* <div className='filter-tag'>Action</div> */}
                             </div>
 
                             <div className='filters-section'>

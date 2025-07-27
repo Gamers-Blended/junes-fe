@@ -839,7 +839,7 @@ body.modal-open {
   gap: 20px;
 }
 
-/* PRODUCT LISTINGS - FILTERS */
+/* PRODUCT LISTINGS - FILTERS-SIDEBAR */
 .filters-sidebar {
   width: 250px;
   padding: 10px;
@@ -850,6 +850,7 @@ body.modal-open {
   text-align: left;
   margin-left: 10px;
   margin-bottom: -5px;
+  margin-top: -10px;
 }
 
 .filters-section {
@@ -968,4 +969,48 @@ body.modal-open {
 
 .filter-input {
   width: 80px;
+}
+
+/* PRODUCT LISTINGS - INPUTBOX */
+.input-options-box-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.input-container {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.input-box {
+  padding: 12px;
+  cursor: text;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.placeholder {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.clear-all {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  color: #4b5563;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.clear-all:hover {
+  color: #1f2937;
 }
