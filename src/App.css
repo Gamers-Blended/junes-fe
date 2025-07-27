@@ -857,6 +857,10 @@ body.modal-open {
   padding: 10px;
 }
 
+.filters-section:not(:last-child) {
+  border-bottom: 1px solid black; /* Adds line after each except last */
+}
+
 .filters-section h4 {
   text-align: left;
   margin-bottom: 10px;
