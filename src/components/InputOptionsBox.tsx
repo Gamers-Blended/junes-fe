@@ -35,6 +35,7 @@ const InputOptionsBox: React.FC = () => {
         <div className='input-options-box-container'>
 
             <div className='input-container'>
+
                 <div
                     ref={inputRef} 
                     onClick={handleInputClick} className={`input-box common-input-box ${isActive ? 'active' : ''}`} 
@@ -43,6 +44,8 @@ const InputOptionsBox: React.FC = () => {
                         borderColor: isActive ? '#C2E0B4' : '#D9D9D9'
                     }}
                 >
+
+                    {/* Display all selected options */}
                     {selectedOptions.map((option: string, index: number) => (
                         <span 
                             key={index}
@@ -55,10 +58,12 @@ const InputOptionsBox: React.FC = () => {
                         </span>
                     ))}
 
+                    {/* Placeholder text */}
                     {selectedOptions.length === 0 && (
                         <span className='placeholder'>Select options...</span>
                     )}
 
+                    {/* Clear All text */}
                     {selectedOptions.length > 0 && (
                         <button onClick={(e: React.MouseEvent) => {
                             e.stopPropagation();
@@ -70,13 +75,18 @@ const InputOptionsBox: React.FC = () => {
 
                 {isPopupOpen && (
                     <div ref={popupRef} className='popup-container'>
-                        <div>
-                            <h3>Select Options</h3>
+                        <div className='popup-header-container'>
+                            <h3 className='popup-header-text'>Select Options</h3>
                         </div>
 
-                        <div>
+                        <div className='popup-options-container'>
                             {availableOptions.map((option: string, index: number) => (
-                                <button key={index} onClick={() => handleOptionClick(option)} className='option-badge'>{option}</button>
+                                <button 
+                                    key={index} 
+                                    onClick={() => handleOptionClick(option)} 
+                                    className='option-badge'>
+                                    {option}
+                                </button>
                             ))}
                         </div>
                     </div>
