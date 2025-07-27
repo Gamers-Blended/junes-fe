@@ -150,13 +150,92 @@ const ProductListingPage: React.FC = () => {
 
                 </div>
 
-                <div className='product-listing-content'>
+                <div className='product-listing-content-container'>
                     <div className='platform-banner'>
                         <img className='banner-image' src={getBanner()} alt={platform} />
                     </div>
 
-                    <div className='filters-section'>
-                        <div className='filters-row'>
+                    <div className='product-listing-content'>
+                    
+                        {/* <!-- Sidebar Filters --> */}
+                        <div className='filters-sidebar'>
+                            <h3>FILTERS</h3>
+
+                            <div className='filters-section'>
+                                <input type='text' className='search-input common-input-box' placeholder='Type to search title'></input>
+                            </div>
+
+                            <div className='filters-section'>
+                                <h4>Availability</h4>
+                                <div className='checkbox-group'>
+                                    <div className='checkbox-item'>
+                                        <input type='checkbox' id='in-stock'></input>
+                                        <label className='filter-label'>In Stock</label>
+                                    </div>
+
+                                    <div className='checkbox-item'>
+                                        <input type='checkbox' id='out-stock'></input>
+                                        <label className='filter-label'>Out of Stock</label>
+                                    </div>
+
+                                    <div className='checkbox-item'>
+                                        <input type='checkbox' id='pre-orders'></input>
+                                        <label className='filter-label'>Pre-Orders</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='filters-section'>
+                                <h4>Price Range</h4>
+                                <div className='price-inputs'>
+                                    <label className='filter-label price-label'>From</label>
+                                    <input type='text' className='price-input common-input-box'></input>
+                                </div>
+                                <div className='price-inputs'>
+                                    <label className='filter-label price-label'>To</label>
+                                    <input type='text' className='price-input common-input-box'></input>
+                                </div>
+                            </div>
+
+                            <div className='filters-section'>
+                                <h4>Genre</h4>
+                                <div className='filter-tag'>Action</div>
+                            </div>
+
+                            <div className='filters-section'>
+                                <h4>Region</h4>
+                                <div className='filter-tag'>Asia</div>
+                            </div>
+
+                            <div className='filters-section'>
+                                <h4>Publisher</h4>
+                                <div className='filter-tag'>Koei</div>
+                            </div>
+
+                            <div className='filters-section'>
+                                <h4>Edition</h4>
+                                <div className='filter-tag'>Standard</div>
+                            </div>
+
+                            <div className='filters-section'>
+                                <h4>Language</h4>
+                                <div className='filter-tag'>English</div>
+                            </div>
+
+                            <div className='filters-section'>
+                                <h4>A - Z</h4>
+                                <div className='filter-tag'>D</div>
+                            </div>
+
+                            <div className='filters-section'>
+                                <h4>Release Date</h4>
+                                <div className='filter-tag'>Apr 2025</div>
+                            </div>
+
+                        </div>
+
+                        {/* Main Content */}
+                        <div className='main-content'>
 
                             <div className='filter-group'>
                                 <label className='filter-label'>Sort By</label>

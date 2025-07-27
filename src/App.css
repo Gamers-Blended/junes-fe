@@ -808,13 +808,14 @@ body.modal-open {
   font-size: 18px;
 }
 
-/* BANNER */
-.product-listing-content {
+/* PRODUCT LISTINGS - MAIN CONTAINER */
+.product-listing-content-container {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
+/* PRODUCT LISTINGS - BANNER */
 .platform-banner {
   display: flex;
   align-items: center;
@@ -830,22 +831,115 @@ body.modal-open {
   width: 1000px;
 }
 
-/* FILTERS */
-.filters-section {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* PRODUCT LISTINGS - PRODUCT-LISTING */
+.product-listing-content {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
 }
 
-.filters-row {
+/* PRODUCT LISTINGS - FILTERS */
+.filters-sidebar {
+  width: 250px;
+  padding: 10px;
+  flex-shrink: 0;
+}
+
+.filters-sidebar h3 {
+  text-align: left;
+  margin-left: 10px;
+  margin-bottom: -5px;
+}
+
+.filters-section {
+  background: white;
+  padding: 10px;
+}
+
+.filters-section h4 {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.common-input-box {
+  padding: 8px 12px;
+  border: 1px solid #D9D9D9;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #D9D9D9;
+}
+
+.common-input-box:focus {
+  outline: none;
+  border-color: #999;
+  background-color: #C2E0B4;
+}
+
+.search-input {
+  width: 100%;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkbox-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #C2E0B4;
+}
+
+.checkbox-item label {
+  font-size: 14px;
+}
+
+.price-inputs {
+  display: flex; /* Enables flexbox for easy alignment */
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.price-label {
+  line-height: 40px;
+}
+
+.price-input {
+  width: 100px;
+  margin-left: auto;
+}
+
+.filter-tag {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: #00d4aa;
+  color: white;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+/* PRODUCT LISTINGS - MAIN CONTENT */
+.main-content {
+  flex: 1;
   display: flex;
   gap: 20px;
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
 }
 
+/* PRODUCT LISTINGS - HEADERS */
 .filter-group:last-child {
   margin-left: auto;
 }
