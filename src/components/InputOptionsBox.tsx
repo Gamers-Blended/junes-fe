@@ -84,7 +84,8 @@ const InputOptionsBox: React.FC = () => {
                                 <button 
                                     key={index} 
                                     onClick={() => handleOptionClick(option)} 
-                                    className='option-badge'>
+                                    className={`option-badge ${selectedOptions.includes(option) ? 'option-badge-disabled' : ''}`}
+                                    disabled={selectedOptions.includes(option)}>
                                     {option}
                                 </button>
                             ))}
