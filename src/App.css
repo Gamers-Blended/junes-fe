@@ -1014,3 +1014,20 @@ body.modal-open {
 .clear-all:hover {
   color: #1f2937;
 }
+
+/* PRODUCT LISTINGS - INPUTBOX - BADGE */
+.option-badge {
+  padding: 10px;
+  border-radius: 4px; 
+  font-size: 14px;
+  color: #000000;
+  background-color: #00d4aa;
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms; 
+  cursor: pointer; 
+}
+
+.option-badge:hover {
+  opacity: 0.8; 
+}

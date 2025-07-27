@@ -22,6 +22,11 @@ const InputOptionsBox: React.FC = () => {
         setIsActive(false);
     };
 
+    // Clicking on badge will remove it from the box
+    const handleBadgeClick = (optionToRemove: string): void => {
+        setSelectedOptions(selectedOptions.filter(option => option != optionToRemove));
+    };
+
     const handleClearAll = (): void => {
         setSelectedOptions([]);
     };
@@ -30,9 +35,24 @@ const InputOptionsBox: React.FC = () => {
         <div className='input-options-box-container'>
 
             <div className='input-container'>
-                <div ref={inputRef} onClick={handleInputClick} className={`input-box common-input-box ${isActive ? 'active' : ''}`}>
+                <div
+                    ref={inputRef} 
+                    onClick={handleInputClick} className={`input-box common-input-box ${isActive ? 'active' : ''}`} 
+                    style={{
+                        backgroundColor: isActive ? '#C2E0B4' : '#D9D9D9',
+                        borderColor: isActive ? '#C2E0B4' : '#D9D9D9'
+                    }}
+                >
                     {selectedOptions.map((option: string, index: number) => (
-                        <span key={index}>{option} x</span>
+                        <span 
+                            key={index}
+                            onClick={(e: React.MouseEvent) => {
+                                e.stopPropagation();
+                                handleBadgeClick(option);
+                            }}
+                            className='option-badge'>
+                                {option} x
+                        </span>
                     ))}
 
                     {selectedOptions.length === 0 && (
