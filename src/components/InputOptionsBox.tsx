@@ -18,6 +18,28 @@ const InputOptionsBox: React.FC<InputOptionsBoxProps> = ({
     const inputRef = useRef<HTMLDivElement>(null);
     const popupRef = useRef<HTMLDivElement>(null);
 
+    // Handle clicks outside component to close popup
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (inputRef.current && popupRef.current && 
+                !inputRef.current.contains(event.target as Node) &&
+                !popupRef.current.contains(event.target as Node)) {
+                    setIsPopupOpen(false);
+                    setIsActive(false);
+                    setCurrentLevel(null);
+            }
+        };
+
+        if (isPopupOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        // Cleanup function
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isPopupOpen]);
+
     const handleInputClick = (): void => {
         setIsPopupOpen(true);
         setIsActive(true);
