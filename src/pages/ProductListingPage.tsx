@@ -200,8 +200,9 @@ const ProductListingPage: React.FC = () => {
 
                             <div className='filters-section'>
                                 <h4>Genre</h4>
-                                <InputOptionsBox/>
-                                {/* <div className='filter-tag'>Action</div> */}
+                                <InputOptionsBox
+                                    availableOptions={['Asia', 'United States', 'Europe', 'Japan']}
+                                    placeholder='Select regions...'/>
                             </div>
 
                             <div className='filters-section'>
@@ -231,7 +232,14 @@ const ProductListingPage: React.FC = () => {
 
                             <div className='filters-section'>
                                 <h4>Release Date</h4>
-                                <div className='filter-tag'>Apr 2025</div>
+                                <InputOptionsBox 
+                                    availableOptions={{
+                                        '2024': ['January', 'February', 'March', 'April', 'May', 'June'],
+                                        '2025': ['January', 'February', 'March', 'April', 'May', 'June']
+                                    }}
+                                    placeholder="Select date..."
+                                    isHierachical={true}
+                                    />
                             </div>
 
                         </div>
