@@ -201,33 +201,43 @@ const ProductListingPage: React.FC = () => {
                             <div className='filters-section'>
                                 <h4>Genre</h4>
                                 <InputOptionsBox
+                                    availableOptions={['JRPG', 'RPG', 'FPS', 'TPS', 'Racing', 'Action', 'Adventure']}
+                                    placeholder='Select genres...'/>
+                            </div>
+
+                            <div className='filters-section'>
+                                <h4>Region</h4>
+                                <InputOptionsBox
                                     availableOptions={['Asia', 'United States', 'Europe', 'Japan']}
                                     placeholder='Select regions...'/>
                             </div>
 
                             <div className='filters-section'>
-                                <h4>Region</h4>
-                                <div className='filter-tag'>Asia</div>
-                            </div>
-
-                            <div className='filters-section'>
                                 <h4>Publisher</h4>
-                                <div className='filter-tag'>Koei</div>
+                                <InputOptionsBox
+                                    availableOptions={['Koei', 'Square Enix', 'Capcom']}
+                                    placeholder='Select publishers...'/>
                             </div>
 
                             <div className='filters-section'>
                                 <h4>Edition</h4>
-                                <div className='filter-tag'>Standard</div>
+                                <InputOptionsBox
+                                    availableOptions={['Standard', 'Collector\'s', 'Limited']}
+                                    placeholder='Select editions...'/>
                             </div>
 
                             <div className='filters-section'>
                                 <h4>Language</h4>
-                                <div className='filter-tag'>English</div>
+                                <InputOptionsBox
+                                    availableOptions={['English', 'Chinese', 'Japanese']}
+                                    placeholder='Select languages...'/>
                             </div>
 
                             <div className='filters-section'>
                                 <h4>A - Z</h4>
-                                <div className='filter-tag'>D</div>
+                                <InputOptionsBox
+                                    availableOptions={['A', 'B', 'C', 'D']}
+                                    placeholder='Select starting letters...'/>
                             </div>
 
                             <div className='filters-section'>
