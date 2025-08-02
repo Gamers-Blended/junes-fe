@@ -942,6 +942,12 @@ body.modal-open {
   margin-left: auto;
 }
 
+.price-error-message {
+  color: red;
+  font-size: 15px;
+  font-weight: bold;
+}
+
 .filter-tag {
   display: inline-block;
   padding: 6px 12px;

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import { Platform } from "../utils/Enums";
 import { formatPrice } from '../utils/utils';
@@ -29,6 +29,7 @@ const ProductListingPage: React.FC = () => {
     const [sortBy, setSortBy] = useState('name');
     const [orderBy, setOrderBy] = useState('asc');
     const [priceFilter, setPriceFilter] = useState({ min: '', max: ''});
+    const [priceError, setPriceError] = useState('');
 
     // States for clearing filters
     const [clearTrigger, setClearTrigger] = useState(0);
@@ -119,6 +120,28 @@ const ProductListingPage: React.FC = () => {
         const newSortValue = event.target.value;
         setSortBy(newSortValue);
     }
+
+    const handlePriceFilterChange = (type: 'min' | 'max', value: string) => {
+        // Negative value check
+        const newValue = value === '' ? '' : Math.max(0, parseFloat(value)).toString();
+
+        if (type === 'min') {
+            setPriceFilter(prev => ({ ...prev, min: newValue }));
+        } else {
+            setPriceFilter(prev => ({ ...prev, max: newValue }));
+        }
+    };
+
+
+    useEffect(() => {
+        // min cannot be > max
+        if (priceFilter.min !== '' && priceFilter.max !== '' &&
+                parseFloat(priceFilter.min) > parseFloat(priceFilter.max)) {
+            setPriceError('Minimum price cannot be greater than maximum price');
+        } else {
+            setPriceError('');
+        }
+    }, [priceFilter.min, priceFilter.max])
 
     // Clears all filters
     const handleClearAllFilters = () => {
@@ -287,7 +310,7 @@ const ProductListingPage: React.FC = () => {
                                         type='number' 
                                         className='price-input common-input-box'
                                         value={priceFilter.min}
-                                        onChange={(e) => setPriceFilter(prev => ({ ...prev, min: e.target.value }))}
+                                        onChange={(e) => handlePriceFilterChange('min', e.target.value)}
                                     />
                                 </div>
                                 <div className='price-inputs'>
@@ -296,9 +319,12 @@ const ProductListingPage: React.FC = () => {
                                         type='number'
                                         className='price-input common-input-box'
                                         value={priceFilter.max}
-                                        onChange={(e) => setPriceFilter(prev => ({ ...prev, max: e.target.value }))}
+                                        onChange={(e) => handlePriceFilterChange('max', e.target.value)}
                                     />
                                 </div>
+                                {priceError && (
+                                    <div className="price-error-message">{priceError}</div>
+                                )}
                             </div>
 
                             <div className='filters-section'>
