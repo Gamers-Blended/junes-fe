@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
+import axios from 'axios';
 import { Platform } from "../utils/Enums";
 import { formatPrice } from '../utils/utils';
 import InputOptionsBox from '../components/InputOptionsBox';
@@ -22,6 +23,27 @@ interface Game {
     productImageUrl: string;
 }
 
+interface ProductSliderItemDTO {
+    id: string;
+    name: string;
+    slug: string;
+    platform: string;
+    region: string;
+    edition: string;
+    price: number;
+    productImageUrl: string;
+}
+
+interface PageResponse<T> {
+    content: T[];
+    totalElements: number;
+    totalPages: number;
+    size: number;
+    number: number;
+    first: boolean;
+    last: boolean;
+}
+
 const ProductListingPage: React.FC = () => {
     const navigate = useNavigate();
     const { platform } = useParams<{ platform: string }>();
@@ -30,6 +52,22 @@ const ProductListingPage: React.FC = () => {
     const [orderBy, setOrderBy] = useState('asc');
     const [priceFilter, setPriceFilter] = useState({ min: '', max: ''});
     const [priceError, setPriceError] = useState('');
+    const [itemsPerPage, setItemsPerPage] = useState(15);
+    const [currentPage, setCurrentPage] = useState(0);
+
+    // Product data states
+    const [products, setProducts] = useState<ProductSliderItemDTO[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [pageInfo, setPageInfo] = useState<{
+        totalElements: number;
+        totalPages: number;
+        currentPage: number;
+    }>({
+        totalElements: 0,
+        totalPages: 0,
+        currentPage: 0
+    });
 
     // States for clearing filters
     const [clearTrigger, setClearTrigger] = useState(0);
@@ -69,6 +107,49 @@ const ProductListingPage: React.FC = () => {
         { id: '4', name: 'Final Fantasy Pixel Remaster', slug: 'final-fantasy-pixel-remaster', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' },
         { id: '5', name: 'Final Fantasy Pixel Remaster', slug: 'final-fantasy-pixel-remaster', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' }
     ];
+
+    // Fetch products from API
+    const fetchProducts = useCallback(async () => {
+        if (!platform) return;
+
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await axios.get<PageResponse<ProductSliderItemDTO>>(
+                `http://localhost:8080/junes/api/v1/product/products/${platform}`,
+                {
+                    params: {
+                        page: currentPage,
+                        size: itemsPerPage,
+                        sort: `${sortBy},${orderBy}`
+                    }
+                }
+            );
+            
+            const data = response.data;
+            setProducts(data.content);
+            setPageInfo({
+                totalElements: data.totalElements,
+                totalPages: data.totalPages,
+                currentPage: data.number
+            });
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                setError(err.response?.data?.message || err.message || 'Failed to fetch products');
+            } else {
+                setError('An unexpected error occurred');
+            }
+            console.error('Error fetching products:', err);
+        } finally {
+            setLoading(false);
+        }
+    }, [platform, currentPage, itemsPerPage, sortBy, orderBy]);
+
+    // Fetch products when component mounts or dependencies change
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
 
     const handlePreOrderClick = (slug: string) => {
         navigate('/details/' + slug);
@@ -133,6 +214,12 @@ const ProductListingPage: React.FC = () => {
 
         setSortBy(selectedOption.sortBy);
         setOrderBy(selectedOption.orderBy);
+        setCurrentPage(0); // Reset to first page when sorting changes
+    };
+
+    const handleItemsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setItemsPerPage(Number(event.target.value));
+        setCurrentPage(0); // Reset to first page when page size changes
     };
 
     const handlePriceFilterChange = (type: 'min' | 'max', value: string) => {
@@ -420,6 +507,7 @@ const ProductListingPage: React.FC = () => {
                         {/* Main Content */}
                         <div className='main-content'>
 
+                            {/* Header */}
                             <div className='filter-group'>
                                 <label className='filter-label'>Sort By</label>
                                 <select
@@ -444,6 +532,44 @@ const ProductListingPage: React.FC = () => {
                                     <option value="50">50</option>
                                 </select>
                             </div>
+
+                            {/* Loading, Error, and Products Display */}
+                            {loading && (
+                                <div className="loading-message">Loading products...</div>
+                            )}
+                            
+                            {error && (
+                                <div className="error-message">Error: {error}</div>
+                            )}
+
+                            {!loading && !error && (
+                                <>
+                                    {/* Product Count Info */}
+                                    <div className="products-info">
+                                        Showing {products.length} of {pageInfo.totalElements} products
+                                    </div>
+
+                                    {/* Games Grid */}
+                                    <div className="games-grid">
+                                        {products.map((product) => (
+                                            <div 
+                                                key={product.id} 
+                                                className="product-card"
+                                            >
+                                                <div className="product-info">
+                                                    <h3 className="product-title">{product.name}</h3>
+                                                    <p className="product-details">
+                                                        {product.platform} • {product.region} • {product.edition}
+                                                    </p>
+                                                    <div className="product-price">
+                                                        {formatPrice(product.price.toString())}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
 
