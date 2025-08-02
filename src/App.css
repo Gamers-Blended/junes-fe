@@ -853,6 +853,24 @@ body.modal-open {
   margin-top: -10px;
 }
 
+.clear-all-filters-btn {
+  margin-top: 10px;
+  margin-right: 150px;
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.clear-all-filters-btn:disabled {
+  opacity: 0.5;
+  background-color: #cccccc !important;
+  cursor: not-allowed;
+}
+
 .filters-section {
   background: white;
   padding: 10px;
@@ -864,6 +882,7 @@ body.modal-open {
 
 .filters-section h4 {
   text-align: left;
+  margin-top: 5px;
   margin-bottom: 10px;
 }
 

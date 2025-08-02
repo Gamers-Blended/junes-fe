@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import { Platform } from "../utils/Enums";
 import { formatPrice } from '../utils/utils';
@@ -30,6 +30,26 @@ const ProductListingPage: React.FC = () => {
     const [orderBy, setOrderBy] = useState('asc');
     const [priceFilter, setPriceFilter] = useState({ min: '', max: ''});
 
+    // States for clearing filters
+    const [clearTrigger, setClearTrigger] = useState(0);
+    const [searchText, setSearchText] = useState('');
+    const [availability, setAvailablity] = useState({
+        inStock: false,
+        outOfStock: false,
+        preOrders: false
+    });
+
+    // Store filter selections from InputOptionsBox components
+    const [filterSelections, setFilterSelections] = useState({
+        genre: [] as string[],
+        region: [] as string[],
+        publisher: [] as string[],
+        edition: [] as string[],
+        language: [] as string[],
+        alphabet: [] as string[],
+        releaseDate: [] as string[]
+    });
+    
     const categories = ['Games', 'Pre-Orders', 'Best Sellers', 'Consoles'];
 
     const sortOptions = [
@@ -100,6 +120,49 @@ const ProductListingPage: React.FC = () => {
         setSortBy(newSortValue);
     }
 
+    // Clears all filters
+    const handleClearAllFilters = () => {
+        setSearchText('');
+        setPriceFilter({ min: '', max:'' });
+        setAvailablity({
+            inStock: false,
+            outOfStock: false,
+            preOrders: false
+        });
+
+        // Clear all InputOptionsBox selections by incrementing trigger
+        setClearTrigger(prev => prev + 1);
+
+        setFilterSelections({
+            genre: [],
+            region: [],
+            publisher: [],
+            edition: [],
+            language: [],
+            alphabet: [],
+            releaseDate: []
+        });
+    };
+
+    // Update filter selections
+    const updateFilterSelection = useCallback((filterType: keyof typeof filterSelections) => 
+        (selectedOptions: string[]) => {
+            setFilterSelections(prev => ({
+                ...prev,
+                [filterType]: selectedOptions
+            }));
+        }, []);
+    
+    const hasActiveFilters = () => {
+        return searchText != '' ||
+                priceFilter.min != '' ||
+                priceFilter.max != '' ||
+                availability.inStock ||
+                availability.outOfStock || 
+                availability.preOrders ||
+                Object.values(filterSelections).some(selections => selections.length > 0);
+    };
+
     return (
         <div className='product-listing-container'>
 
@@ -162,25 +225,55 @@ const ProductListingPage: React.FC = () => {
                         <div className='filters-sidebar'>
                             <h3>FILTERS</h3>
 
+                                <button
+                                    onClick={handleClearAllFilters}
+                                    className='clear-all-filters-btn'
+                                    disabled={!hasActiveFilters()}
+                                >
+                                    Clear All
+                                </button>
+                                       
+
                             <div className='filters-section'>
-                                <input type='text' className='search-input common-input-box' placeholder='Type to search title'></input>
+                                <input 
+                                    type='text' 
+                                    className='search-input common-input-box' 
+                                    placeholder='Type to search title'
+                                    value={searchText}
+                                    onChange={(e) => setSearchText(e.target.value)}
+                                />
                             </div>
 
                             <div className='filters-section'>
                                 <h4>Availability</h4>
                                 <div className='checkbox-group'>
                                     <div className='checkbox-item'>
-                                        <input type='checkbox' id='in-stock'></input>
+                                        <input
+                                            type='checkbox' 
+                                            id='in-stock'
+                                            checked={availability.inStock}
+                                            onChange={(e) => setAvailablity(prev => ({ ...prev, inStock: e.target.checked }))}    
+                                        />
                                         <label className='filter-label'>In Stock</label>
                                     </div>
 
                                     <div className='checkbox-item'>
-                                        <input type='checkbox' id='out-stock'></input>
+                                        <input 
+                                            type='checkbox' 
+                                            id='out-stock'
+                                            checked={availability.outOfStock}
+                                            onChange={(e) => setAvailablity(prev => ({ ...prev, outOfStock: e.target.checked }))}
+                                        />
                                         <label className='filter-label'>Out of Stock</label>
                                     </div>
 
                                     <div className='checkbox-item'>
-                                        <input type='checkbox' id='pre-orders'></input>
+                                        <input 
+                                            type='checkbox' 
+                                            id='pre-orders'
+                                            checked={availability.preOrders}
+                                            onChange={(e) => setAvailablity(prev => ({ ...prev, preOrders: e.target.checked }))}
+                                        />
                                         <label className='filter-label'>Pre-Orders</label>
                                     </div>
                                 </div>
@@ -190,11 +283,21 @@ const ProductListingPage: React.FC = () => {
                                 <h4>Price Range</h4>
                                 <div className='price-inputs'>
                                     <label className='filter-label price-label'>From</label>
-                                    <input type='text' className='price-input common-input-box'></input>
+                                    <input 
+                                        type='number' 
+                                        className='price-input common-input-box'
+                                        value={priceFilter.min}
+                                        onChange={(e) => setPriceFilter(prev => ({ ...prev, min: e.target.value }))}
+                                    />
                                 </div>
                                 <div className='price-inputs'>
                                     <label className='filter-label price-label'>To</label>
-                                    <input type='text' className='price-input common-input-box'></input>
+                                    <input 
+                                        type='number'
+                                        className='price-input common-input-box'
+                                        value={priceFilter.max}
+                                        onChange={(e) => setPriceFilter(prev => ({ ...prev, max: e.target.value }))}
+                                    />
                                 </div>
                             </div>
 
@@ -202,42 +305,60 @@ const ProductListingPage: React.FC = () => {
                                 <h4>Genre</h4>
                                 <InputOptionsBox
                                     availableOptions={['JRPG', 'RPG', 'FPS', 'TPS', 'Racing', 'Action', 'Adventure']}
-                                    placeholder='Select genres...'/>
+                                    placeholder='Select genres...'
+                                    clearTrigger={clearTrigger}
+                                    onSelectionChange={updateFilterSelection('genre')}
+                                />
                             </div>
 
                             <div className='filters-section'>
                                 <h4>Region</h4>
                                 <InputOptionsBox
                                     availableOptions={['Asia', 'United States', 'Europe', 'Japan']}
-                                    placeholder='Select regions...'/>
+                                    placeholder='Select regions...'
+                                    clearTrigger={clearTrigger}
+                                    onSelectionChange={updateFilterSelection('region')}
+                                />
                             </div>
 
                             <div className='filters-section'>
                                 <h4>Publisher</h4>
                                 <InputOptionsBox
                                     availableOptions={['Koei', 'Square Enix', 'Capcom']}
-                                    placeholder='Select publishers...'/>
+                                    placeholder='Select publishers...'
+                                    clearTrigger={clearTrigger}
+                                    onSelectionChange={updateFilterSelection('publisher')}
+                                />
                             </div>
 
                             <div className='filters-section'>
                                 <h4>Edition</h4>
                                 <InputOptionsBox
                                     availableOptions={['Standard', 'Collector\'s', 'Limited']}
-                                    placeholder='Select editions...'/>
+                                    placeholder='Select editions...'
+                                    clearTrigger={clearTrigger}
+                                    onSelectionChange={updateFilterSelection('edition')}
+                                />
                             </div>
 
                             <div className='filters-section'>
                                 <h4>Language</h4>
                                 <InputOptionsBox
                                     availableOptions={['English', 'Chinese', 'Japanese']}
-                                    placeholder='Select languages...'/>
+                                    placeholder='Select languages...'
+                                    clearTrigger={clearTrigger}
+                                    onSelectionChange={updateFilterSelection('language')}
+                                />
                             </div>
 
                             <div className='filters-section'>
                                 <h4>A - Z</h4>
                                 <InputOptionsBox
                                     availableOptions={['A', 'B', 'C', 'D']}
-                                    placeholder='Select starting letters...'/>
+                                    placeholder='Select starting letters...'
+                                    clearTrigger={clearTrigger}
+                                    onSelectionChange={updateFilterSelection('alphabet')}
+                                />
                             </div>
 
                             <div className='filters-section'>
@@ -249,7 +370,9 @@ const ProductListingPage: React.FC = () => {
                                     }}
                                     placeholder="Select date..."
                                     isHierachical={true}
-                                    />
+                                    clearTrigger={clearTrigger}
+                                    onSelectionChange={updateFilterSelection('releaseDate')}
+                                />
                             </div>
 
                         </div>

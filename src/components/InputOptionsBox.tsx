@@ -4,12 +4,16 @@ interface InputOptionsBoxProps {
     availableOptions: string[] | { [key: string]: string[] };
     placeholder?: string;
     isHierachical?: boolean;
+    clearTrigger?: number;
+    onSelectionChange?: (selectedOptions: string[]) => void; // Callback for selection changes
 }
 
 const InputOptionsBox: React.FC<InputOptionsBoxProps> = ({
     availableOptions,
     placeholder = "Select options...",
-    isHierachical = false
+    isHierachical = false,
+    clearTrigger = 0,
+    onSelectionChange
 }) => {
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
     const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
@@ -17,6 +21,14 @@ const InputOptionsBox: React.FC<InputOptionsBoxProps> = ({
     const [currentLevel, setCurrentLevel] = useState<string | null>(null);
     const inputRef = useRef<HTMLDivElement>(null);
     const popupRef = useRef<HTMLDivElement>(null);
+
+    // Clear selections when clearTrigger changes
+    useEffect(() => {
+        if (clearTrigger > 0) {
+            setSelectedOptions([]);
+            onSelectionChange?.([]);
+        }
+    }, [clearTrigger]);
 
     // Handle clicks outside component to close popup
     useEffect(() => {
@@ -62,7 +74,9 @@ const InputOptionsBox: React.FC<InputOptionsBoxProps> = ({
                 const fullOption = `${currentLevel} ${option}`;
                 // Add current option to selected options
                 if (!selectedOptions.includes(fullOption)) {
-                    setSelectedOptions([...selectedOptions, fullOption]);
+                    const updatedOptions = [...selectedOptions, fullOption];
+                    setSelectedOptions(updatedOptions);
+                    onSelectionChange?.(updatedOptions);
                 }
                 setIsPopupOpen(false);
                 setIsActive(false);
@@ -73,7 +87,9 @@ const InputOptionsBox: React.FC<InputOptionsBoxProps> = ({
 
         // Case II: Non-hierarchical selection
         if (!selectedOptions.includes(option)) {
-            setSelectedOptions([...selectedOptions, option]);
+            const updatedOptions = [...selectedOptions, option];
+            setSelectedOptions(updatedOptions);
+            onSelectionChange?.(updatedOptions);
         }
         setIsPopupOpen(false);
         setIsActive(false);
@@ -81,11 +97,14 @@ const InputOptionsBox: React.FC<InputOptionsBoxProps> = ({
 
     // Clicking on badge will remove it from the box
     const handleBadgeClick = (optionToRemove: string): void => {
-        setSelectedOptions(selectedOptions.filter(option => option != optionToRemove));
+        const newSelectedOptions = selectedOptions.filter(option => option != optionToRemove);
+        setSelectedOptions(newSelectedOptions);
+        onSelectionChange?.(newSelectedOptions);
     };
 
     const handleClearAll = (): void => {
         setSelectedOptions([]);
+        onSelectionChange?.([]);
     };
 
     const handleBackToFirstLevel = (): void => {
@@ -98,9 +117,11 @@ const InputOptionsBox: React.FC<InputOptionsBoxProps> = ({
             const hierarchicalOptions = availableOptions as { [key: string]: string[] };
 
             if (!currentLevel) {
+                // If not 1st level option selected
                 // Show 1st level options (e.g. years)
                 return Object.keys(hierarchicalOptions);
             } else {
+                // 1st level selected already selected
                 // Show 2nd level options (e.g. months for selected year)
                 return hierarchicalOptions[currentLevel] || [];
             }
