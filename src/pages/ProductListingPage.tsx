@@ -113,13 +113,27 @@ const ProductListingPage: React.FC = () => {
     };
 
     const getCurrentSortValue = (): string => {
-        return sortBy;
+        const currentOption = sortOptions.find(
+            option => option.sortBy === sortBy && option.orderBy === orderBy
+        );
+        return currentOption ? currentOption.value : sortOptions[0].value;
     };
 
     const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const newSortValue = event.target.value;
-        setSortBy(newSortValue);
-    }
+        const value = event.target.value;
+        const selectedOption = sortOptions.find(option => option.value === value);
+
+        if (!selectedOption) {
+            // Fallback to 1st option if no match found
+            const fallbackOption = sortOptions[0];
+            setSortBy(fallbackOption.sortBy);
+            setOrderBy(fallbackOption.orderBy);
+            return;
+        }
+
+        setSortBy(selectedOption.sortBy);
+        setOrderBy(selectedOption.orderBy);
+    };
 
     const handlePriceFilterChange = (type: 'min' | 'max', value: string) => {
         // Negative value check
