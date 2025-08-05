@@ -57,7 +57,7 @@ const ProductListingPage: React.FC = () => {
 
     // Product data states
     const [products, setProducts] = useState<ProductSliderItemDTO[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [pageInfo, setPageInfo] = useState<{
         totalElements: number;
@@ -112,10 +112,29 @@ const ProductListingPage: React.FC = () => {
     const fetchProducts = useCallback(async () => {
         if (!platform) return;
 
-        setLoading(true);
+        setIsLoading(true);
         setError(null);
 
         try {
+            // This code snippet is for testing loading state
+            // Create a promise that resolves after 10 seconds
+            // const delayPromise = new Promise(resolve => setTimeout(resolve, 10000));
+            
+            // // Make both the API call and wait for the delay
+            // const [response] = await Promise.all([
+            //     axios.get<PageResponse<ProductSliderItemDTO>>(
+            //         `http://localhost:8080/junes/api/v1/product/products/${platform}`,
+            //         {
+            //             params: {
+            //                 page: currentPage,
+            //                 size: itemsPerPage,
+            //                 sort: `${sortBy},${orderBy}`
+            //             }
+            //         }
+            //     ),
+            //     delayPromise
+            // ]);
+
             const response = await axios.get<PageResponse<ProductSliderItemDTO>>(
                 `http://localhost:8080/junes/api/v1/product/products/${platform}`,
                 {
@@ -142,7 +161,7 @@ const ProductListingPage: React.FC = () => {
             }
             console.error('Error fetching products:', err);
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
     }, [platform, currentPage, itemsPerPage, sortBy, orderBy]);
 
@@ -344,6 +363,14 @@ const ProductListingPage: React.FC = () => {
                     </div>
 
                     <div className='product-listing-content'>
+
+                        {/* Loading Placeholder */}
+                        {isLoading && (
+                            <div className='product-listing-loading-placeholder'>
+                                <div className='product-slider-loading-spinner'></div>
+                                <div className='product-slider-loading-text'>Loading items...</div>
+                            </div>
+                        )}
                     
                         {/* <!-- Sidebar Filters --> */}
                         <div className='filters-sidebar'>
@@ -536,17 +563,13 @@ const ProductListingPage: React.FC = () => {
                                 </div>
 
                             </div>
-
-                            {/* Loading, Error, and Products Display */}
-                            {loading && (
-                                <div className='loading-message centered-message'>Loading products...</div>
-                            )}
                             
+                            {/* Error Message */}
                             {error && (
                                 <div className="error-section">
-                                    <div className='error-message centered-message'>
+                                    <div className='error-message'>
                                         Error retrieving products: 
-                                        <div className='error-message'>
+                                        <div>
                                             {error}
                                         </div>
                                         <button 
@@ -559,12 +582,8 @@ const ProductListingPage: React.FC = () => {
                                 </div>
                             )}
 
-                            {!loading && !error && (
+                            {!isLoading && !error && (
                                 <>
-                                    {/* Product Count Info */}
-                                    <div className='products-info'>
-                                        Showing {products.length} of {pageInfo.totalElements} products
-                                    </div>
 
                                     {/* Games Grid */}
                                     <div className="games-grid">
@@ -584,6 +603,11 @@ const ProductListingPage: React.FC = () => {
                                                 </div>
                                             </div>
                                         ))}
+                                    </div>
+
+                                    {/* Product Count Info */}
+                                    <div className='products-info'>
+                                        Showing {products.length} of {pageInfo.totalElements} products
                                     </div>
                                 </>
                             )}
