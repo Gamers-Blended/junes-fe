@@ -507,30 +507,34 @@ const ProductListingPage: React.FC = () => {
                         {/* Main Content */}
                         <div className='main-content'>
 
-                            {/* Header */}
-                            <div className='filter-group'>
-                                <label className='filter-label'>Sort By</label>
-                                <select
-                                    className='filter-select'
-                                    value={getCurrentSortValue()}
-                                    onChange={handleSortChange}
-                                >
-                                    {sortOptions.map(option => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                            {/* Content Controls */}
+                            <div className='content-controls-row'>
+                            
+                                <div className='filter-group'>
+                                    <label className='filter-label'>Sort By</label>
+                                    <select
+                                        className='filter-select'
+                                        value={getCurrentSortValue()}
+                                        onChange={handleSortChange}
+                                    >
+                                        {sortOptions.map(option => (
+                                            <option key={option.value} value={option.value}>
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
 
-                            <div className='filter-group'>
-                                <label className='filter-label'>Items Per Page</label>
-                                <select className='filter-select'>
-                                    <option value="15">15</option>
-                                    <option value="20">20</option>
-                                    <option value="30">30</option>
-                                    <option value="50">50</option>
-                                </select>
+                                <div className='filter-group'>
+                                    <label className='filter-label'>Items Per Page</label>
+                                    <select className='filter-select'>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                        <option value="30">30</option>
+                                        <option value="50">50</option>
+                                    </select>
+                                </div>
+
                             </div>
 
                             {/* Loading, Error, and Products Display */}

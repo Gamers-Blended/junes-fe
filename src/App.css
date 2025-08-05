@@ -1095,3 +1095,11 @@ body.modal-open {
   color: #6B7280;
   cursor: not-allowed;
 }
+
+/* PRODUCT LISTINGS - CONTENT CONTROLS */
+.content-controls-row {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 20px;
+}
