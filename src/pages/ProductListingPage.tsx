@@ -539,17 +539,30 @@ const ProductListingPage: React.FC = () => {
 
                             {/* Loading, Error, and Products Display */}
                             {loading && (
-                                <div className="loading-message">Loading products...</div>
+                                <div className='loading-message centered-message'>Loading products...</div>
                             )}
                             
                             {error && (
-                                <div className="error-message">Error: {error}</div>
+                                <div className="error-section">
+                                    <div className='error-message centered-message'>
+                                        Error retrieving products: 
+                                        <div className='error-message'>
+                                            {error}
+                                        </div>
+                                        <button 
+                                            className="retry-button"
+                                            onClick={fetchProducts}
+                                        >
+                                            Retry
+                                        </button>
+                                    </div>                              
+                                </div>
                             )}
 
                             {!loading && !error && (
                                 <>
                                     {/* Product Count Info */}
-                                    <div className="products-info">
+                                    <div className='products-info'>
                                         Showing {products.length} of {pageInfo.totalElements} products
                                     </div>
 
