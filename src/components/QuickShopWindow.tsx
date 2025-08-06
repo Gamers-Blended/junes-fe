@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { appendUrlPrefix } from '../utils/utils.ts';
 
 interface ProductDTO {
     id: string;
@@ -139,11 +140,9 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
 
             const data: ProductDetailsResponse = await response.json();
 
-            const urlPrefix = "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/";
-
             // Append prefix to each productImageUrl
-            data.productVariantDTOList.forEach((variant) => {
-                variant.productImageUrl = variant.productImageUrl ? `${urlPrefix}${variant.productImageUrl}` : "";
+            data.productVariantDTOList.forEach(variant => {
+                variant.productImageUrl = appendUrlPrefix(variant.productImageUrl);
             });
             
             setProductData(data.productDTO);

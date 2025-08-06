@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ProductSliderItem, PageResponse } from '../types/products.ts';
 import ProductCard from './ProductCard';
+import { appendUrlPrefix } from '../utils/utils.ts';
 import { useAuth } from "../components/AuthContext.tsx";
 import arrowLeftIcon from "../assets/arrowLeftIcon.png";
 import arrowRightIcon from "../assets/arrowRightIcon.png";
@@ -76,12 +77,12 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ title }) => {
           response = await api.get<PageResponse<ProductSliderItem>>(`/frontpage/best-sellers?page=${pageNumber}`);
       }
 
-      const urlPrefix = "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/";
+      const imageUrls = response.data.content.map(item => item.productImageUrl || "");
+      const prefixedUrls = appendUrlPrefix(imageUrls);
 
-      // Append prefix to each productImageUrl
-      const updatedData = response.data.content.map((item) => ({
+      const updatedData = response.data.content.map((item, index) => ({
         ...item,
-        productImageUrl: item.productImageUrl ? `${urlPrefix}${item.productImageUrl}` : "",
+        productImageUrl: prefixedUrls[index]
       }));
 
       setItems(updatedData);

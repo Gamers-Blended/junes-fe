@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { ProductSliderItem, PageResponse } from '../types/products';
+import { appendUrlPrefix } from '../utils/utils.ts';
 import { Platform } from "../utils/Enums";
 import { formatPrice } from '../utils/utils';
 import InputOptionsBox from '../components/InputOptionsBox';
@@ -128,6 +129,12 @@ const ProductListingPage: React.FC = () => {
             );
             
             const data = response.data;
+
+            // Append prefix to each productImageUrl
+            data.content.forEach(item => {
+                item.productImageUrl = appendUrlPrefix(item.productImageUrl);
+            });
+
             setProducts(data.content);
             setPageInfo({
                 totalElements: data.totalElements,
