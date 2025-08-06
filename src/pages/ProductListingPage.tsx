@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { ProductSliderItem, PageResponse } from '../types/products';
 import { Platform } from "../utils/Enums";
 import { formatPrice } from '../utils/utils';
 import InputOptionsBox from '../components/InputOptionsBox';
+import ProductCard from '../components/ProductCard';
 
 import ps4Banner from "../assets/banners/ps4-banner.jpg";
 import ps5Banner from "../assets/banners/ps5-banner.jpg";
@@ -23,27 +25,6 @@ interface Game {
     productImageUrl: string;
 }
 
-interface ProductSliderItemDTO {
-    id: string;
-    name: string;
-    slug: string;
-    platform: string;
-    region: string;
-    edition: string;
-    price: number;
-    productImageUrl: string;
-}
-
-interface PageResponse<T> {
-    content: T[];
-    totalElements: number;
-    totalPages: number;
-    size: number;
-    number: number;
-    first: boolean;
-    last: boolean;
-}
-
 const ProductListingPage: React.FC = () => {
     const navigate = useNavigate();
     const { platform } = useParams<{ platform: string }>();
@@ -56,7 +37,7 @@ const ProductListingPage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(0);
 
     // Product data states
-    const [products, setProducts] = useState<ProductSliderItemDTO[]>([]);
+    const [products, setProducts] = useState<ProductSliderItem[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [pageInfo, setPageInfo] = useState<{
@@ -122,7 +103,7 @@ const ProductListingPage: React.FC = () => {
             
             // // Make both the API call and wait for the delay
             // const [response] = await Promise.all([
-            //     axios.get<PageResponse<ProductSliderItemDTO>>(
+            //     axios.get<PageResponse<ProductSliderItem>>(
             //         `http://localhost:8080/junes/api/v1/product/products/${platform}`,
             //         {
             //             params: {
@@ -135,7 +116,7 @@ const ProductListingPage: React.FC = () => {
             //     delayPromise
             // ]);
 
-            const response = await axios.get<PageResponse<ProductSliderItemDTO>>(
+            const response = await axios.get<PageResponse<ProductSliderItem>>(
                 `http://localhost:8080/junes/api/v1/product/products/${platform}`,
                 {
                     params: {
@@ -588,20 +569,7 @@ const ProductListingPage: React.FC = () => {
                                     {/* Games Grid */}
                                     <div className="games-grid">
                                         {products.map((product) => (
-                                            <div 
-                                                key={product.id} 
-                                                className="product-card"
-                                            >
-                                                <div className="product-info">
-                                                    <h3 className="product-title">{product.name}</h3>
-                                                    <p className="product-details">
-                                                        {product.platform} • {product.region} • {product.edition}
-                                                    </p>
-                                                    <div className="product-price">
-                                                        {formatPrice(product.price.toString())}
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <ProductCard key={product.id} item={product} isLoading={isLoading} />
                                         ))}
                                     </div>
 

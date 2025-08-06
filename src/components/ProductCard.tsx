@@ -13,7 +13,7 @@ interface ProductCardProps {
         platform: string;
         region: string;
         edition: string;
-        price: string;
+        price: number;
         productImageUrl: string;
     },
     isLoading: boolean;
