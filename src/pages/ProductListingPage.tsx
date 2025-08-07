@@ -34,7 +34,7 @@ const ProductListingPage: React.FC = () => {
     const [orderBy, setOrderBy] = useState('asc');
     const [priceFilter, setPriceFilter] = useState({ min: '', max: ''});
     const [priceError, setPriceError] = useState('');
-    const [itemsPerPage, setItemsPerPage] = useState(15);
+    const [itemsPerPage, setItemsPerPage] = useState(15); // Must correspond with 1st option
     const [currentPage, setCurrentPage] = useState(0);
 
     // Product data states
@@ -294,6 +294,12 @@ const ProductListingPage: React.FC = () => {
                 Object.values(filterSelections).some(selections => selections.length > 0);
     };
 
+    const getItemRange = () => {
+        const start = currentPage * itemsPerPage + 1;
+        const end = Math.min(start + products.length - 1, pageInfo.totalElements);
+        return { start, end };
+    };
+
     return (
         <div className='product-listing-container'>
 
@@ -542,7 +548,10 @@ const ProductListingPage: React.FC = () => {
 
                                 <div className='filter-group'>
                                     <label className='filter-label'>Items Per Page</label>
-                                    <select className='filter-select'>
+                                    <select 
+                                        className='filter-select'
+                                        value={itemsPerPage}
+                                        onChange={handleItemsPerPageChange}>
                                         <option value="15">15</option>
                                         <option value="20">20</option>
                                         <option value="30">30</option>
@@ -582,8 +591,11 @@ const ProductListingPage: React.FC = () => {
 
                                     {/* Product Count Info */}
                                     <div className='products-info'>
-                                        Showing {products.length} of {pageInfo.totalElements} products
+                                        <div className='products-count'>
+                                            Showing {getItemRange().start} - {getItemRange().end} of {pageInfo.totalElements} Items
+                                        </div>
                                     </div>
+
                                 </>
                             )}
                         </div>

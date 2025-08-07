@@ -1097,6 +1097,9 @@ body.modal-open {
   gap: 20px;
   align-items: flex-start;
   flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  justify-content: flex-start;
 }
 
 /* PRODUCT LISTINGS - CONTENT CONTROLS */
