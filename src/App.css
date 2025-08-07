@@ -1,6 +1,5 @@
 #root {
-  max-width: 1280px;
-  width: 90%;
+  max-width: 1380px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
@@ -178,6 +177,9 @@
 
 .product-slider-items {
   display: flex;
+  justify-content: center;
+  flex-wrap: wrap; 
+  width: 100%;
 }
 
 /* LOADING PLACEHOLDER */
@@ -1169,4 +1171,6 @@ body.modal-open {
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   padding: 20px 0;
+  width: 100%;
+  min-width: 800px;
 }
