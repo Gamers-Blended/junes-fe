@@ -828,7 +828,7 @@ body.modal-open {
   max-width: 100%;
   height: auto; /* Maintain aspect ratio */
   max-height: 500px;
-  width: 1000px;
+  width: 1200px;
 }
 
 /* PRODUCT LISTINGS - PRODUCT-LISTING */
@@ -1161,4 +1161,12 @@ body.modal-open {
   justify-content: center;
   align-items: center;
   z-index: 20;
+}
+
+/* PRODUCT LISTINGS - PRODUCTS GRID */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px 0;
 }

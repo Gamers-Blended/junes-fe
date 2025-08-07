@@ -573,8 +573,8 @@ const ProductListingPage: React.FC = () => {
                             {!isLoading && !error && (
                                 <>
 
-                                    {/* Games Grid */}
-                                    <div className="games-grid">
+                                    {/* Products Grid */}
+                                    <div className="product-grid">
                                         {products.map((product) => (
                                             <ProductCard key={product.id} item={product} isLoading={isLoading} />
                                         ))}
