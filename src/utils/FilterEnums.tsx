@@ -3,6 +3,7 @@ export interface FilterOption {
     value: string;
 }
 
+// Release date: year: month[]
 export interface HierarchicalFilterOption {
     display: string;
     value: string;
@@ -21,7 +22,10 @@ const createFilterOption = (display: string, customValue?: string): FilterOption
     value: customValue || formatFilterValue(display)
 });
 
-// Genre filter options
+// =============================================================================
+// FILTER DISPLAYS
+// =============================================================================
+
 const GENRE_DISPLAYS = [
     'JRPG',
     'RPG',
@@ -29,15 +33,91 @@ const GENRE_DISPLAYS = [
     'TPS',
     'Racing',
     'Action',
-    'Adventure'
+    'Adventure',
+    'Survival Horror',
+    'Visual Novel'
 ];
+
+const REGION_DISPLAYS = [
+    'United States',
+    'Europe',
+    'Japan',
+    'Japan',
+    'Asia'
+];
+
+const PUBLISHER_DISPLAYS = [
+    'Square Enix',
+    'Koei Tecmo',
+    'Bandai Namco',
+    'Capcom',
+    'Nintendo',
+    'Arc System Works'
+];
+
+const EDITION_DISPLAYS = [
+    'Standard',
+    'Collector\'s Edition',
+    'Limited',
+    'Deluxe'
+];
+
+const LANGUAGE_DISPLAYS = [
+    'English',
+    'Japanese',
+    'French',
+    'German',
+    'Spanish',
+    'Italian',
+    'Chinese',
+    'Cantonese',
+    'Korean',
+    'Russian',
+    'Portuguese',
+    'Thai'
+];
+
+const STARTING_LETTER_DISPLAYS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+
+// =============================================================================
+// FILTER OPTIONS
+// =============================================================================
 
 export const GENRE_OPTIONS: FilterOption[] = GENRE_DISPLAYS.map(display => 
     createFilterOption(display)
 );
 
-// Month mapping for release dates
-const MONTH_OPTIONS: FilterOption[] = [
+export const REGION_OPTIONS: FilterOption[] = REGION_DISPLAYS.map(display => 
+    createFilterOption(display, 
+        // Custom mappings for regions
+        display === 'United States' ? 'us' :
+        display === 'Europe' ? 'eur' :
+        display === 'Japan' ? 'jp' : undefined
+    )
+);
+
+export const PUBLISHER_OPTIONS: FilterOption[] = PUBLISHER_DISPLAYS.map(display => 
+    createFilterOption(display)
+);
+
+export const EDITION_OPTIONS: FilterOption[] = EDITION_DISPLAYS.map(display => 
+    createFilterOption(display,
+        // Custom mappings for editions
+        display === 'Standard' ? 'std' :
+        display === 'Collector\'s Edition' ? 'collectors' : undefined
+    )
+);
+
+export const LANGUAGE_OPTIONS: FilterOption[] = LANGUAGE_DISPLAYS.map(display => 
+    createFilterOption(display)
+);
+
+export const STARTING_LETTER_OPTIONS: FilterOption[] = STARTING_LETTER_DISPLAYS.map(display => 
+    createFilterOption(display)
+);
+
+// Month mapping for release dates - exported for use in utility functions
+export const MONTH_OPTIONS: FilterOption[] = [
     { display: 'Jan', value: '01' },
     { display: 'Feb', value: '02' },
     { display: 'Mar', value: '03' },
@@ -73,7 +153,7 @@ const createReleaseDateOptions = (years: number[]): HierarchicalFilterOption[] =
     }));
 };
 
-// Release date filter options (hierarchical) - 2000 to 2025
+// Release date filter options (hierarchical)
 export const RELEASE_DATE_OPTIONS: HierarchicalFilterOption[] = createReleaseDateOptions(
     generateYears(2000, 2025)
 );
@@ -91,7 +171,7 @@ export class FilterUtils {
     }
 
     /**
-     * Get display values from filter options.
+     * Get display values from filter options
      */
     static getDisplayValues(options: FilterOption[]): string[] {
         return options.map(option => option.display);
@@ -169,6 +249,41 @@ export const genreOptions = {
     convertToValues: (displayValues: string[]) => 
         FilterUtils.convertDisplayToApiValues(displayValues, GENRE_OPTIONS)
 }
+
+export const regionOptions = {
+    display: FilterUtils.getDisplayValues(REGION_OPTIONS),
+    options: REGION_OPTIONS,
+    convertToValues: (displayValues: string[]) => 
+        FilterUtils.convertDisplayToApiValues(displayValues, REGION_OPTIONS)
+};
+
+export const publisherOptions = {
+    display: FilterUtils.getDisplayValues(PUBLISHER_OPTIONS),
+    options: PUBLISHER_OPTIONS,
+    convertToValues: (displayValues: string[]) => 
+        FilterUtils.convertDisplayToApiValues(displayValues, PUBLISHER_OPTIONS)
+};
+
+export const editionOptions = {
+    display: FilterUtils.getDisplayValues(EDITION_OPTIONS),
+    options: EDITION_OPTIONS,
+    convertToValues: (displayValues: string[]) => 
+        FilterUtils.convertDisplayToApiValues(displayValues, EDITION_OPTIONS)
+};
+
+export const languageOptions = {
+    display: FilterUtils.getDisplayValues(LANGUAGE_OPTIONS),
+    options: LANGUAGE_OPTIONS,
+    convertToValues: (displayValues: string[]) => 
+        FilterUtils.convertDisplayToApiValues(displayValues, LANGUAGE_OPTIONS)
+};
+
+export const startingLetterOptions = {
+    display: FilterUtils.getDisplayValues(STARTING_LETTER_OPTIONS),
+    options: STARTING_LETTER_OPTIONS,
+    convertToValues: (displayValues: string[]) => 
+        FilterUtils.convertDisplayToApiValues(displayValues, STARTING_LETTER_OPTIONS)
+};
 
 export const releaseDateOptions = {
     display: FilterUtils.getHierarchicalDisplayValues(RELEASE_DATE_OPTIONS),

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ProductSliderItem, PageResponse } from '../types/products';
 import { appendUrlPrefix } from '../utils/utils.ts';
 import { Platform } from "../utils/Enums";
-import { genreOptions, releaseDateOptions } from '../utils/FilterEnums';
+import { genreOptions, regionOptions, publisherOptions, editionOptions, languageOptions, startingLetterOptions, releaseDateOptions } from '../utils/FilterEnums';
 import { formatPrice } from '../utils/utils';
 import InputOptionsBox from '../components/InputOptionsBox';
 import ProductCard from '../components/ProductCard';
@@ -590,50 +590,65 @@ const ProductListingPage: React.FC = () => {
                             <div className='filters-section'>
                                 <h4>Region</h4>
                                 <InputOptionsBox
-                                    availableOptions={['Asia', 'United States', 'Europe', 'Japan']}
+                                    availableOptions={regionOptions.display}
                                     placeholder='Select regions...'
                                     clearTrigger={clearTrigger}
-                                    onSelectionChange={updateFilterSelection('regions')}
+                                    onSelectionChange={(selectedDisplayValues: string[]) => {
+                                        const apiValues = regionOptions.convertToValues(selectedDisplayValues);
+                                        updateFilterSelection('regions')(apiValues);
+                                    }}
                                 />
                             </div>
 
                             <div className='filters-section'>
                                 <h4>Publisher</h4>
                                 <InputOptionsBox
-                                    availableOptions={['Koei', 'Square Enix', 'Capcom']}
+                                    availableOptions={publisherOptions.display}
                                     placeholder='Select publishers...'
                                     clearTrigger={clearTrigger}
-                                    onSelectionChange={updateFilterSelection('publishers')}
+                                    onSelectionChange={(selectedDisplayValues: string[]) => {
+                                        const apiValues = publisherOptions.convertToValues(selectedDisplayValues);
+                                        updateFilterSelection('publishers')(apiValues);
+                                    }}
                                 />
                             </div>
 
                             <div className='filters-section'>
                                 <h4>Edition</h4>
                                 <InputOptionsBox
-                                    availableOptions={['Standard', 'Collector\'s', 'Limited']}
+                                    availableOptions={editionOptions.display}
                                     placeholder='Select editions...'
                                     clearTrigger={clearTrigger}
-                                    onSelectionChange={updateFilterSelection('editions')}
+                                    onSelectionChange={(selectedDisplayValues: string[]) => {
+                                        const apiValues = editionOptions.convertToValues(selectedDisplayValues);
+                                        updateFilterSelection('editions')(apiValues);
+                                    }}
                                 />
                             </div>
 
                             <div className='filters-section'>
                                 <h4>Language</h4>
                                 <InputOptionsBox
-                                    availableOptions={['English', 'Chinese', 'Japanese']}
+                                    availableOptions={languageOptions.display}
                                     placeholder='Select languages...'
                                     clearTrigger={clearTrigger}
-                                    onSelectionChange={updateFilterSelection('languages')}
+                                    onSelectionChange={(selectedDisplayValues: string[]) => {
+                                        const apiValues = languageOptions.convertToValues(selectedDisplayValues);
+                                        updateFilterSelection('languages')(apiValues);
+                                    }}
                                 />
                             </div>
 
                             <div className='filters-section'>
                                 <h4>A - Z</h4>
                                 <InputOptionsBox
-                                    availableOptions={['A', 'B', 'C', 'D']}
+                                    availableOptions={startingLetterOptions.display}
                                     placeholder='Select starting letters...'
                                     clearTrigger={clearTrigger}
-                                    onSelectionChange={updateFilterSelection('startingLetter')}
+                                    onSelectionChange={(selectedDisplayValues: string[]) => {
+                                        const apiValues = startingLetterOptions.convertToValues(selectedDisplayValues);
+                                        updateFilterSelection('startingLetter')(apiValues);
+                                    }}
                                 />
                             </div>
 
