@@ -240,6 +240,17 @@ const ProductListingPage: React.FC = () => {
         }
     };
 
+    const handlePreviousPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < pageInfo.totalPages - 1) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
 
     useEffect(() => {
         // min cannot be > max
@@ -531,7 +542,7 @@ const ProductListingPage: React.FC = () => {
                             {/* Content Controls */}
                             <div className='content-controls-row'>
                             
-                                <div className='filter-group'>
+                                <div className='content-controls-group'>
                                     <label className='filter-label'>Sort By</label>
                                     <select
                                         className='filter-select'
@@ -546,7 +557,7 @@ const ProductListingPage: React.FC = () => {
                                     </select>
                                 </div>
 
-                                <div className='filter-group'>
+                                <div className='content-controls-group'>
                                     <label className='filter-label'>Items Per Page</label>
                                     <select 
                                         className='filter-select'
@@ -589,13 +600,37 @@ const ProductListingPage: React.FC = () => {
                                         ))}
                                     </div>
 
-                                    {/* Product Count Info */}
+                                    {/* Product Count Info with Pagination */}
                                     <div className='products-info'>
                                         <div className='products-count'>
                                             Showing {getItemRange().start} - {getItemRange().end} of {pageInfo.totalElements} Items
                                         </div>
-                                    </div>
 
+                                        <div className='pagination-controls'>
+                                            
+                                            {currentPage > 0 && (
+                                                <button 
+                                                    className='pagination-btn'
+                                                    onClick={handlePreviousPage}
+                                                >
+                                                    ⮜ Previous
+                                                </button>
+                                            )}
+
+                                            < div className='page-info'>
+                                                Page {currentPage + 1} of {pageInfo.totalPages}
+                                            </div>
+
+                                            {currentPage < pageInfo.totalPages - 1 && (
+                                                <button 
+                                                    className='pagination-btn'
+                                                    onClick={handleNextPage}
+                                                >
+                                                    Next ➤
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
                                 </>
                             )}
                         </div>
