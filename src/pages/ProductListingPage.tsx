@@ -217,17 +217,21 @@ const ProductListingPage: React.FC = () => {
             const fallbackOption = sortOptions[0];
             setSortBy(fallbackOption.sortBy);
             setOrderBy(fallbackOption.orderBy);
+            setCurrentPage(0); // Reset to first page when sorting changes
+            setPageInputValue('1'); // Reset page input to match first page
             return;
         }
 
         setSortBy(selectedOption.sortBy);
         setOrderBy(selectedOption.orderBy);
         setCurrentPage(0); // Reset to first page when sorting changes
+        setPageInputValue('1'); // Reset page input to match first page
     };
 
     const handleItemsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setItemsPerPage(Number(event.target.value));
         setCurrentPage(0); // Reset to first page when page size changes
+        setPageInputValue('1'); // Reset page input to match first page
     };
 
     const handlePriceFilterChange = (type: 'min' | 'max', value: string) => {
