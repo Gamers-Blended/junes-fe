@@ -32,7 +32,7 @@ const ProductListingPage: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState('Games')
     const [sortBy, setSortBy] = useState('name');
     const [orderBy, setOrderBy] = useState('asc');
-    const [priceFilter, setPriceFilter] = useState({ min: '', max: ''});
+    const [priceFilter, setPriceFilter] = useState({ minPrice: '', maxPrice: ''});
     const [priceError, setPriceError] = useState('');
     const [itemsPerPage, setItemsPerPage] = useState(15); // Must correspond with 1st option
     const [currentPage, setCurrentPage] = useState(0);
@@ -63,12 +63,12 @@ const ProductListingPage: React.FC = () => {
 
     // Store filter selections from InputOptionsBox components
     const [filterSelections, setFilterSelections] = useState({
-        genre: [] as string[],
-        region: [] as string[],
-        publisher: [] as string[],
-        edition: [] as string[],
-        language: [] as string[],
-        alphabet: [] as string[],
+        genres: [] as string[],
+        regions: [] as string[],
+        publishers: [] as string[],
+        editions: [] as string[],
+        languages: [] as string[],
+        startingLetter: [] as string[],
         releaseDate: [] as string[]
     });
     
@@ -91,6 +91,56 @@ const ProductListingPage: React.FC = () => {
         { id: '5', name: 'Final Fantasy Pixel Remaster', slug: 'final-fantasy-pixel-remaster', platform: '', region: '', edition: '', price: '79.99', productImageUrl: 'https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_final_fantasy_pixel_remaster_collection.jpg' }
     ];
 
+    // Build query parameters
+    const buildQueryParams = useCallback(() => {
+        const params: Record<string, any> = {
+            page: currentPage,
+            size: itemsPerPage,
+            sort: `${sortBy},${orderBy}`
+        };
+
+        // Add search text if provided
+        if (searchText.trim()) {
+            params.name = searchText.trim();
+        }
+
+        // Add price filters if provided
+        if (priceFilter.minPrice !== '') {
+            params.minPrice = parseFloat(priceFilter.minPrice);
+        }
+        if (priceFilter.maxPrice !== '') {
+            params.maxPrice = parseFloat(priceFilter.maxPrice);
+        }
+
+        // Add availability filters
+        const availabilityFilters = [];
+        if (availability.inStock) availabilityFilters.push('in_stock');
+        if (availability.outOfStock) availabilityFilters.push('out_of_stock');
+        if (availability.preOrders) availabilityFilters.push('preorder');
+        if (availabilityFilters.length > 0) {
+            params.availability = availabilityFilters.join(',');
+        }
+
+        // Add filter selections
+        Object.entries(filterSelections).forEach(([key, values]) => {
+            if (values.length > 0) {
+                params[key] = values.join(',');
+            }
+        });
+
+        return params;
+    }, [
+        currentPage,
+        itemsPerPage,
+        sortBy,
+        orderBy,
+        selectedCategory,
+        searchText,
+        priceFilter,
+        availability,
+        filterSelections
+    ]);
+
     // Fetch products from API
     const fetchProducts = useCallback(async () => {
         if (!platform) return;
@@ -103,16 +153,12 @@ const ProductListingPage: React.FC = () => {
             // Create a promise that resolves after 10 seconds
             // const delayPromise = new Promise(resolve => setTimeout(resolve, 10000));
             
-            // // Make both the API call and wait for the delay
+            // Make both the API call and wait for the delay
             // const [response] = await Promise.all([
             //     axios.get<PageResponse<ProductSliderItem>>(
             //         `http://localhost:8080/junes/api/v1/product/products/${platform}`,
             //         {
-            //             params: {
-            //                 page: currentPage,
-            //                 size: itemsPerPage,
-            //                 sort: `${sortBy},${orderBy}`
-            //             }
+            //             params: buildQueryParams()
             //         }
             //     ),
             //     delayPromise
@@ -121,11 +167,7 @@ const ProductListingPage: React.FC = () => {
             const response = await axios.get<PageResponse<ProductSliderItem>>(
                 `http://localhost:8080/junes/api/v1/product/products/${platform}`,
                 {
-                    params: {
-                        page: currentPage,
-                        size: itemsPerPage,
-                        sort: `${sortBy},${orderBy}`
-                    }
+                    params: buildQueryParams()
                 }
             );
             
@@ -152,12 +194,35 @@ const ProductListingPage: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [platform, currentPage, itemsPerPage, sortBy, orderBy]);
+    }, [platform, buildQueryParams]);
 
     // Fetch products when component mounts or dependencies change
     useEffect(() => {
         fetchProducts();
     }, [fetchProducts]);
+
+    // Reset to first page when filters change (except pagination-related changes)
+    const resetToFirstPage = useCallback(() => {
+        if (currentPage !== 0) {
+            setCurrentPage(0);
+            setPageInputValue('1');
+        }
+    }, [currentPage]);
+
+    // Watch for filter changes and reset to first page
+    useEffect(() => {
+        resetToFirstPage();
+    }, [
+        selectedCategory,
+        searchText,
+        priceFilter.minPrice,
+        priceFilter.maxPrice,
+        availability,
+        filterSelections,
+        sortBy,
+        orderBy,
+        itemsPerPage
+    ]);
 
     const handlePreOrderClick = (slug: string) => {
         navigate('/details/' + slug);
@@ -217,21 +282,15 @@ const ProductListingPage: React.FC = () => {
             const fallbackOption = sortOptions[0];
             setSortBy(fallbackOption.sortBy);
             setOrderBy(fallbackOption.orderBy);
-            setCurrentPage(0); // Reset to first page when sorting changes
-            setPageInputValue('1'); // Reset page input to match first page
             return;
         }
 
         setSortBy(selectedOption.sortBy);
         setOrderBy(selectedOption.orderBy);
-        setCurrentPage(0); // Reset to first page when sorting changes
-        setPageInputValue('1'); // Reset page input to match first page
     };
 
     const handleItemsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setItemsPerPage(Number(event.target.value));
-        setCurrentPage(0); // Reset to first page when page size changes
-        setPageInputValue('1'); // Reset page input to match first page
     };
 
     const handlePriceFilterChange = (type: 'min' | 'max', value: string) => {
@@ -239,9 +298,9 @@ const ProductListingPage: React.FC = () => {
         const newValue = value === '' ? '' : Math.max(0, parseFloat(value)).toString();
 
         if (type === 'min') {
-            setPriceFilter(prev => ({ ...prev, min: newValue }));
+            setPriceFilter(prev => ({ ...prev, minPrice: newValue }));
         } else {
-            setPriceFilter(prev => ({ ...prev, max: newValue }));
+            setPriceFilter(prev => ({ ...prev, maxPrice: newValue }));
         }
     };
 
@@ -307,18 +366,18 @@ const ProductListingPage: React.FC = () => {
 
     useEffect(() => {
         // min cannot be > max
-        if (priceFilter.min !== '' && priceFilter.max !== '' &&
-                parseFloat(priceFilter.min) > parseFloat(priceFilter.max)) {
+        if (priceFilter.minPrice !== '' && priceFilter.maxPrice !== '' &&
+                parseFloat(priceFilter.minPrice) > parseFloat(priceFilter.maxPrice)) {
             setPriceError('Minimum price cannot be greater than maximum price');
         } else {
             setPriceError('');
         }
-    }, [priceFilter.min, priceFilter.max])
+    }, [priceFilter.minPrice, priceFilter.maxPrice])
 
     // Clears all filters
     const handleClearAllFilters = () => {
         setSearchText('');
-        setPriceFilter({ min: '', max:'' });
+        setPriceFilter({ minPrice: '', maxPrice:'' });
         setAvailablity({
             inStock: false,
             outOfStock: false,
@@ -329,12 +388,12 @@ const ProductListingPage: React.FC = () => {
         setClearTrigger(prev => prev + 1);
 
         setFilterSelections({
-            genre: [],
-            region: [],
-            publisher: [],
-            edition: [],
-            language: [],
-            alphabet: [],
+            genres: [],
+            regions: [],
+            publishers: [],
+            editions: [],
+            languages: [],
+            startingLetter: [],
             releaseDate: []
         });
     };
@@ -349,9 +408,9 @@ const ProductListingPage: React.FC = () => {
         }, []);
     
     const hasActiveFilters = () => {
-        return searchText != '' ||
-                priceFilter.min != '' ||
-                priceFilter.max != '' ||
+        return searchText !== '' ||
+                priceFilter.minPrice !== '' ||
+                priceFilter.maxPrice !== '' ||
                 availability.inStock ||
                 availability.outOfStock || 
                 availability.preOrders ||
@@ -495,7 +554,7 @@ const ProductListingPage: React.FC = () => {
                                     <input 
                                         type='number' 
                                         className='price-input common-input-box'
-                                        value={priceFilter.min}
+                                        value={priceFilter.minPrice}
                                         onChange={(e) => handlePriceFilterChange('min', e.target.value)}
                                     />
                                 </div>
@@ -504,7 +563,7 @@ const ProductListingPage: React.FC = () => {
                                     <input 
                                         type='number'
                                         className='price-input common-input-box'
-                                        value={priceFilter.max}
+                                        value={priceFilter.maxPrice}
                                         onChange={(e) => handlePriceFilterChange('max', e.target.value)}
                                     />
                                 </div>
@@ -519,7 +578,7 @@ const ProductListingPage: React.FC = () => {
                                     availableOptions={['JRPG', 'RPG', 'FPS', 'TPS', 'Racing', 'Action', 'Adventure']}
                                     placeholder='Select genres...'
                                     clearTrigger={clearTrigger}
-                                    onSelectionChange={updateFilterSelection('genre')}
+                                    onSelectionChange={updateFilterSelection('genres')}
                                 />
                             </div>
 
@@ -529,7 +588,7 @@ const ProductListingPage: React.FC = () => {
                                     availableOptions={['Asia', 'United States', 'Europe', 'Japan']}
                                     placeholder='Select regions...'
                                     clearTrigger={clearTrigger}
-                                    onSelectionChange={updateFilterSelection('region')}
+                                    onSelectionChange={updateFilterSelection('regions')}
                                 />
                             </div>
 
@@ -539,7 +598,7 @@ const ProductListingPage: React.FC = () => {
                                     availableOptions={['Koei', 'Square Enix', 'Capcom']}
                                     placeholder='Select publishers...'
                                     clearTrigger={clearTrigger}
-                                    onSelectionChange={updateFilterSelection('publisher')}
+                                    onSelectionChange={updateFilterSelection('publishers')}
                                 />
                             </div>
 
@@ -549,7 +608,7 @@ const ProductListingPage: React.FC = () => {
                                     availableOptions={['Standard', 'Collector\'s', 'Limited']}
                                     placeholder='Select editions...'
                                     clearTrigger={clearTrigger}
-                                    onSelectionChange={updateFilterSelection('edition')}
+                                    onSelectionChange={updateFilterSelection('editions')}
                                 />
                             </div>
 
@@ -559,7 +618,7 @@ const ProductListingPage: React.FC = () => {
                                     availableOptions={['English', 'Chinese', 'Japanese']}
                                     placeholder='Select languages...'
                                     clearTrigger={clearTrigger}
-                                    onSelectionChange={updateFilterSelection('language')}
+                                    onSelectionChange={updateFilterSelection('languages')}
                                 />
                             </div>
 
@@ -569,7 +628,7 @@ const ProductListingPage: React.FC = () => {
                                     availableOptions={['A', 'B', 'C', 'D']}
                                     placeholder='Select starting letters...'
                                     clearTrigger={clearTrigger}
-                                    onSelectionChange={updateFilterSelection('alphabet')}
+                                    onSelectionChange={updateFilterSelection('startingLetter')}
                                 />
                             </div>
 
