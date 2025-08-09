@@ -726,7 +726,6 @@ const ProductListingPage: React.FC = () => {
 
                             {!isLoading && !error && (
                                 <>
-
                                     {/* Products Grid */}
                                     <div className="product-grid">
                                         {products.map((product) => (
@@ -734,48 +733,60 @@ const ProductListingPage: React.FC = () => {
                                         ))}
                                     </div>
 
-                                    {/* Product Count Info with Pagination */}
-                                    <div className='products-info'>
-                                        <div className='products-count'>
-                                            Showing {getItemRange().start} - {getItemRange().end} of {pageInfo.totalElements} Items
-                                        </div>
-
-                                        <div className='pagination-controls'>
-                                            
-                                            {currentPage > 0 && (
-                                                <button 
-                                                    className='pagination-btn'
-                                                    onClick={handlePreviousPage}
-                                                >
-                                                    ⮜ Previous
-                                                </button>
-                                            )}
-
-                                            < div className='page-info'>
-                                                Page{' '}
-                                                <input
-                                                    type='number'
-                                                    min={1}
-                                                    max={pageInfo.totalPages}
-                                                    value={pageInputValue}
-                                                    onChange={handlePageInputChange}
-                                                    onKeyDown={handlePageInputKeyDown}
-                                                    onBlur={handlePageInputBlur}
-                                                    className='common-input-box'/>
-                                                    {' '}
-                                                    / {pageInfo.totalPages}
+                                    {products.length === 0 ? (
+                                        <>
+                                            {/* No Products Found Message */}
+                                            <div className='no-products-message'>
+                                                No products found for the selected filters
                                             </div>
+                                        </>
+                                        
+                                    ) : (
+                                        <>
+                                            {/* Product Count Info with Pagination */}
+                                            <div className='products-info'>
+                                                <div className='products-count'>
+                                                    Showing {getItemRange().start} - {getItemRange().end} of {pageInfo.totalElements} Items
+                                                </div>
 
-                                            {currentPage < pageInfo.totalPages - 1 && (
-                                                <button 
-                                                    className='pagination-btn'
-                                                    onClick={handleNextPage}
-                                                >
-                                                    Next ➤
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
+                                                <div className='pagination-controls'>
+                                                    
+                                                    {currentPage > 0 && (
+                                                        <button 
+                                                            className='pagination-btn'
+                                                            onClick={handlePreviousPage}
+                                                        >
+                                                            ⮜ Previous
+                                                        </button>
+                                                    )}
+
+                                                    < div className='page-info'>
+                                                        Page{' '}
+                                                        <input
+                                                            type='number'
+                                                            min={1}
+                                                            max={pageInfo.totalPages}
+                                                            value={pageInputValue}
+                                                            onChange={handlePageInputChange}
+                                                            onKeyDown={handlePageInputKeyDown}
+                                                            onBlur={handlePageInputBlur}
+                                                            className='common-input-box'/>
+                                                            {' '}
+                                                            / {pageInfo.totalPages}
+                                                    </div>
+
+                                                    {currentPage < pageInfo.totalPages - 1 && (
+                                                        <button 
+                                                            className='pagination-btn'
+                                                            onClick={handleNextPage}
+                                                        >
+                                                            Next ➤
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
                                 </>
                             )}
                         </div>
