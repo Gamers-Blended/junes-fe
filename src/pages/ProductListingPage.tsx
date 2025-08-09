@@ -4,6 +4,7 @@ import axios from 'axios';
 import { ProductSliderItem, PageResponse } from '../types/products';
 import { appendUrlPrefix } from '../utils/utils.ts';
 import { Platform } from "../utils/Enums";
+import { genreOptions } from '../utils/FilterEnums';
 import { formatPrice } from '../utils/utils';
 import InputOptionsBox from '../components/InputOptionsBox';
 import ProductCard from '../components/ProductCard';
@@ -575,10 +576,14 @@ const ProductListingPage: React.FC = () => {
                             <div className='filters-section'>
                                 <h4>Genre</h4>
                                 <InputOptionsBox
-                                    availableOptions={['JRPG', 'RPG', 'FPS', 'TPS', 'Racing', 'Action', 'Adventure']}
+                                    availableOptions={genreOptions.display}
                                     placeholder='Select genres...'
                                     clearTrigger={clearTrigger}
-                                    onSelectionChange={updateFilterSelection('genres')}
+                                    onSelectionChange={(selectedDisplayValues: string[]) => {
+                                        // Convert display values to API values
+                                        const apiValues = genreOptions.convertToValues(selectedDisplayValues);
+                                        updateFilterSelection('genres')(apiValues);
+                                    }}
                                 />
                             </div>
 
