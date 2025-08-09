@@ -79,8 +79,8 @@ const ProductListingPage: React.FC = () => {
         { value: 'name-desc', label: 'Name (Z → A)', sortBy: 'name', orderBy: 'desc' },
         { value: 'price-asc', label: 'Price ↗', sortBy: 'price', orderBy: 'asc' },
         { value: 'price-desc', label: 'Price ↘', sortBy: 'price', orderBy: 'desc' },
-        { value: 'release-asc', label: 'Release Date ↗', sortBy: 'release', orderBy: 'asc' },
-        { value: 'release-desc', label: 'Release Date ↘', sortBy: 'release', orderBy: 'desc' }
+        { value: 'release-asc', label: 'Release Date ↗', sortBy: 'release_date', orderBy: 'asc' },
+        { value: 'release-desc', label: 'Release Date ↘', sortBy: 'release_date', orderBy: 'desc' }
     ];
 
     const topPreOrders: Game[] = [
