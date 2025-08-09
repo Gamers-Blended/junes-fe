@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ProductSliderItem, PageResponse } from '../types/products';
 import { appendUrlPrefix } from '../utils/utils.ts';
 import { Platform } from "../utils/Enums";
-import { genreOptions } from '../utils/FilterEnums';
+import { genreOptions, releaseDateOptions } from '../utils/FilterEnums';
 import { formatPrice } from '../utils/utils';
 import InputOptionsBox from '../components/InputOptionsBox';
 import ProductCard from '../components/ProductCard';
@@ -640,14 +640,16 @@ const ProductListingPage: React.FC = () => {
                             <div className='filters-section'>
                                 <h4>Release Date</h4>
                                 <InputOptionsBox 
-                                    availableOptions={{
-                                        '2024': ['January', 'February', 'March', 'April', 'May', 'June'],
-                                        '2025': ['January', 'February', 'March', 'April', 'May', 'June']
-                                    }}
+                                    availableOptions={releaseDateOptions.display}
                                     placeholder="Select date..."
                                     isHierachical={true}
                                     clearTrigger={clearTrigger}
-                                    onSelectionChange={updateFilterSelection('releaseDate')}
+                                    onSelectionChange={(selectedDisplayValues: string[]) => {
+                                        console.log('Selected display values:', selectedDisplayValues);
+                                        const apiValues = releaseDateOptions.convertToValues(selectedDisplayValues);
+                                        console.log('Converted API values:', apiValues);
+                                        updateFilterSelection('releaseDate')(apiValues);
+                                    }}
                                 />
                             </div>
 
