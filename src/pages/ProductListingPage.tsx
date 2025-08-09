@@ -36,6 +36,7 @@ const ProductListingPage: React.FC = () => {
     const [priceError, setPriceError] = useState('');
     const [itemsPerPage, setItemsPerPage] = useState(15); // Must correspond with 1st option
     const [currentPage, setCurrentPage] = useState(0);
+    const [pageInputValue, setPageInputValue] = useState('1');
 
     // Product data states
     const [products, setProducts] = useState<ProductSliderItem[]>([]);
@@ -242,14 +243,62 @@ const ProductListingPage: React.FC = () => {
 
     const handlePreviousPage = () => {
         if (currentPage > 0) {
-            setCurrentPage(currentPage - 1);
+            const newPage = currentPage - 1;
+            setCurrentPage(newPage);
+            setPageInputValue((newPage + 1).toString()); // Update input to match new page
         }
     };
 
     const handleNextPage = () => {
         if (currentPage < pageInfo.totalPages - 1) {
-            setCurrentPage(currentPage + 1);
+            const newPage = currentPage + 1;
+            setCurrentPage(newPage);
+            setPageInputValue((newPage + 1).toString()); // Update input to match new page
         }
+    };
+
+    const handlePageInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const inputValue = event.target.value;
+
+        // Allow empty string OR strings containing only digits (but can be partial)
+        if (inputValue === '' || /^\d+$/.test(inputValue)) {
+            setPageInputValue(inputValue);
+        }
+    };
+
+    const handlePageJump = () => {
+        // If empty, reset to current page (don't jump anywhere)
+        if (pageInputValue === '' || pageInputValue.trim() === '') {
+            setPageInputValue((currentPage + 1).toString());
+            return;
+        }
+
+        const pageNumber = parseInt(pageInputValue, 10);
+
+        // Validate page number
+        if (isNaN(pageNumber) || pageNumber < 1) {
+            setPageInputValue((currentPage + 1).toString());
+            return;
+        }
+
+        // Clamp between 1 and total pages
+        const clampedPage = Math.max(1, Math.min(pageNumber, pageInfo.totalPages));
+
+        // Update current page and input value
+        if (clampedPage - 1 !== currentPage) {
+            setCurrentPage(clampedPage - 1); // Convert to zero-based index
+        }
+        setPageInputValue(clampedPage.toString());
+    };
+
+    const handlePageInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            handlePageJump();
+        }
+    };
+
+    const handlePageInputBlur = () => {
+        handlePageJump();
     };
 
     useEffect(() => {
@@ -618,7 +667,18 @@ const ProductListingPage: React.FC = () => {
                                             )}
 
                                             < div className='page-info'>
-                                                Page {currentPage + 1} of {pageInfo.totalPages}
+                                                Page{' '}
+                                                <input
+                                                    type='number'
+                                                    min={1}
+                                                    max={pageInfo.totalPages}
+                                                    value={pageInputValue}
+                                                    onChange={handlePageInputChange}
+                                                    onKeyDown={handlePageInputKeyDown}
+                                                    onBlur={handlePageInputBlur}
+                                                    className='common-input-box'/>
+                                                    {' '}
+                                                    / {pageInfo.totalPages}
                                             </div>
 
                                             {currentPage < pageInfo.totalPages - 1 && (

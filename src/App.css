@@ -1215,3 +1215,8 @@ body.modal-open {
   align-items: center; /* Centers text vertically */
   justify-content: center;
 }
+
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+  appearance: textfield; /* Other modern browsers */
+}
