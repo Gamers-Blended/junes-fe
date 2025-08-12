@@ -70,7 +70,7 @@ const ProductListingPage: React.FC = () => {
         editions: [] as string[],
         languages: [] as string[],
         startingLetters: [] as string[],
-        releaseDate: [] as string[]
+        releaseDates: [] as string[]
     });
     
     const categories = ['Games', 'Pre-Orders', 'Best Sellers', 'Consoles'];
@@ -395,7 +395,7 @@ const ProductListingPage: React.FC = () => {
             editions: [],
             languages: [],
             startingLetters: [],
-            releaseDate: []
+            releaseDates: []
         });
     };
 
@@ -663,7 +663,7 @@ const ProductListingPage: React.FC = () => {
                                         console.log('Selected display values:', selectedDisplayValues);
                                         const apiValues = releaseDateOptions.convertToValues(selectedDisplayValues);
                                         console.log('Converted API values:', apiValues);
-                                        updateFilterSelection('releaseDate')(apiValues);
+                                        updateFilterSelection('releaseDates')(apiValues);
                                     }}
                                 />
                             </div>
