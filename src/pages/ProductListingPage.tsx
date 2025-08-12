@@ -69,7 +69,7 @@ const ProductListingPage: React.FC = () => {
         publishers: [] as string[],
         editions: [] as string[],
         languages: [] as string[],
-        startingLetter: [] as string[],
+        startingLetters: [] as string[],
         releaseDate: [] as string[]
     });
     
@@ -394,7 +394,7 @@ const ProductListingPage: React.FC = () => {
             publishers: [],
             editions: [],
             languages: [],
-            startingLetter: [],
+            startingLetters: [],
             releaseDate: []
         });
     };
@@ -647,7 +647,7 @@ const ProductListingPage: React.FC = () => {
                                     clearTrigger={clearTrigger}
                                     onSelectionChange={(selectedDisplayValues: string[]) => {
                                         const apiValues = startingLetterOptions.convertToValues(selectedDisplayValues);
-                                        updateFilterSelection('startingLetter')(apiValues);
+                                        updateFilterSelection('startingLetters')(apiValues);
                                     }}
                                 />
                             </div>
