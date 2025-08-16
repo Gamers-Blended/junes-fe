@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useNavigate } from "react-router-dom";
 import NotificationPopUp from './NotificationPopUp';
 import QuickShopWindow from './QuickShopWindow';
+import { useAppDispatch } from '../store/hooks';
+import { setSelectedItem } from '../store/productSlice';
 
 import heartGreenIcon from "../assets/heartGreenIcon.png";
 import heartGreenFilledIcon from "../assets/heartGreenFilledIcon.png";
@@ -31,9 +33,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
     // Title will only show up to wordLimit characters
     const trimmedTitle = item.name.length > wordLimit ? `${item.name.substring(0, wordLimit)}...` : item.name;
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     const handleNavigateToProduct = () => {
         const url = `/games/${item.slug}`;
+        dispatch(setSelectedItem(item)); // Set the selected item in the Redux store
+        console.log(`Navigating to product details for ${item.name}`);
+        // Navigate to the product details page
         navigate(url);
     };
 

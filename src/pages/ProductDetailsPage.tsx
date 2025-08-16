@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { formatPlatformName, formatRegionName, formatEditionName } from '../utils/utils.ts';
+import { useAppSelector } from '../store/hooks';
 
 
 interface ProductDTO {
@@ -41,7 +42,11 @@ interface ProductDetailsDTO {
 
 const ProductDetailsPage: React.FC = () => {
     const { slug } = useParams();
+    const selectedItem = useAppSelector((state) => state.product.selectedItem);
+
     const [productDetails, setProductDetails] = useState<ProductDetailsDTO | null>(null);
+    const [currentPrice, setCurrentPrice] = useState<number>(0);
+    const [currentProductImageUrl, setCurrentProductImageUrl] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -74,6 +79,20 @@ const ProductDetailsPage: React.FC = () => {
                     `http://localhost:8080/junes/api/v1/product/details/${slug}`
                 );
                 setProductDetails(response.data);
+
+                // Set default selections if variants exist
+                if (response.data.productVariantDTOList.length > 0 && selectedItem) {
+                    // Try to find a variant matching the platform from props
+                    const matchingVariant = response.data.productVariantDTOList.find(v => v.platform === selectedItem.platform && v.region === selectedItem.region && v.edition === selectedItem.edition);
+                    const defaultVariant = matchingVariant || response.data.productVariantDTOList[0];
+
+                    setSelectedPlatform(defaultVariant.platform);
+                    setSelectedRegion(defaultVariant.region);
+                    setSelectedEdition(defaultVariant.edition);
+                    setCurrentPrice(defaultVariant.price);
+                    setCurrentProductImageUrl(defaultVariant.productImageUrl);
+                }
+
             } catch (err) {
                 if (axios.isAxiosError(err)) {
                     setError(`Failed to fetch product details: ${err.response?.status || err.message}`);
@@ -87,6 +106,68 @@ const ProductDetailsPage: React.FC = () => {
 
         fetchProductDetails();
     }, [slug]);
+
+    const updatePriceAndProductImageUrl = (platform: string, region: string, edition: string) => {
+        const variant = productDetails?.productVariantDTOList.find(v => 
+            v.platform === platform && v.region === region && v.edition == edition);
+        if (variant) {
+            setCurrentPrice(variant.price);
+            setCurrentProductImageUrl(variant.productImageUrl);
+        }
+    };
+
+    const handlePlatformChange = (platform: string) => {
+        setSelectedPlatform(platform);
+
+        // Reset region and edition if not available for new platform
+        const availableRegionsForNewPlatform = [...new Set(productDetails?.productVariantDTOList.filter(v => v.platform === platform).map(v => v.region))];
+
+        // Reset to 1st new region if current region not available for new platform
+        if (!availableRegionsForNewPlatform.includes(selectedRegion)) {
+            const newRegion = availableRegionsForNewPlatform[0] || '';
+            setSelectedRegion(newRegion);
+            
+            // Reset to 1st new edition
+            const availableEditionsForNewSelection = [...new Set(productDetails?.productVariantDTOList.filter(v => v.platform === platform && v.region === newRegion).map(v => v.edition))];
+            const newEdition = availableEditionsForNewSelection[0] || '';
+            setSelectedEdition(newEdition);
+
+            updatePriceAndProductImageUrl(platform, newRegion, newEdition);
+        } else {
+            // Currently selected region also available for new platform
+            const availableEditionsForNewSelection = [...new Set(productDetails?.productVariantDTOList.filter(v => v.platform === platform && v.region === selectedRegion).map(v => v.edition))];
+            
+            // Reset to 1st new edition if current edition not available for new platform and region
+            if (!availableEditionsForNewSelection.includes(selectedEdition)) {
+                const newEdition = availableEditionsForNewSelection[0] || '';
+                setSelectedEdition(newEdition);
+
+                updatePriceAndProductImageUrl(platform, selectedRegion, newEdition);
+            } else {
+                // Currently selected edition also available for new platform and region
+                updatePriceAndProductImageUrl(platform, selectedRegion, selectedEdition);
+            }
+        }
+    };
+
+    const handleRegionChange = (region: string) => {
+        setSelectedRegion(region);
+
+        const availableEditionsForNewSelection = [...new Set(productDetails?.productVariantDTOList.filter(v => v.platform === selectedPlatform && v.region === region).map(v => v.edition))];
+        // Reset to 1st new edition if current edition not available for new region
+        if (!availableEditionsForNewSelection.includes(selectedEdition)) {
+            const newEdition = availableEditionsForNewSelection[0] || '';
+            setSelectedEdition(newEdition);
+            updatePriceAndProductImageUrl(selectedPlatform, region, newEdition);
+        } else {
+            updatePriceAndProductImageUrl(selectedPlatform, region, selectedEdition);
+        }
+    };
+
+    const handleEditionChange = (edition: string) => {
+        setSelectedEdition(edition);
+        updatePriceAndProductImageUrl(selectedPlatform, selectedRegion, edition);
+    };
 
     if (loading) {
         return (
@@ -143,6 +224,7 @@ const ProductDetailsPage: React.FC = () => {
                                 <button
                                     key={platform}
                                     className={`option-btn ${selectedPlatform === platform ? 'active' : ''}`}
+                                    onClick={() => handlePlatformChange(platform)}
                                 >
                                     {formatPlatformName(platform)}
                                 </button>
@@ -159,6 +241,7 @@ const ProductDetailsPage: React.FC = () => {
                                 <button
                                     key={region}
                                     className={`option-btn ${selectedRegion === region ? 'active' : ''}`}
+                                    onClick={() => handleRegionChange(region)}
                                 >
                                     {formatRegionName(region)}
                                 </button>
@@ -174,6 +257,7 @@ const ProductDetailsPage: React.FC = () => {
                                 <button
                                     key={editon}
                                     className={`option-btn ${selectedEdition === editon ? 'active' : ''}`}
+                                    onClick={() => handleEditionChange(editon)}
                                 >
                                     {formatEditionName(editon)}
                                 </button>

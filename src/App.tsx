@@ -10,12 +10,15 @@ import WishListPage from './pages/WishListPage.tsx';
 import NavigationBar from "./components/NavigationBar.tsx";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './components/AuthContext';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
 
 function App() {
 
   return (
     <BrowserRouter>
     <AuthProvider>
+    <Provider store={store}>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/products/:id" element={<ProductsPage />} />
@@ -26,9 +29,10 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/wishlist" element={<WishListPage />} />
       </Routes>
-      <NavigationBar/>
-      </AuthProvider>
-      </BrowserRouter>
+    </Provider>
+    <NavigationBar/>
+    </AuthProvider>
+    </BrowserRouter>
   )
 }
 
