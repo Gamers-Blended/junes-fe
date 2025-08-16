@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { appendUrlPrefix } from '../utils/utils.ts';
+import { formatPlatformName, formatRegionName, formatEditionName, appendUrlPrefix } from '../utils/utils.ts';
 
 interface ProductDTO {
     id: string;
@@ -250,50 +250,6 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
         // Close the window after a short delay
         setTimeout(onClose, 300);
     }
-
-
-    const formatPlatformName = (platform: string) => {
-        switch (platform.toLowerCase()) {
-            case 'ps4':
-                return 'PS4';
-            case 'ps5':
-                return 'PS5';
-            case 'nsw':
-                return 'Switch'
-            case 'nsw2':
-                return 'Switch 2'
-            case 'xbox':
-                return 'Xbox'
-            case 'pc':
-                return 'PC'
-            default:
-                return platform.charAt(0).toUpperCase() + platform.slice(1);
-        }
-    };
-
-    const formatRegionName = (region: string) => {
-        switch (region.toLowerCase()) {
-            case 'asia':
-                return 'Asia';
-            case 'us':
-                return 'United States';
-            case 'eur':
-                return 'Europe';
-            default:
-                return region.charAt(0).toUpperCase() + region.slice(1);
-        }
-    };
-
-    const formatEditionName = (edition: string) => {
-        switch (edition.toLowerCase()) {
-            case 'std':
-                return 'Standard';
-            case 'ce':
-                return 'Collector\'s';
-            default:
-                return edition.charAt(0).toUpperCase() + edition.slice(1);
-        }
-    };
 
     useEffect(() => {
         fetchProductDetails();

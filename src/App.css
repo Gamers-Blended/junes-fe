@@ -1237,3 +1237,36 @@ input[type="number"] {
   -moz-appearance: textfield; /* Firefox */
   appearance: textfield; /* Other modern browsers */
 }
+
+/* PRODUCT DETAILS PAGE */
+.product-variant-container {
+  max-width: 1200px;
+  display: flex;
+}
+
+.product-publisher {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.option-group-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.option-label-details {
+  font-size: 24px;
+  font-weight: bold;
+  justify-content: left;
+  align-items: center;
+  display: flex;
+  width: 100px;
+}
+
+.option-buttons-details {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
