@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 import NotificationPopUp from './NotificationPopUp';
 import QuickShopWindow from './QuickShopWindow';
 
@@ -29,6 +30,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
     const wordLimit = 40;
     // Title will only show up to wordLimit characters
     const trimmedTitle = item.name.length > wordLimit ? `${item.name.substring(0, wordLimit)}...` : item.name;
+    const navigate = useNavigate();
+
+    const handleNavigateToProduct = () => {
+        const url = `/games/${item.slug}`;
+        navigate(url);
+    };
 
     const handleAddToWishList = () => {
         const newLikedState = !isLiked;
@@ -93,9 +100,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
                     onClick={handleAddToWishList}
                     alt={isLiked ? "Remove from Wishlist" : "Add to Wishlist"}
                 />
-                <img className='product-card-image' src={item.productImageUrl} alt={item.name} />
+                <img 
+                    src={item.productImageUrl} 
+                    className='product-card-image'
+                    onClick={handleNavigateToProduct}
+                    alt={item.name} />
             </div>
-            <p className='product-card-title'>{trimmedTitle}</p>
+            <p 
+                className='product-card-title'
+                onClick={handleNavigateToProduct}
+            >{trimmedTitle}</p>
             <p className='product-card-price'>{item.price}</p>
 
             {/* Buttons that appear on hover */}
