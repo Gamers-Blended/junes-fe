@@ -104,12 +104,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
                     src={item.productImageUrl} 
                     className='product-card-image'
                     onClick={handleNavigateToProduct}
-                    alt={item.name} />
+                    alt={item.name} 
+                />
             </div>
             <p 
                 className='product-card-title'
                 onClick={handleNavigateToProduct}
-            >{trimmedTitle}</p>
+            >
+                {trimmedTitle}
+            </p>
             <p className='product-card-price'>{item.price}</p>
 
             {/* Buttons that appear on hover */}
