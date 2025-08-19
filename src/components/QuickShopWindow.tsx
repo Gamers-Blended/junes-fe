@@ -1,40 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { formatPlatformName, formatRegionName, formatEditionName, formatStringArrays, convertDate, appendUrlPrefix } from '../utils/utils.ts';
-
-interface ProductDTO {
-    id: string;
-    name: string;
-    slug: string;
-    description: string;
-    price: number;
-    platform: string;
-    region: string;
-    edition: string;
-    publisher: string;
-    releaseDate: number[];
-    series: string[];
-    genres: string[];
-    languages: string[];
-    numberOfPlayers: string[];
-    unitsSold: number;
-    stock: number;
-    imageUrlList: string[];
-    editionNotes: string;
-    createdOn: string;
-}
-
-interface ProductVariantDTO {
-    platform: string;
-    region: string;
-    edition: string;
-    price: number;
-    productImageUrl: string;
-}
-
-interface ProductDetailsResponse {
-    productDTO: ProductDTO;
-    productVariantDTOList: ProductVariantDTO[];
-}
+import { ProductDTO, ProductVariantDTO, ProductDetailsResponse } from '../types/products.ts';
 
 interface QuickWindowProps {
     item: {

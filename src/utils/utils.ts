@@ -1,3 +1,5 @@
+import { StockStatus } from '../utils/Enums.tsx';
+
 const URL_PREFIX = "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/";
 
 // Functions for formatting strings or numbers
@@ -96,4 +98,20 @@ export const appendUrlPrefix = (
     return input.map((item) => (item ? `${URL_PREFIX}${item}` : ""));
   }
   return input ? `${URL_PREFIX}${input}` : "";
+};
+
+// Derive product status from releaseDate and stock
+export const getStockStatus = (releaseDate: number[], stock: number): string => {
+  // Parse the release date
+  const [year, month, day] = releaseDate;
+  // Month is 0-indexed in JavaScript Date
+  const releaseDateObj = new Date(year, month - 1, day)
+  console.log("Release Date Object:", releaseDateObj , "stock:", stock);
+
+  if (releaseDateObj > new Date()) {
+    return StockStatus.PRE_ORDER;
+  } else if (stock > 0) {
+    return StockStatus.IN_STOCK;
+  }
+  return StockStatus.OUT_OF_STOCK;
 };

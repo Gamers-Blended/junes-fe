@@ -6,3 +6,9 @@ export enum Platform {
     XBOX = 'xbox',
     PC = 'pc'
 }
+
+export enum StockStatus {
+    IN_STOCK = 'In Stock',
+    OUT_OF_STOCK = 'Out of Stock',
+    PRE_ORDER = 'Pre-order'
+}

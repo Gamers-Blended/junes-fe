@@ -1,50 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, CSSProperties } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { formatPlatformName, formatRegionName, formatEditionName, formatStringGeneral } from '../utils/utils.ts';
+import { formatPlatformName, formatRegionName, formatEditionName, formatStringGeneral, getStockStatus } from '../utils/utils.ts';
+import { ProductDTO, ProductVariantDTO, ProductDetailsResponse } from '../types/products.ts';
+import { StockStatus } from '../utils/Enums.tsx';
 import { useAppSelector } from '../store/hooks';
 
-
-interface ProductDTO {
-    id: string;
-    name: string;
-    slug: string;
-    description: string;
-    price: number;
-    platform: string;
-    region: string;
-    edition: string;
-    publisher: string;
-    releaseDate: string;
-    series: string[];
-    genres: string[];
-    languages: string[];
-    numberOfPlayers: string[];
-    unitsSold: number;
-    stock: number;
-    imageUrlList: string[];
-    editionNotes: string;
-    createdOn: string;
-}
-
-interface ProductVariantDTO {
-    platform: string;
-    region: string;
-    edition: string;
-    price: number;
-    productImageUrl: string;
-}
-
-interface ProductDetailsDTO {
-    productDTO: ProductDTO;
-    productVariantDTOList: ProductVariantDTO[];
-}
 
 const ProductDetailsPage: React.FC = () => {
     const { slug } = useParams();
     const selectedItem = useAppSelector((state) => state.product.selectedItem);
 
-    const [productDetails, setProductDetails] = useState<ProductDetailsDTO | null>(null);
+    const [productDetails, setProductDetails] = useState<ProductDetailsResponse | null>(null);
+    const [currentStock, setCurrentStock] = useState<number>(0);
     const [currentPrice, setCurrentPrice] = useState<number>(0);
     const [currentProductImageUrl, setCurrentProductImageUrl] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
@@ -75,7 +43,7 @@ const ProductDetailsPage: React.FC = () => {
             
             try {
                 setLoading(true);
-                const response = await axios.get<ProductDetailsDTO>(
+                const response = await axios.get<ProductDetailsResponse>(
                     `http://localhost:8080/junes/api/v1/product/details/${slug}`
                 );
                 setProductDetails(response.data);
@@ -118,6 +86,10 @@ const ProductDetailsPage: React.FC = () => {
 
     const handlePlatformChange = (platform: string) => {
         setSelectedPlatform(platform);
+
+        // Reset stock level
+        const newStock = productDetails?.productVariantDTOList.find(v => v.platform === platform)?.stock || 0;
+        setCurrentStock(newStock);
 
         // Reset region and edition if not available for new platform
         const availableRegionsForNewPlatform = [...new Set(productDetails?.productVariantDTOList.filter(v => v.platform === platform).map(v => v.region))];
@@ -169,6 +141,27 @@ const ProductDetailsPage: React.FC = () => {
         updatePriceAndProductImageUrl(selectedPlatform, selectedRegion, edition);
     };
 
+    // Styling for stock status
+    const getStatusStyle = (status: string): CSSProperties => {
+        const baseStyle: CSSProperties = {
+            color: 'white',
+            padding: '8px 16px',
+            borderRadius: '6px',
+            fontWeight: '600',
+            fontSize: '14px',
+            textAlign: 'center',
+            display: 'inline-block',
+            border: 'none',
+        };
+
+    switch(status) {
+        case StockStatus.IN_STOCK: return { ...baseStyle, backgroundColor: '#22c55e' };
+        case StockStatus.OUT_OF_STOCK: return { ...baseStyle, backgroundColor: '#ef4444' };
+        case StockStatus.PRE_ORDER: return { ...baseStyle, backgroundColor: '#3b82f6' };
+        default: return { ...baseStyle, backgroundColor: '#6b7280' };
+    }
+};
+
     if (loading) {
         return (
             <div className="container">
@@ -203,6 +196,7 @@ const ProductDetailsPage: React.FC = () => {
   }
 
   const { productDTO } = productDetails;
+  const status = getStockStatus(productDTO.releaseDate, currentStock);
 
   return (
     <div className="product-variant-container">
@@ -265,6 +259,10 @@ const ProductDetailsPage: React.FC = () => {
                         </div>
                     )}
                 </div>
+            </div>
+
+            <div style={getStatusStyle(status)}>
+                    {getStockStatus(productDTO.releaseDate, currentStock)}
             </div>
           
             <div className="product-description">
