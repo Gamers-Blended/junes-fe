@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { formatPlatformName, formatRegionName, formatEditionName } from '../utils/utils.ts';
+import { formatPlatformName, formatRegionName, formatEditionName, formatStringGeneral } from '../utils/utils.ts';
 import { useAppSelector } from '../store/hooks';
 
 
@@ -210,7 +210,7 @@ const ProductDetailsPage: React.FC = () => {
             <h1 className="product-title">{productDTO.name}</h1>
 
             <div className="product-publisher">
-                <p>{productDTO.publisher}</p>
+                <p>{formatStringGeneral(productDTO.publisher)}</p>
             </div>
 
             <div className='product-options'>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { formatPlatformName, formatRegionName, formatEditionName, appendUrlPrefix } from '../utils/utils.ts';
+import { formatPlatformName, formatRegionName, formatEditionName, formatStringArrays, convertDate, appendUrlPrefix } from '../utils/utils.ts';
 
 interface ProductDTO {
     id: string;
@@ -89,36 +89,6 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
         }
     };
 
-    const convertDate = (dateArray: number[]) => {
-        if (!dateArray || dateArray.length === 0) return 'Not Available';
-
-        const day = dateArray[2];
-        const month = dateArray[1];
-        const year = dateArray[0];
-        const date = new Date(year, month - 1, day); // month is 0-indexed
-        return date.toLocaleDateString('en-GB', { 
-        day: 'numeric', 
-        month: 'long', 
-        year: 'numeric' 
-            });
-    };
-
-    const formatStringArrays = (strings: string[]) => {
-        if (!strings || strings.length === 0) return 'Not Available';
-        
-        return strings
-            .map(str => {
-            // Replace underscores with spaces and split into words
-            const words = str.replace(/_/g, ' ').split(' ');
-            // Capitalize each word
-            const capitalized = words.map(word => 
-                word.charAt(0).toUpperCase() + word.slice(1)
-            );
-            return capitalized.join(' ');
-        })
-        .join(', ');
-    };
-
     const formatNumberArrays = (numbers: string[]) => {
         if (!numbers || !Array.isArray(numbers) || numbers.length === 0) {
             return 'Not Available';
@@ -142,7 +112,8 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({ item, onClose, onAddToCar
 
             // Append prefix to each productImageUrl
             data.productVariantDTOList.forEach(variant => {
-                variant.productImageUrl = appendUrlPrefix(variant.productImageUrl);
+                const prefixedUrl = appendUrlPrefix(variant.productImageUrl);
+                variant.productImageUrl = prefixedUrl as string;
             });
             
             setProductData(data.productDTO);
