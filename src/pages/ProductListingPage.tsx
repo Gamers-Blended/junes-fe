@@ -176,7 +176,8 @@ const ProductListingPage: React.FC = () => {
 
             // Append prefix to each productImageUrl
             data.content.forEach(item => {
-                item.productImageUrl = appendUrlPrefix(item.productImageUrl);
+                const prefixedUrl = appendUrlPrefix(item.productImageUrl);
+                item.productImageUrl = prefixedUrl as string;
             });
 
             setProducts(data.content);
