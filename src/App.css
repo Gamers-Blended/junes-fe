@@ -1,5 +1,14 @@
+@import './styles/Breadcrumb.css';
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 #root {
   max-width: 1380px;
+  height: 85%;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
@@ -1254,6 +1263,7 @@ input[type="number"] {
 .product-variant-container {
   max-width: 1200px;
   display: flex;
+  flex-direction: column;
 }
 
 .product-variant-section {

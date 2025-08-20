@@ -22,6 +22,25 @@ export const formatPlatformName = (platform: string) => {
   }
 };
 
+export const formatFullPlatformName = (platform: string) => {
+  switch (platform.toLowerCase()) {
+    case "ps4":
+      return "PlayStation 4";
+    case "ps5":
+      return "PlayStation 5";
+    case "nsw":
+      return "Nintendo Switch";
+    case "nsw2":
+      return "Nintendo Switch 2";
+    case "xbox":
+      return "Xbox Series X/S";
+    case "pc":
+      return "PC";
+    default:
+      return platform.charAt(0).toUpperCase() + platform.slice(1);
+  }
+};
+
 export const formatRegionName = (region: string) => {
   switch (region.toLowerCase()) {
     case "asia":

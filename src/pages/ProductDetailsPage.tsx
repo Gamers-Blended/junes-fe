@@ -15,6 +15,7 @@ import {
 } from "../types/products.ts";
 import { StockStatus } from "../utils/Enums.tsx";
 import { useAppSelector } from "../store/hooks";
+import Breadcrumb from "../components/Breadcrumb.tsx";
 
 const ProductDetailsPage: React.FC = () => {
   const { slug } = useParams();
@@ -284,6 +285,8 @@ const ProductDetailsPage: React.FC = () => {
 
   return (
     <div className="product-variant-container">
+      <Breadcrumb selectedPlatform={selectedPlatform} />
+
       <div className="product-variant-section">
         <h1 className="product-title">{productDTO.name}</h1>
 
