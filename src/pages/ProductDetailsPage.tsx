@@ -23,6 +23,7 @@ const ProductDetailsPage: React.FC = () => {
 
   const [productDetails, setProductDetails] =
     useState<ProductDetailsResponse | null>(null);
+  const [currentCategory, setCurrentCategory] = useState<string>("Games");
   const [currentStock, setCurrentStock] = useState<number>(0);
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [currentProductImageUrl, setCurrentProductImageUrl] =
@@ -285,7 +286,7 @@ const ProductDetailsPage: React.FC = () => {
 
   return (
     <div className="product-variant-container">
-      <Breadcrumb selectedPlatform={selectedPlatform} />
+      <Breadcrumb selectedPlatform={selectedPlatform} selectedCategory={currentCategory} />
 
       <div className="product-variant-section">
         <h1 className="product-title">{productDTO.name}</h1>

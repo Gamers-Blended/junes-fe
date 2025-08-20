@@ -4,9 +4,10 @@ import { formatFullPlatformName } from "../utils/utils";
 
 interface BreadcrumbProps {
   selectedPlatform?: string;
+  selectedCategory?: string;
 }
 
-const Breadcrumb: React.FC<BreadcrumbProps> = ({ selectedPlatform }) => {
+const Breadcrumb: React.FC<BreadcrumbProps> = ({ selectedPlatform, selectedCategory }) => {
   return (
     <nav className="breadcrumb" aria-label="Breadcrumb">
       <ol className="breadcrumb-list">
@@ -26,7 +27,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ selectedPlatform }) => {
                 to={`/products/listings/${selectedPlatform}`}
                 className="breadcrumb-link"
               >
-                {formatFullPlatformName(selectedPlatform)}
+                {formatFullPlatformName(selectedPlatform) + ' ' + (selectedCategory ? `${selectedCategory}` : '')}
               </Link>
             </li>
           </>
