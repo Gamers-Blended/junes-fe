@@ -1315,3 +1315,31 @@ input[type="number"] {
   display: inline-block;
   border: none;
 }
+
+/* PRODUCT DETAILS PAGE - USER ACTION BOX */
+.product-main-content {
+  display: flex;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.product-options-left {
+  flex: 1;
+}
+
+.product-card-right {
+  flex: 0 0 300px; /* Fixed width for the card */
+}
+
+.price-card {
+  border: 2px solid black;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.price-display {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}

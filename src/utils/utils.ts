@@ -137,3 +137,19 @@ export const getStockStatus = (
   }
   return StockStatus.OUT_OF_STOCK;
 };
+
+// Currency formatter
+export const formatCurrency = (currenySymbol: string): string => {
+  switch (currenySymbol.toUpperCase()) {
+    case "SGD":
+      return "S$";
+    case "USD":
+      return "$";
+    case "EUR":
+      return "€";
+    case "GBP":
+      return "£";
+    default:
+      return currenySymbol;
+  }
+}

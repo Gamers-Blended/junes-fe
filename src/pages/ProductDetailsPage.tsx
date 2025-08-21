@@ -7,6 +7,7 @@ import {
   formatEditionName,
   formatStringGeneral,
   getStockStatus,
+  formatCurrency,
 } from "../utils/utils.ts";
 import {
   ProductDTO,
@@ -25,6 +26,7 @@ const ProductDetailsPage: React.FC = () => {
     useState<ProductDetailsResponse | null>(null);
   const [currentCategory, setCurrentCategory] = useState<string>("Games");
   const [currentStock, setCurrentStock] = useState<number>(0);
+  const [currentCurrency, setCurrentCurrency] = useState<string>("SGD");
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [currentProductImageUrl, setCurrentProductImageUrl] =
     useState<string>("");
@@ -286,7 +288,10 @@ const ProductDetailsPage: React.FC = () => {
 
   return (
     <div className="product-variant-container">
-      <Breadcrumb selectedPlatform={selectedPlatform} selectedCategory={currentCategory} />
+      <Breadcrumb
+        selectedPlatform={selectedPlatform}
+        selectedCategory={currentCategory}
+      />
 
       <div className="product-variant-section">
         <h1 className="product-title">{productDTO.name}</h1>
@@ -295,66 +300,85 @@ const ProductDetailsPage: React.FC = () => {
           <p>{formatStringGeneral(productDTO.publisher)}</p>
         </div>
 
-        <div className="product-options">
-          <div className="option-group-details">
-            {/* Platform */}
-            {availableRegions.length > 0 && (
-              <div className="option-group-details option-buttons-details">
-                <label className="option-label-details">Platform</label>
-                {availablePlatforms.map((platform) => (
-                  <button
-                    key={platform}
-                    className={`option-btn ${
-                      selectedPlatform === platform ? "active" : ""
-                    }`}
-                    onClick={() => handlePlatformChange(platform)}
-                  >
-                    {formatPlatformName(platform)}
-                  </button>
-                ))}
-              </div>
-            )}
+        <div className="product-main-content">
+          {/* Product Options */}
+          <div className="product-options-left">
+            <div className="product-options">
+              <div className="option-group-details">
+                {/* Platform */}
+                {availableRegions.length > 0 && (
+                  <div className="option-group-details option-buttons-details">
+                    <label className="option-label-details">Platform</label>
+                    {availablePlatforms.map((platform) => (
+                      <button
+                        key={platform}
+                        className={`option-btn ${
+                          selectedPlatform === platform ? "active" : ""
+                        }`}
+                        onClick={() => handlePlatformChange(platform)}
+                      >
+                        {formatPlatformName(platform)}
+                      </button>
+                    ))}
+                  </div>
+                )}
 
-            {/* Region */}
-            {availableRegions.length > 0 && (
-              <div className="option-group-details option-buttons-details">
-                <label className="option-label-details">Region</label>
-                {availableRegionsForPlatform.map((region) => (
-                  <button
-                    key={region}
-                    className={`option-btn ${
-                      selectedRegion === region ? "active" : ""
-                    }`}
-                    onClick={() => handleRegionChange(region)}
-                  >
-                    {formatRegionName(region)}
-                  </button>
-                ))}
-              </div>
-            )}
+                {/* Region */}
+                {availableRegions.length > 0 && (
+                  <div className="option-group-details option-buttons-details">
+                    <label className="option-label-details">Region</label>
+                    {availableRegionsForPlatform.map((region) => (
+                      <button
+                        key={region}
+                        className={`option-btn ${
+                          selectedRegion === region ? "active" : ""
+                        }`}
+                        onClick={() => handleRegionChange(region)}
+                      >
+                        {formatRegionName(region)}
+                      </button>
+                    ))}
+                  </div>
+                )}
 
-            {/* Edition */}
-            {availableEditions.length > 0 && (
-              <div className="option-group-details option-buttons-details">
-                <label className="option-label-details">Edition</label>
-                {availableEditionsForSelection.map((editon) => (
-                  <button
-                    key={editon}
-                    className={`option-btn ${
-                      selectedEdition === editon ? "active" : ""
-                    }`}
-                    onClick={() => handleEditionChange(editon)}
-                  >
-                    {formatEditionName(editon)}
-                  </button>
-                ))}
+                {/* Edition */}
+                {availableEditions.length > 0 && (
+                  <div className="option-group-details option-buttons-details">
+                    <label className="option-label-details">Edition</label>
+                    {availableEditionsForSelection.map((editon) => (
+                      <button
+                        key={editon}
+                        className={`option-btn ${
+                          selectedEdition === editon ? "active" : ""
+                        }`}
+                        onClick={() => handleEditionChange(editon)}
+                      >
+                        {formatEditionName(editon)}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+
+            {/* Stock Status */}
+            <div className="stock-status-container">
+              <div style={getStatusStyle(status)}>
+                {getStockStatus(productDTO.releaseDate, currentStock)}
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div style={getStatusStyle(status)}>
-          {getStockStatus(productDTO.releaseDate, currentStock)}
+          {/* Price and Actions Card */}
+          <div className="product-cart-right">
+            <div className="price-card">
+              <div className="price-display">
+                {formatCurrency(currentCurrency)}{currentPrice.toFixed(2)}
+              </div>
+            </div>
+          </div>
+
+
         </div>
 
         <div className="product-description">
