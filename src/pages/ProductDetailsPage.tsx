@@ -255,6 +255,16 @@ const ProductDetailsPage: React.FC = () => {
   };
 
   // Button functions
+  const handleAddToWishList = (productDTO: ProductDTO) => {
+    const message = `${productDTO.name}, ${formatPlatformName(
+      selectedPlatform
+    )} added to Wish List!`;
+    console.log(`${productDTO.name} added to wish list`);
+
+    setNotificationMessage(message);
+    setShowNotification(true);
+  };
+
   const handleAddToCart = (productDTO: ProductDTO, quantity: number = 1) => {
     setIsAddingToCart(true);
 
@@ -402,7 +412,10 @@ const ProductDetailsPage: React.FC = () => {
               </div>
 
               <div className="product-details-buttons-container">
-                <button className="common-button product-details-wishlist-button">
+                <button
+                  className="common-button product-details-wishlist-button"
+                  onClick={() => handleAddToWishList(productDTO)}
+                >
                   Add to Wishlist
                 </button>
 
@@ -411,7 +424,7 @@ const ProductDetailsPage: React.FC = () => {
                     isAddingToCart ? "adding-to-cart" : ""
                   }`}
                   onClick={() => handleAddToCart(productDTO)}
-                  disabled={ isAddingToCart || isOutOfStock(currentStock) }
+                  disabled={isAddingToCart || isOutOfStock(currentStock)}
                 >
                   {isAddingToCart ? (
                     <div className="add-to-cart-spinner-container">
