@@ -373,12 +373,21 @@ const ProductDetailsPage: React.FC = () => {
           <div className="product-cart-right">
             <div className="price-card">
               <div className="price-display">
-                {formatCurrency(currentCurrency)}{currentPrice.toFixed(2)}
+                {formatCurrency(currentCurrency)}
+                {currentPrice.toFixed(2)}
+              </div>
+
+              <div className="product-details-buttons-container">
+                <button className="common-button product-details-wishlist-button">
+                  Add to Wishlist
+                </button>
+
+                <button className="common-button add-to-cart-button product-details-cart-button">
+                  Add to Cart
+                </button>
               </div>
             </div>
           </div>
-
-
         </div>
 
         <div className="product-description">

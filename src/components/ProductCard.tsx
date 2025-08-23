@@ -123,10 +123,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isLoading, isLiked: ini
 
             {/* Buttons that appear on hover */}
             <div className='product-card-buttons'>
-                <button className="product-card-button" onClick={handleQuickShop}>
+                <button className="common-button" onClick={handleQuickShop}>
                     Quick Shop
                 </button>
-                <button className={`product-card-button add-to-cart-button ${isAddingToCart ? 'adding-to-cart' : ''}`} onClick={() => handleAddToCart(item)} disabled={isAddingToCart}>
+                <button className={`common-button add-to-cart-button ${isAddingToCart ? 'adding-to-cart' : ''}`} onClick={() => handleAddToCart(item)} disabled={isAddingToCart}>
                     {isAddingToCart ? (
                         <div className='add-to-cart-spinner-container'>
                             <div className='add-to-cart-spinner'></div>
