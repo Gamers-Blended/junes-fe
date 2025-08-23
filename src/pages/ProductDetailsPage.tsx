@@ -14,6 +14,7 @@ import {
   ProductVariantDTO,
   ProductDetailsResponse,
 } from "../types/products.ts";
+import NotificationPopUp from "../components/NotificationPopUp.tsx";
 import { StockStatus } from "../utils/Enums.tsx";
 import { useAppSelector } from "../store/hooks";
 import Breadcrumb from "../components/Breadcrumb.tsx";
@@ -30,6 +31,9 @@ const ProductDetailsPage: React.FC = () => {
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [currentProductImageUrl, setCurrentProductImageUrl] =
     useState<string>("");
+  const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
+  const [showNotification, setShowNotification] = useState<boolean>(false);
+  const [notificationMessage, setNotificationMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -250,6 +254,26 @@ const ProductDetailsPage: React.FC = () => {
     }
   };
 
+  // Button functions
+  const handleAddToCart = (productDTO: ProductDTO, quantity: number = 1) => {
+    setIsAddingToCart(true);
+
+    const message = `${productDTO.name} added to cart!`;
+    console.log(`${productDTO.name} added to cart! Quantity: ${quantity}`);
+
+    setNotificationMessage(message);
+    setShowNotification(true);
+    setIsAddingToCart(false);
+  };
+
+  const isOutOfStock = (stock: number) => {
+    return stock <= 0;
+  };
+
+  const handleCloseNotification = () => {
+    setShowNotification(false);
+  };
+
   if (loading) {
     return (
       <div className="container">
@@ -382,10 +406,29 @@ const ProductDetailsPage: React.FC = () => {
                   Add to Wishlist
                 </button>
 
-                <button className="common-button add-to-cart-button product-details-cart-button">
-                  Add to Cart
+                <button
+                  className={`common-button add-to-cart-button product-details-cart-button ${
+                    isAddingToCart ? "adding-to-cart" : ""
+                  }`}
+                  onClick={() => handleAddToCart(productDTO)}
+                  disabled={ isAddingToCart || isOutOfStock(currentStock) }
+                >
+                  {isAddingToCart ? (
+                    <div className="add-to-cart-spinner-container">
+                      <div className="add-to-cart-spinner"></div>
+                    </div>
+                  ) : (
+                    "Add To Cart"
+                  )}
                 </button>
               </div>
+
+              <NotificationPopUp
+                message={notificationMessage}
+                isVisible={showNotification}
+                onClose={handleCloseNotification}
+                duration={3000} // 3 seconds
+              />
             </div>
           </div>
         </div>
