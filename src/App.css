@@ -1168,7 +1168,7 @@ input[type="number"] {
 }
 
 /* PRODUCT DETAILS PAGE */
-.product-variant-container {
+.product-details-container {
   max-width: 1200px;
   display: flex;
   flex-direction: column;
@@ -1250,4 +1250,25 @@ input[type="number"] {
   font-size: 2rem;
   font-weight: bold;
   margin-bottom: 1rem;
+}
+
+/* PRODUCT DETAILS PAGE - DESCRIPTION */
+.product-details-section-header {
+  background: #00d4aa;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-weight: bold;
+  font-size: 25px;
+  text-align: center;
+}
+
+.product-description {
+  background: #c2e0b4;
+  text-align: left;
+  padding: 1rem;
+  padding-top: 0;
+}
+
+.product-detail-row-first {
+  border-bottom: black 2px solid;
 }

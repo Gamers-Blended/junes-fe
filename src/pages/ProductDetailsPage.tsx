@@ -6,12 +6,14 @@ import {
   formatRegionName,
   formatEditionName,
   formatStringGeneral,
+  formatStringArrays,
+  formatNumberArrays,
   getStockStatus,
   formatCurrency,
+  convertDate,
 } from "../utils/utils.ts";
 import {
   ProductDTO,
-  ProductVariantDTO,
   ProductDetailsResponse,
 } from "../types/products.ts";
 import NotificationPopUp from "../components/NotificationPopUp.tsx";
@@ -321,7 +323,7 @@ const ProductDetailsPage: React.FC = () => {
   const status = getStockStatus(productDTO.releaseDate, currentStock);
 
   return (
-    <div className="product-variant-container">
+    <div className="product-details-container">
       <Breadcrumb
         selectedPlatform={selectedPlatform}
         selectedCategory={currentCategory}
@@ -445,13 +447,45 @@ const ProductDetailsPage: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="product-description">
-          <p>{productDTO.description}</p>
-        </div>
+      <div className="product-details-section-header">Product Description</div>
 
-        <div className="product-info-section">
-          <h3 className="info-title">Product Information</h3>
+      <div className="product-description">
+        <p style={{ whiteSpace: 'pre-wrap' }}>{productDTO.description}</p>
+
+        {/* Product Details */}
+        <div className="product-details-table">
+          <div className="detail-row product-detail-row-first">
+            <span className="detail-label">Name</span>
+            <span className="detail-value">
+              {formatStringGeneral(productDTO.name)}
+            </span>
+          </div>
+          <div className="detail-row">
+            <span className="detail-label">Official Release Date</span>
+            <span className="detail-value">
+              {convertDate(productDTO.releaseDate)}
+            </span>
+          </div>
+          <div className="detail-row">
+            <span className="detail-label">Language(s)</span>
+            <span className="detail-value">
+              {formatStringArrays(productDTO.languages)}
+            </span>
+          </div>
+          <div className="detail-row">
+            <span className="detail-label">Genre(s)</span>
+            <span className="detail-value">
+              {formatStringArrays(productDTO.genres)}
+            </span>
+          </div>
+          <div className="detail-row">
+            <span className="detail-label">Number of Player(s)</span>
+            <span className="detail-value">
+              {formatNumberArrays(productDTO.numberOfPlayers)}
+            </span>
+          </div>
         </div>
       </div>
     </div>

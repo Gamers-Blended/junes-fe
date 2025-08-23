@@ -4,6 +4,7 @@ import {
   formatRegionName,
   formatEditionName,
   formatStringArrays,
+  formatNumberArrays,
   convertDate,
   appendUrlPrefix,
 } from "../utils/utils.ts";
@@ -89,14 +90,6 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
     if (newQuantity >= 1) {
       setQuantity(newQuantity);
     }
-  };
-
-  const formatNumberArrays = (numbers: string[]) => {
-    if (!numbers || !Array.isArray(numbers) || numbers.length === 0) {
-      return "Not Available";
-    }
-
-    return numbers.join(", ");
   };
 
   const fetchProductDetails = async () => {

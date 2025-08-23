@@ -94,6 +94,14 @@ export const formatStringArrays = (strings: string[]) => {
   return strings.map(formatStringGeneral).join(", ");
 };
 
+export const formatNumberArrays = (numbers: string[]) => {
+  if (!numbers || !Array.isArray(numbers) || numbers.length === 0) {
+    return "Not Available";
+  }
+
+  return numbers.join(", ");
+};
+
 // Convert [yyy,mm,dd] date array to DD Month YYYY format
 export const convertDate = (dateArray: number[]) => {
   if (!dateArray || dateArray.length === 0) return "Not Available";
@@ -152,4 +160,4 @@ export const formatCurrency = (currenySymbol: string): string => {
     default:
       return currenySymbol;
   }
-}
+};
