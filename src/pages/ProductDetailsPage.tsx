@@ -110,6 +110,7 @@ const ProductDetailsPage: React.FC = () => {
           setSelectedRegion(defaultVariant.region);
           setSelectedEdition(defaultVariant.edition);
           setCurrentPrice(defaultVariant.price);
+          setCurrentStock(defaultVariant.stock);
           setCurrentProductImageUrl(defaultVariant.productImageUrl);
 
           // Combine variant image with product images
