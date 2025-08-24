@@ -1,5 +1,6 @@
 @import './styles/Breadcrumb.css';
 @import './styles/ButtonsCommon.css';
+@import './styles/ProductDetailsImages.css';
 
 html, body {
   margin: 0;

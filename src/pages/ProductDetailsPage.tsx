@@ -11,11 +11,9 @@ import {
   getStockStatus,
   formatCurrency,
   convertDate,
+  appendUrlPrefix,
 } from "../utils/utils.ts";
-import {
-  ProductDTO,
-  ProductDetailsResponse,
-} from "../types/products.ts";
+import { ProductDTO, ProductDetailsResponse } from "../types/products.ts";
 import NotificationPopUp from "../components/NotificationPopUp.tsx";
 import { StockStatus } from "../utils/Enums.tsx";
 import { useAppSelector } from "../store/hooks";
@@ -27,15 +25,20 @@ const ProductDetailsPage: React.FC = () => {
 
   const [productDetails, setProductDetails] =
     useState<ProductDetailsResponse | null>(null);
+
   const [currentCategory, setCurrentCategory] = useState<string>("Games");
   const [currentStock, setCurrentStock] = useState<number>(0);
   const [currentCurrency, setCurrentCurrency] = useState<string>("SGD");
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [currentProductImageUrl, setCurrentProductImageUrl] =
     useState<string>("");
+  const [currentImageUrlList, setCurrentImageUrlList] = useState<string[]>([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
   const [showNotification, setShowNotification] = useState<boolean>(false);
   const [notificationMessage, setNotificationMessage] = useState<string>("");
+
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -108,6 +111,14 @@ const ProductDetailsPage: React.FC = () => {
           setSelectedEdition(defaultVariant.edition);
           setCurrentPrice(defaultVariant.price);
           setCurrentProductImageUrl(defaultVariant.productImageUrl);
+
+          // Combine variant image with product images
+          const allImages = [
+            defaultVariant.productImageUrl,
+            ...(response.data.productDTO.imageUrlList || []),
+          ].filter((url) => url && url.trim() !== ""); // Filter out empty/null URLs
+
+          setCurrentImageUrlList(allImages);
         }
       } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -139,6 +150,15 @@ const ProductDetailsPage: React.FC = () => {
     if (variant) {
       setCurrentPrice(variant.price);
       setCurrentProductImageUrl(variant.productImageUrl);
+
+      // Update image list when variant changes
+      const allImages = [
+        variant.productImageUrl,
+        ...(productDetails?.productDTO.imageUrlList || []),
+      ].filter((url) => url && url.trim() !== "");
+
+      setCurrentImageUrlList(allImages);
+      setSelectedImageIndex(0); // Reset to first image
     }
   };
 
@@ -229,6 +249,10 @@ const ProductDetailsPage: React.FC = () => {
   const handleEditionChange = (edition: string) => {
     setSelectedEdition(edition);
     updatePriceAndProductImageUrl(selectedPlatform, selectedRegion, edition);
+  };
+
+  const handleThumbnailClick = (index: number) => {
+    setSelectedImageIndex(index);
   };
 
   // Styling for stock status
@@ -337,6 +361,41 @@ const ProductDetailsPage: React.FC = () => {
         </div>
 
         <div className="product-main-content">
+          {/* Image Thumbnails Column */}
+          {currentProductImageUrl.length > 0 && (
+            <div className="product-thumbnails-column">
+              {currentImageUrlList.map((imageUrl, index) => (
+                <div
+                  key={index}
+                  className={`thumbnail-container ${
+                    selectedImageIndex === index ? "active" : ""
+                  }`}
+                  onClick={() => handleThumbnailClick(index)}
+                >
+                  <img
+                    src={appendUrlPrefix(imageUrl)}
+                    alt="Image"
+                    className="thumbnail-image"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Main Product Image */}
+          <div className="product-main-image-container">
+            <div className="image-container">
+              <img
+                src={appendUrlPrefix(
+                  currentImageUrlList[selectedImageIndex] ||
+                    currentProductImageUrl
+                )}
+                alt={productDTO.name}
+                className="product-main-image"
+              />
+            </div>
+          </div>
+
           {/* Product Options */}
           <div className="product-options-left">
             <div className="product-options">
@@ -403,6 +462,11 @@ const ProductDetailsPage: React.FC = () => {
                 {getStockStatus(productDTO.releaseDate, currentStock)}
               </div>
             </div>
+
+            {/* Image Zoom Hint */}
+            <div className="image-zoom-hint">
+              <span>ℹ️ Hover over image to zoom in</span>
+            </div>
           </div>
 
           {/* Price and Actions Card */}
@@ -452,7 +516,7 @@ const ProductDetailsPage: React.FC = () => {
       <div className="product-details-section-header">Product Description</div>
 
       <div className="product-description">
-        <p style={{ whiteSpace: 'pre-wrap' }}>{productDTO.description}</p>
+        <p style={{ whiteSpace: "pre-wrap" }}>{productDTO.description}</p>
 
         {/* Product Details */}
         <div className="product-details-table">
