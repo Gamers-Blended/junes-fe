@@ -251,6 +251,7 @@ const ProductDetailsPage: React.FC = () => {
     updatePriceAndProductImageUrl(selectedPlatform, selectedRegion, edition);
   };
 
+  // Handle thumbnail click
   const handleThumbnailClick = (index: number) => {
     setSelectedImageIndex(index);
   };
@@ -373,7 +374,7 @@ const ProductDetailsPage: React.FC = () => {
                   onClick={() => handleThumbnailClick(index)}
                 >
                   <img
-                    src={appendUrlPrefix(imageUrl)}
+                    src={appendUrlPrefix(imageUrl) as string}
                     alt="Image"
                     className="thumbnail-image"
                   />
@@ -383,18 +384,20 @@ const ProductDetailsPage: React.FC = () => {
           )}
 
           {/* Main Product Image */}
-          <div className="product-main-image-container">
-            <div className="image-container">
-              <img
-                src={appendUrlPrefix(
-                  currentImageUrlList[selectedImageIndex] ||
-                    currentProductImageUrl
-                )}
-                alt={productDTO.name}
-                className="product-main-image"
-              />
+          {currentProductImageUrl.length > 0 && (
+            <div className="product-main-image-container">
+              <div className="image-container">
+                <img
+                  src={appendUrlPrefix(
+                    currentImageUrlList[selectedImageIndex] ||
+                      currentProductImageUrl 
+                  ) as string}
+                  alt={productDTO.name}
+                  className="product-main-image"
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Product Options */}
           <div className="product-options-left">
