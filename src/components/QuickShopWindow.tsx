@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   formatPlatformName,
   formatRegionName,
@@ -97,15 +98,11 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
       setIsLoading(true);
       setError("");
 
-      const response = await fetch(
+      const response = await axios.get(
         `http://localhost:8080/junes/api/v1/product/details/${item.slug}`
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data: ProductDetailsResponse = await response.json();
+      const data: ProductDetailsResponse = response.data;
 
       // Append prefix to each productImageUrl
       data.productVariantDTOList.forEach((variant) => {
