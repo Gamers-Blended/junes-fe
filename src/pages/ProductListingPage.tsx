@@ -8,6 +8,7 @@ import { genreOptions, regionOptions, publisherOptions, editionOptions, language
 import { formatPrice } from '../utils/utils';
 import InputOptionsBox from '../components/InputOptionsBox';
 import ProductCard from '../components/ProductCard';
+import Footer from "../components/Footer";
 
 import ps4Banner from "../assets/banners/ps4-banner.jpg";
 import ps5Banner from "../assets/banners/ps5-banner.jpg";
@@ -797,6 +798,8 @@ const ProductListingPage: React.FC = () => {
                 </div>
 
             </div>
+
+            <Footer/>
         </div>
     );
 };

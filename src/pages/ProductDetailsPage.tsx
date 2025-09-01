@@ -18,6 +18,7 @@ import NotificationPopUp from "../components/NotificationPopUp.tsx";
 import { StockStatus } from "../utils/Enums.tsx";
 import { useAppSelector } from "../store/hooks";
 import Breadcrumb from "../components/Breadcrumb.tsx";
+import Footer from "../components/Footer";
 
 const ProductDetailsPage: React.FC = () => {
   const { slug } = useParams();
@@ -556,6 +557,8 @@ const ProductDetailsPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <Footer/>
     </div>
   );
 };
