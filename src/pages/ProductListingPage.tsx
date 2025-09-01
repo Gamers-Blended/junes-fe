@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
-import axios from 'axios';
+import { apiClient } from "../utils/api.ts";
 import { ProductSliderItem, PageResponse } from '../types/products';
 import { appendUrlPrefix } from '../utils/utils.ts';
 import { Platform } from "../utils/Enums";
@@ -157,8 +157,8 @@ const ProductListingPage: React.FC = () => {
             
             // Make both the API call and wait for the delay
             // const [response] = await Promise.all([
-            //     axios.get<PageResponse<ProductSliderItem>>(
-            //         `http://localhost:8080/junes/api/v1/product/products/${platform}`,
+            //     apiClient.get<PageResponse<ProductSliderItem>>(
+            //         `/junes/api/v1/product/products/${platform}`,
             //         {
             //             params: buildQueryParams()
             //         }
@@ -166,8 +166,8 @@ const ProductListingPage: React.FC = () => {
             //     delayPromise
             // ]);
 
-            const response = await axios.get<PageResponse<ProductSliderItem>>(
-                `http://localhost:8080/junes/api/v1/product/products/${platform}`,
+            const response = await apiClient.get<PageResponse<ProductSliderItem>>(
+                `/junes/api/v1/product/products/${platform}`,
                 {
                     params: buildQueryParams()
                 }
@@ -188,11 +188,7 @@ const ProductListingPage: React.FC = () => {
                 currentPage: data.number
             });
         } catch (err) {
-            if (axios.isAxiosError(err)) {
-                setError(err.response?.data?.message || err.message || 'Failed to fetch products');
-            } else {
-                setError('An unexpected error occurred');
-            }
+            setError(err instanceof Error ? err.message : "Failed to fetch product listings");
             console.error('Error fetching products:', err);
         } finally {
             setIsLoading(false);

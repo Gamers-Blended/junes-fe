@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { apiClient } from "../utils/api.ts";
 import {
   formatPlatformName,
   formatRegionName,
@@ -98,8 +98,8 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
       setIsLoading(true);
       setError("");
 
-      const response = await axios.get(
-        `http://localhost:8080/junes/api/v1/product/details/${item.slug}`
+      const response = await apiClient.get(
+        `/junes/api/v1/product/details/${item.slug}`
       );
 
       const data: ProductDetailsResponse = response.data;

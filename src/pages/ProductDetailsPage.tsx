@@ -1,6 +1,6 @@
 import React, { useState, useEffect, CSSProperties } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import { apiClient } from "../utils/api.ts";
 import {
   formatPlatformName,
   formatRegionName,
@@ -90,8 +90,8 @@ const ProductDetailsPage: React.FC = () => {
 
       try {
         setLoading(true);
-        const response = await axios.get<ProductDetailsResponse>(
-          `http://localhost:8080/junes/api/v1/product/details/${slug}`
+        const response = await apiClient.get<ProductDetailsResponse>(
+          `/junes/api/v1/product/details/${slug}`
         );
         setProductDetails(response.data);
 
@@ -123,15 +123,10 @@ const ProductDetailsPage: React.FC = () => {
           setCurrentImageUrlList(allImages);
         }
       } catch (err) {
-        if (axios.isAxiosError(err)) {
           setError(
-            `Failed to fetch product details: ${
-              err.response?.status || err.message
-            }`
+            err instanceof Error ? err.message : "Failed to fetch product details"
           );
-        } else {
-          setError("An error occurred while fetching product details");
-        }
+          console.error("Error fetching product details:", err);
       } finally {
         setLoading(false);
       }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { apiClient } from "../utils/api.ts";
 import { ProductSliderItem, PageResponse } from '../types/products.ts';
 import ProductCard from './ProductCard';
 import { appendUrlPrefix } from '../utils/utils.ts';
@@ -25,11 +25,6 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ title }) => {
   const [error, setError] = useState<string | null>(null);
   const { userID, isLoggedIn } = useAuth();
 
-  const api = axios.create({
-        baseURL: 'http://localhost:8080/junes/api/v1',
-        timeout: 10000,
-  });
-
   const fetchItems = async (pageNumber: number) => {
     try {
       setIsLoading(true);
@@ -42,7 +37,14 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ title }) => {
           if (isLoggedIn) {
             console.info(`Fetching ${title} data for page ${pageNumber} for userID ${userID}...`);
 
-            response = await api.get<PageResponse<ProductSliderItem>>(`/frontpage/recommended?userID=${userID}&page=${pageNumber}`);
+            response = await apiClient.get<PageResponse<ProductSliderItem>>(`/junes/api/v1/frontpage/recommended`,
+              {
+                params: {
+                  userID: userID,
+                  page: pageNumber
+                }
+              }
+            );
           } else {
               console.info(`Fetching ${title} data for page ${pageNumber} for guest user...`);
 
@@ -51,9 +53,14 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ title }) => {
                 historyCache: ["item1"] // TODO: get from history cache
               };
 
-              response = await api.post<PageResponse<ProductSliderItem>>(`/frontpage/recommended/no-user?page=${pageNumber}`, requestData, {headers: {
-                  'Content-Type': 'application/json'
-              }});
+              response = await apiClient.post<PageResponse<ProductSliderItem>>(`/junes/api/v1/frontpage/recommended/no-user`,
+                requestData,
+                {
+                  params: {
+                    page: pageNumber
+                  }
+                }
+              );
           }
           break;
 
@@ -62,19 +69,39 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ title }) => {
 
           const referenceDate = "2023-01-01"; // TODO get from DebugWindow
 
-          response = await api.get<PageResponse<ProductSliderItem>>(`/frontpage/preorders?page=${pageNumber}&currentDate=${referenceDate}`);
+          response = await apiClient.get<PageResponse<ProductSliderItem>>(`/junes/api/v1/frontpage/preorders`,
+            {
+              params: {
+                page: pageNumber,
+                currentDate: referenceDate
+              }
+            }
+          );
           break;
 
         case "Best Sellers":
           console.info(`Fetching ${title} data for page ${pageNumber}`);
 
-          response = await api.get<PageResponse<ProductSliderItem>>(`/frontpage/best-sellers?page=${pageNumber}`);
+          response = await apiClient.get<PageResponse<ProductSliderItem>>(`/junes/api/v1/frontpage/best-sellers`,
+            {
+              params: {
+                page: pageNumber
+              }
+            }
+          );
           break;
         
         default:
           console.info(`Invalid title given, fetching best-seller data for page ${pageNumber} as default`);
 
-          response = await api.get<PageResponse<ProductSliderItem>>(`/frontpage/best-sellers?page=${pageNumber}`);
+          response = await apiClient.get<PageResponse<ProductSliderItem>>(`/junes/api/v1/frontpage/best-sellers`,
+            {
+              params: {
+                page: pageNumber
+              }
+            }
+          );
+          break;
       }
 
       const imageUrls = response.data.content.map(item => item.productImageUrl || "");
