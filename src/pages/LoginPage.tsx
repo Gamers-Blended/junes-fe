@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { validateEmail, validatePassword } from "../utils/inputValidationUtils";
 import Footer from "../components/Footer";
 
 interface FormErrors {
@@ -14,15 +15,9 @@ const LoginPage: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({ email: "", password: "" });
 
   const handleSignIn = (): void => {
-    const newErrors: FormErrors = { email: "", password: "" };
-
-    // Check for blank fields
-    if (!email.trim()) {
-      newErrors.email = "Email is required.";
-    }
-    if (!password.trim()) {
-      newErrors.password = "Password is required.";
-    }
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+    const newErrors: FormErrors = { email: emailError, password: passwordError };
 
     setErrors(newErrors);
 
