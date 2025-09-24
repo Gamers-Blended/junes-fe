@@ -87,10 +87,11 @@
   outline: none;
 }
 
-.error-message {
+.login-error-message {
   color: #ef4444;
   font-size: 0.875rem;
   margin-top: 0.25rem;
+  text-align: left;
 }
 
 .label {
@@ -103,4 +104,25 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.sign-in-button {
+  background-color: #00c698;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.sign-in-button:hover {
+  background-color: #059669;
+}
+
+.sign-in-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5);
 }

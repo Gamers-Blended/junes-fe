@@ -13,6 +13,25 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errors, setErrors] = useState<FormErrors>({ email: "", password: "" });
 
+  const handleSignIn = (): void => {
+    const newErrors: FormErrors = { email: "", password: "" };
+
+    // Check for blank fields
+    if (!email.trim()) {
+      newErrors.email = "Email is required.";
+    }
+    if (!password.trim()) {
+      newErrors.password = "Password is required.";
+    }
+
+    setErrors(newErrors);
+
+    // If no errors, proceed sign in
+    if (!newErrors.email && !newErrors.password) {
+      console.log("Signed in");
+    }
+  };
+
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setEmail(e.target.value);
     // Clear error when user starts typing
@@ -51,7 +70,7 @@ const LoginPage: React.FC = () => {
               onChange={handleEmailChange}
               className={`input-field ${errors.email ? "error" : ""}`}
             />
-            {errors.email && <p className="error-message">{errors.email}</p>}
+            {errors.email && (<p className="login-error-message">{errors.email}</p>)}
           </div>
 
           {/* Password Input */}
@@ -78,8 +97,19 @@ const LoginPage: React.FC = () => {
               </button>
             </div>
             {errors.password && (
-              <p className="error-message">{errors.password}</p>
+              <p className="login-error-message">{errors.password}</p>
             )}
+          </div>
+
+          {/* Sign In Button and Links */}
+          <div className="actions-container">
+            <button
+              onClick={handleSignIn}
+              className="sign-in-button"
+            >
+              Sign In
+            </button>
+
           </div>
         </div>
       </div>
