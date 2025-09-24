@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { validateEmail, validatePassword } from "../utils/inputValidationUtils";
 import Footer from "../components/Footer";
@@ -9,6 +10,7 @@ interface FormErrors {
 }
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -27,6 +29,7 @@ const LoginPage: React.FC = () => {
     // If no errors, proceed sign in
     if (!newErrors.email && !newErrors.password) {
       console.log("Signed in");
+      navigate('/myaccount/');
     }
   };
 
@@ -50,6 +53,7 @@ const LoginPage: React.FC = () => {
 
   const handleCreateAccount = (): void => {
     console.log("Routing to create account page");
+    navigate('/createaccount/');
   };
 
   const handleForgotPassword = (): void => {
