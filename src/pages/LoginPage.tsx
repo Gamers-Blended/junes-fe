@@ -17,7 +17,10 @@ const LoginPage: React.FC = () => {
   const handleSignIn = (): void => {
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
-    const newErrors: FormErrors = { email: emailError, password: passwordError };
+    const newErrors: FormErrors = {
+      email: emailError,
+      password: passwordError,
+    };
 
     setErrors(newErrors);
 
@@ -45,6 +48,14 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  const handleCreateAccount = (): void => {
+    console.log("Routing to create account page");
+  };
+
+  const handleForgotPassword = (): void => {
+    console.log("Routing to forgot password page");
+  };
+
   return (
     <div className="login-container">
       <div className="login-form">
@@ -65,7 +76,9 @@ const LoginPage: React.FC = () => {
               onChange={handleEmailChange}
               className={`input-field ${errors.email ? "error" : ""}`}
             />
-            {errors.email && (<p className="login-error-message">{errors.email}</p>)}
+            {errors.email && (
+              <p className="login-error-message">{errors.email}</p>
+            )}
           </div>
 
           {/* Password Input */}
@@ -98,13 +111,18 @@ const LoginPage: React.FC = () => {
 
           {/* Sign In Button and Links */}
           <div className="actions-container">
-            <button
-              onClick={handleSignIn}
-              className="sign-in-button"
-            >
+            <button onClick={handleSignIn} className="sign-in-button">
               Sign In
             </button>
 
+            <div className="links-container">
+              <button onClick={handleCreateAccount} className="link-button">
+                Create account
+              </button>
+              <button onClick={handleForgotPassword} className="link-button">
+                Forgot your password?
+              </button>
+            </div>
           </div>
         </div>
       </div>
