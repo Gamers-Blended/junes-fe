@@ -93,6 +93,12 @@
   margin-top: 0.25rem;
 }
 
+.label {
+  left: 1rem;
+  text-align: left;
+  padding-bottom: 0.5rem;
+}
+
 .actions-container {
   display: flex;
   align-items: center;

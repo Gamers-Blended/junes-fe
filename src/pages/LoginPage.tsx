@@ -41,6 +41,9 @@ const LoginPage: React.FC = () => {
         <div className="form-container">
           {/* Email Input */}
           <div className="input-group">
+            <label htmlFor="email" className="label">
+              Email
+            </label>
             <input
               type="email"
               placeholder="Email"
@@ -53,6 +56,9 @@ const LoginPage: React.FC = () => {
 
           {/* Password Input */}
           <div className="input-group">
+            <label htmlFor="password" className="label">
+              Password
+            </label>
             <div className="password-container">
               <input
                 type={showPassword ? "text" : "password"}
