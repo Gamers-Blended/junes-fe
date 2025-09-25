@@ -2,12 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { validateEmail, validatePassword } from "../utils/inputValidationUtils";
+import { FormErrors } from "../types/formErrors";
 import Footer from "../components/Footer";
-
-interface FormErrors {
-  email: string;
-  password: string;
-}
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -62,9 +58,9 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-form">
-        <div className="login-title">
+    <div className="form-parent-container">
+      <div className="form">
+        <div className="form-title">
           <h1>LOGIN</h1>
         </div>
 
@@ -82,7 +78,7 @@ const LoginPage: React.FC = () => {
               className={`input-field ${errors.email ? "error" : ""}`}
             />
             {errors.email && (
-              <p className="login-error-message">{errors.email}</p>
+              <p className="form-error-message">{errors.email}</p>
             )}
           </div>
 
@@ -110,7 +106,7 @@ const LoginPage: React.FC = () => {
               </button>
             </div>
             {errors.password && (
-              <p className="login-error-message">{errors.password}</p>
+              <p className="form-error-message">{errors.password}</p>
             )}
           </div>
 

@@ -1,20 +1,26 @@
-.login-container {
+.form-parent-container {
   min-height: 100vh;
   padding: 1rem;
   margin-top: 1rem;
 }
 
-.login-form {
+.create-new-user-container {
+  min-height: 100vh;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.form {
   max-width: 30rem;
   margin: 0 auto 0 auto;
 }
 
-.login-title {
+.form-title {
   text-align: center;
   margin-bottom: 2rem;
 }
 
-.login-title h1 {
+.form-title h1 {
   font-size: 1.875rem;
   font-weight: bold;
   margin: 0;
@@ -87,7 +93,7 @@
   outline: none;
 }
 
-.login-error-message {
+.form-error-message {
   color: #ef4444;
   font-size: 0.875rem;
   margin-top: 0.25rem;
