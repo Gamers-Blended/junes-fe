@@ -39,7 +39,7 @@ const CreateNewUserPage: React.FC = () => {
     // If no errors, proceed sign in
     if (!newErrors.email && !newErrors.password) {
       console.log("User created");
-      navigate('/emailsent/');
+      navigate("/emailsent/");
     }
   };
 
@@ -88,6 +88,11 @@ const CreateNewUserPage: React.FC = () => {
         confirmPassword: "Passwords do not match",
       }));
     }
+  };
+
+  const handleLoginAsExistingCustomer = (): void => {
+    console.log("Routing to login page");
+    navigate("/login/");
   };
 
   return (
@@ -183,6 +188,15 @@ const CreateNewUserPage: React.FC = () => {
             <button onClick={handleCreate} className="form-button">
               Create
             </button>
+
+            <div className="links-container">
+              <button
+                onClick={handleLoginAsExistingCustomer}
+                className="link-button"
+              >
+                Login as existing customer
+              </button>
+            </div>
           </div>
         </div>
       </div>
