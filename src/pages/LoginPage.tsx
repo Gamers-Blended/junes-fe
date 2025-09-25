@@ -112,7 +112,7 @@ const LoginPage: React.FC = () => {
 
           {/* Sign In Button and Links */}
           <div className="actions-container">
-            <button onClick={handleSignIn} className="sign-in-button">
+            <button onClick={handleSignIn} className="form-button">
               Sign In
             </button>
 

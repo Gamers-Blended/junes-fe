@@ -112,9 +112,9 @@
   gap: 1rem;
 }
 
-.sign-in-button {
+.form-button {
   background-color: #00c698;
-  color: white;
+  color: black;
   font-weight: 600;
   padding: 0.75rem 2rem;
   border-radius: 0.5rem;
@@ -124,11 +124,11 @@
   transition: background-color 0.15s ease-in-out;
 }
 
-.sign-in-button:hover {
+.form-button:hover {
   background-color: #059669;
 }
 
-.sign-in-button:focus {
+.form-button:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5);
 }

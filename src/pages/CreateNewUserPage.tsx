@@ -1,14 +1,21 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { FormErrors } from "../types/formErrors";
 import {
   USERNAME_MIN_LENGTH,
   USERNAME_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  validateEmail,
+  validateUsername,
+  validateNewPasswordCreation,
+  validateConfirmPassword,
 } from "../utils/inputValidationUtils";
 
 const CreateNewUserPage: React.FC = () => {
   const [email, setEmail] = useState<string>("");
+  const navigate = useNavigate();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -18,6 +25,23 @@ const CreateNewUserPage: React.FC = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const handleCreate = (): void => {
+    const newErrors: FormErrors = {
+      email: validateEmail(email),
+      password: validateNewPasswordCreation(password),
+      username: validateUsername(username),
+      confirmPassword: validateConfirmPassword(password, confirmPassword),
+    };
+
+    setErrors(newErrors);
+
+    // If no errors, proceed sign in
+    if (!newErrors.email && !newErrors.password) {
+      console.log("User created");
+      navigate('/emailsent/');
+    }
+  };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setEmail(e.target.value);
@@ -57,7 +81,7 @@ const CreateNewUserPage: React.FC = () => {
     }
   };
 
-  const validateConfirmPassword = (): void => {
+  const validateConfirmPasswordOnBlur = (): void => {
     if (password !== confirmPassword) {
       setErrors((prev) => ({
         ...prev,
@@ -116,7 +140,7 @@ const CreateNewUserPage: React.FC = () => {
             <div className="password-container">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder={`Minimum ${PASSWORD_MIN_LENGTH} characters`}
+                placeholder={`Between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters`}
                 value={password}
                 onChange={handlePasswordChange}
                 className={`input-field password-input ${
@@ -146,12 +170,19 @@ const CreateNewUserPage: React.FC = () => {
               placeholder="Re-type your password"
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
-              onBlur={validateConfirmPassword}
+              onBlur={validateConfirmPasswordOnBlur}
               className={`input-field ${errors.confirmPassword ? "error" : ""}`}
             />
             {errors.confirmPassword && (
               <p className="form-error-message">{errors.confirmPassword}</p>
             )}
+          </div>
+
+          {/* Create Button */}
+          <div className="actions-container">
+            <button onClick={handleCreate} className="form-button">
+              Create
+            </button>
           </div>
         </div>
       </div>
