@@ -1,8 +1,9 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { JSX } from "react";
 
 const EmailSentPage: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { from, email } = location.state || {};
 
   const renderHeader = (): JSX.Element => {
@@ -14,6 +15,11 @@ const EmailSentPage: React.FC = () => {
       default:
         return <h1>EMAIL HAS BEEN SENT</h1>;
     }
+  };
+
+  const handleBackToLoginPage = (): void => {
+    console.log("Routing to login page");
+    navigate("/login/");
   };
 
   return (
@@ -29,6 +35,15 @@ const EmailSentPage: React.FC = () => {
               email.
             </p>
           )}
+
+          {/* Link */}
+          <div className="actions-container">
+            <div className="links-container">
+              <button onClick={handleBackToLoginPage} className="link-button">
+                Back to login page
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
