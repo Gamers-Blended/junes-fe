@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { NavigationState } from "../types/navigationState";
 import { FormErrors } from "../types/formErrors";
 import {
   USERNAME_MIN_LENGTH,
@@ -39,7 +40,8 @@ const CreateNewUserPage: React.FC = () => {
     // If no errors, proceed sign in
     if (!newErrors.email && !newErrors.password) {
       console.log("User created");
-      navigate("/emailsent/");
+      const state: NavigationState = { from: 'createUser', email };
+      navigate("/emailsent/", { state });
     }
   };
 

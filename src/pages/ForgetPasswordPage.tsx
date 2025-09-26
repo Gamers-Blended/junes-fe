@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { NavigationState } from "../types/navigationState";
 import { FormErrors } from "../types/formErrors";
 import { validateEmail } from "../utils/inputValidationUtils";
 
@@ -20,7 +21,8 @@ const ForgetPasswordPage: React.FC = () => {
     // If no errors, proceed sign in
     if (!newErrors.email && !newErrors.password) {
       console.log("User created");
-      navigate("/emailsent/");
+      const state: NavigationState = { from: "forgetPassword", email };
+      navigate("/emailsent/", { state });
     }
   };
 
