@@ -14,8 +14,8 @@ import {
 } from "../utils/inputValidationUtils";
 
 const CreateNewUserPage: React.FC = () => {
-  const [email, setEmail] = useState<string>("");
   const navigate = useNavigate();
+  const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -183,7 +183,7 @@ const CreateNewUserPage: React.FC = () => {
             )}
           </div>
 
-          {/* Create Button */}
+          {/* Create Button & Links */}
           <div className="actions-container">
             <button onClick={handleCreate} className="form-button">
               Create

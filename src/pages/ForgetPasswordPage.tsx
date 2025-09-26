@@ -1,11 +1,28 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FormErrors } from "../types/formErrors";
+import { validateEmail } from "../utils/inputValidationUtils";
 
 const ForgetPasswordPage: React.FC = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [errors, setErrors] = useState<FormErrors>({
     email: "",
   });
+
+  const handleSendEmail = (): void => {
+    const newErrors: FormErrors = {
+      email: validateEmail(email),
+    };
+
+    setErrors(newErrors);
+
+    // If no errors, proceed sign in
+    if (!newErrors.email && !newErrors.password) {
+      console.log("User created");
+      navigate("/emailsent/");
+    }
+  };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setEmail(e.target.value);
@@ -43,6 +60,13 @@ const ForgetPasswordPage: React.FC = () => {
             {errors.email && (
               <p className="form-error-message">{errors.email}</p>
             )}
+          </div>
+
+          {/* Send Email Button */}
+          <div className="actions-container">
+            <button onClick={handleSendEmail} className="form-button">
+              Send Email
+            </button>
           </div>
         </div>
       </div>
