@@ -32,6 +32,11 @@ const ForgetPasswordPage: React.FC = () => {
     }
   };
 
+  const handleLoginAsExistingCustomer = (): void => {
+    console.log("Routing to login page");
+    navigate("/login/");
+  };
+
   return (
     <div className="form-parent-container">
       <div className="form">
@@ -62,11 +67,20 @@ const ForgetPasswordPage: React.FC = () => {
             )}
           </div>
 
-          {/* Send Email Button */}
+          {/* Create Button & Links */}
           <div className="actions-container">
             <button onClick={handleSendEmail} className="form-button">
               Send Email
             </button>
+
+            <div className="links-container">
+              <button
+                onClick={handleLoginAsExistingCustomer}
+                className="link-button"
+              >
+                Login as existing customer
+              </button>
+            </div>
           </div>
         </div>
       </div>
