@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { validateEmail, validatePassword } from "../utils/inputValidationUtils";
 import { FormErrors } from "../types/formErrors";
+import { useAuth } from "../components/AuthContext";
 import Footer from "../components/Footer";
 
 const LoginPage: React.FC = () => {
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -24,6 +26,7 @@ const LoginPage: React.FC = () => {
 
     // If no errors, proceed sign in
     if (!newErrors.email && !newErrors.password) {
+      setIsLoggedIn(true);
       console.log("Signed in");
       navigate('/myaccount/');
     }
