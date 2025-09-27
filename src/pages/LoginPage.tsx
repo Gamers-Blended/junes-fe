@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { validateEmail, validatePassword } from "../utils/inputValidationUtils";
@@ -14,6 +14,13 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errors, setErrors] = useState<FormErrors>({ email: "", password: "" });
 
+  // Redirect to home if user is already logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/", { replace: true });
+    }
+  }, []);
+
   const handleSignIn = (): void => {
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
@@ -28,7 +35,7 @@ const LoginPage: React.FC = () => {
     if (!newErrors.email && !newErrors.password) {
       setIsLoggedIn(true);
       console.log("Signed in");
-      navigate('/myaccount/');
+      navigate("/myaccount/");
     }
   };
 
@@ -52,12 +59,12 @@ const LoginPage: React.FC = () => {
 
   const handleCreateAccount = (): void => {
     console.log("Routing to create account page");
-    navigate('/createaccount/');
+    navigate("/createaccount/");
   };
 
   const handleForgotPassword = (): void => {
     console.log("Routing to forgot password page");
-    navigate('/resetpassword/');
+    navigate("/resetpassword/");
   };
 
   return (
