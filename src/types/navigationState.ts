@@ -1,4 +1,5 @@
 export interface NavigationState {
   from: string;
-  email: string;
+  email?: string;
+  credentialToChange?: "email" | "password";
 }

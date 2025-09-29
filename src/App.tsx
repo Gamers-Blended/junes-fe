@@ -5,6 +5,7 @@ import CreateNewUserPage from './pages/CreateNewUserPage.tsx';
 import ForgetPasswordPage from './pages/ForgetPasswordPage.tsx';
 import EmailSentPage from './pages/EmailSentPage.tsx';
 import MyAccountPage from './pages/MyAccountPage.tsx';
+import ChangeCredentialsPage from './pages/ChangeCredentialsPage.tsx';
 import ProductsPage from './pages/ProductsPage.tsx';
 import ProductListingPage from './pages/ProductListingPage.tsx';
 import ProductDetailsPage from './pages/ProductDetailsPage.tsx';
@@ -32,6 +33,7 @@ function App() {
         <Route path="/resetpassword" element={<ForgetPasswordPage />} />
         <Route path="/emailsent" element={<EmailSentPage />} />
         <Route path="/myaccount" element={<MyAccountPage />} />
+        <Route path="/changecredentials" element={<ChangeCredentialsPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/wishlist" element={<WishListPage />} />
       </Routes>

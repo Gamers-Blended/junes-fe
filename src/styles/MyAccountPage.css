@@ -22,5 +22,10 @@
 }
 
 .my-account-details {
-  margin-bottom: 30px;
+  margin-bottom: 1rem;
+}
+
+.my-account-actions-button-row {
+  margin-bottom: 1rem;
+  padding-right: 1rem;
 }

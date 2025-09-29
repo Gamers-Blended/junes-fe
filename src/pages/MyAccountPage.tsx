@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
+import { NavigationState } from "../types/navigationState";
 
 const MyAccountPage: React.FC = () => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
@@ -20,6 +21,24 @@ const MyAccountPage: React.FC = () => {
     navigate("/login");
   };
 
+  const handleChangeEmail = (): void => {
+    console.log("Directing user to change email");
+    const state: NavigationState = {
+      from: "myaccount",
+      credentialToChange: "email",
+    };
+    navigate("/changecredentials/", { state });
+  };
+
+  const handleChangePassword = (): void => {
+    console.log("Directing user to change password");
+    const state: NavigationState = {
+      from: "myaccount",
+      credentialToChange: "password",
+    };
+    navigate("/changecredentials/", { state });
+  };
+
   return (
     <div className="my-account-page-container">
       <div className="my-account-content">
@@ -37,9 +56,21 @@ const MyAccountPage: React.FC = () => {
           </div>
 
           <div className="my-account-actions">
-            <button className="form-button" onClick={handleLogOut}>
-              Log Out
-            </button>
+            <div className="my-account-actions-button-row">
+              <button className="form-button" onClick={handleLogOut}>
+                Log Out
+              </button>
+            </div>
+
+            <div className="my-account-actions-button-row">
+              <button className="form-button" onClick={handleChangeEmail}>
+                Change Email
+              </button>
+
+              <button className="form-button" onClick={handleChangePassword}>
+                Change Password
+              </button>
+            </div>
           </div>
         </div>
       </div>
