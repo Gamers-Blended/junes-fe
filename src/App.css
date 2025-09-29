@@ -2,6 +2,7 @@
 @import './styles/ButtonsCommon.css';
 @import './styles/Forms.css';
 @import './styles/ProductDetailsImages.css';
+@import './styles/MyAccountPage.css';
 
 html, body {
   margin: 0;
