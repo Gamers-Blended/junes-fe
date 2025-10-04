@@ -4,6 +4,7 @@ import { useAuth } from "../components/AuthContext";
 import { NavigationState } from "../types/navigationState";
 
 import bookIcon from "../assets/bookIcon.png";
+import cardIcon from "../assets/cardIcon.png";
 
 const MyAccountPage: React.FC = () => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
@@ -46,6 +47,15 @@ const MyAccountPage: React.FC = () => {
     const state: NavigationState = {
       from: "myaccount",
       fieldToChange: "address",
+    };
+    navigate("/changesavedinfo/", { state });
+  };
+
+  const handleMyPayments = (): void => {
+    console.log("Directing user to my payments");
+    const state: NavigationState = {
+      from: "myaccount",
+      fieldToChange: "payment",
     };
     navigate("/changesavedinfo/", { state });
   };
@@ -93,6 +103,16 @@ const MyAccountPage: React.FC = () => {
             </div>
             <div className="feature-card-bottom">
               Edit, remove or set default address
+            </div>
+          </div>
+
+          <div className="feature-card" onClick={handleMyPayments}>
+            <div className="feature-card-top">
+              <img src={cardIcon} className="feature-icon" alt="payment" />
+              <h2>My Payments</h2>
+            </div>
+            <div className="feature-card-bottom">
+              Manage or add payment methods
             </div>
           </div>
         </div>
