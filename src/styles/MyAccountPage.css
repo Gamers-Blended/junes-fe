@@ -16,8 +16,15 @@
   text-align: left;
 }
 
+.my-account-right {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
 .my-account-header h1 {
-  font-size: 28px;
+  font-size: 40px;
   margin: 0 0 20px 0;
 }
 
@@ -28,4 +35,68 @@
 .my-account-actions-button-row {
   margin-bottom: 1rem;
   padding-right: 1rem;
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #fff;
+  min-width: 280px;
+  flex: 1;
+  color: #000;
+}
+
+.feature-card:hover {
+  border-color: #00c698;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card-top {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.feature-card-top h2 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.feature-card-bottom {
+  text-align: left;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .my-account-content {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .my-account-left {
+    min-width: auto;
+  }
+
+  .my-account-right {
+    flex-direction: column;
+  }
+
+  .feature-card {
+    min-width: auto;
+  }
 }

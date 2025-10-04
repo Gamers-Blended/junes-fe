@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import { NavigationState } from "../types/navigationState";
 
+import bookIcon from "../assets/bookIcon.png";
+
 const MyAccountPage: React.FC = () => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const navigate = useNavigate();
@@ -25,7 +27,7 @@ const MyAccountPage: React.FC = () => {
     console.log("Directing user to change email");
     const state: NavigationState = {
       from: "myaccount",
-      credentialToChange: "email",
+      fieldToChange: "email",
     };
     navigate("/changecredentials/", { state });
   };
@@ -34,9 +36,18 @@ const MyAccountPage: React.FC = () => {
     console.log("Directing user to change password");
     const state: NavigationState = {
       from: "myaccount",
-      credentialToChange: "password",
+      fieldToChange: "password",
     };
     navigate("/changecredentials/", { state });
+  };
+
+  const handleMyAddresses = (): void => {
+    console.log("Directing user to my addresses");
+    const state: NavigationState = {
+      from: "myaccount",
+      fieldToChange: "address",
+    };
+    navigate("/changesavedinfo/", { state });
   };
 
   return (
@@ -70,6 +81,18 @@ const MyAccountPage: React.FC = () => {
               <button className="form-button" onClick={handleChangePassword}>
                 Change Password
               </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="my-account-right">
+          <div className="feature-card" onClick={handleMyAddresses}>
+            <div className="feature-card-top">
+              <img src={bookIcon} className="feature-icon" alt="address" />
+              <h2>My Addresses</h2>
+            </div>
+            <div className="feature-card-bottom">
+              Edit, remove or set default address
             </div>
           </div>
         </div>
