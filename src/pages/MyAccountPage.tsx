@@ -11,6 +11,48 @@ const MyAccountPage: React.FC = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState<string>("test name");
   const [email, setEmail] = useState<string>("test@junes.com");
+  const [sortBy, setSortBy] = useState("created_on");
+  const [orderBy, setOrderBy] = useState("desc");
+  const [transactionsPerPage, setTransactionsPerPage] = useState(10); // Must correspond with 1st option
+
+  const sortOptions = [
+    {
+      value: "order-date-asc",
+      label: "Order Date ↗",
+      sortBy: "created_on",
+      orderBy: "asc",
+    },
+    {
+      value: "order-date-desc",
+      label: "Order Date ↘",
+      sortBy: "created_on",
+      orderBy: "desc",
+    },
+    {
+      value: "total-amount-asc",
+      label: "Total Amount ↗",
+      sortBy: "total_amount",
+      orderBy: "asc",
+    },
+    {
+      value: "total-amount-desc",
+      label: "Total Amount ↘",
+      sortBy: "total_amount",
+      orderBy: "desc",
+    },
+    {
+      value: "status-asc",
+      label: "Status (A → Z)",
+      sortBy: "status",
+      orderBy: "asc",
+    },
+    {
+      value: "status-desc",
+      label: "Status (Z → A)",
+      sortBy: "status",
+      orderBy: "desc",
+    },
+  ];
 
   // Redirect to login if user is not logged in
   useEffect(() => {
@@ -58,6 +100,35 @@ const MyAccountPage: React.FC = () => {
       fieldToChange: "payment",
     };
     navigate("/changesavedinfo/", { state });
+  };
+
+  const getCurrentSortValue = (): string => {
+    const currentOption = sortOptions.find(
+      (option) => option.sortBy === sortBy && option.orderBy === orderBy
+    );
+    return currentOption ? currentOption.value : sortOptions[0].value;
+  };
+
+  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    const selectedOption = sortOptions.find((option) => option.value === value);
+
+    if (!selectedOption) {
+      // Fallback to 2nd option if no match found
+      const fallbackOption = sortOptions[1];
+      setSortBy(fallbackOption.sortBy);
+      setOrderBy(fallbackOption.orderBy);
+      return;
+    }
+
+    setSortBy(selectedOption.sortBy);
+    setOrderBy(selectedOption.orderBy);
+  };
+
+  const handleTransactionsPerPageChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setTransactionsPerPage(Number(event.target.value));
   };
 
   return (
@@ -116,6 +187,45 @@ const MyAccountPage: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="my-orders-content">
+        <div className="my-account-header">
+          <h2>Your Orders</h2>
+        </div>
+
+        {/* Content Controls */}
+        <div className="content-controls-row">
+          <div className="content-controls-group">
+            <label className="filter-label">Sort By</label>
+            <select
+              className="filter-select"
+              value={getCurrentSortValue()}
+              onChange={handleSortChange}
+            >
+              {sortOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="content-controls-group">
+            <label className="filter-label">Transactions Per Page</label>
+            <select
+              className="filter-select"
+              value={transactionsPerPage}
+              onChange={handleTransactionsPerPageChange}
+            >
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+        </div>           
+
       </div>
     </div>
   );
