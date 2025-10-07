@@ -37,6 +37,7 @@
   padding-right: 1rem;
 }
 
+/* ADDRESS & PAYMENT FEATURE CARDS */
 .feature-card {
   display: flex;
   flex-direction: column;
@@ -81,7 +82,6 @@
   text-align: left;
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
   .my-account-content {
     flex-direction: column;
@@ -99,4 +99,95 @@
   .feature-card {
     min-width: auto;
   }
+}
+
+/* TRANSACTION TABLE */
+.transactions-table {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.transaction-card {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.transaction-header {
+  background-color: #d9d9d9;
+  padding: 20px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.transaction-header-left {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.transaction-header-right {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.transaction-info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+.transaction-info-group.status-group {
+  margin-bottom: 1.5rem;
+  margin-left: -1rem;
+}
+
+.transaction-label {
+  font-size: 1rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.transaction-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-paid {
+  background-color: #4caf50;
+  color: white;
+}
+
+.status-shipped {
+  background-color: #2196f3;
+  color: white;
+}
+
+.status-pending {
+  background-color: #ff9800;
+  color: white;
+}
+
+.status-cancelled {
+  background-color: #f44336;
+  color: white;
 }

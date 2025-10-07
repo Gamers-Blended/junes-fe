@@ -6,6 +6,25 @@ import { NavigationState } from "../types/navigationState";
 import bookIcon from "../assets/bookIcon.png";
 import cardIcon from "../assets/cardIcon.png";
 
+interface OrderItem {
+  id: string;
+  name: string;
+  platform: string;
+  region: string;
+  edition: string;
+  quantity: number;
+  image: string;
+}
+
+interface Transaction {
+  id: string;
+  orderDate: string;
+  totalAmount: number;
+  status: string;
+  orderNumber: string;
+  items: OrderItem[];
+}
+
 const MyAccountPage: React.FC = () => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const navigate = useNavigate();
@@ -14,6 +33,73 @@ const MyAccountPage: React.FC = () => {
   const [sortBy, setSortBy] = useState("created_on");
   const [orderBy, setOrderBy] = useState("desc");
   const [transactionsPerPage, setTransactionsPerPage] = useState(10); // Must correspond with 1st option
+
+  // Dummy transaction data
+  const dummyTransactions: Transaction[] = [
+    {
+      id: "1",
+      orderDate: "21 September 2025",
+      totalAmount: 10.0,
+      status: "PAID",
+      orderNumber: "J123456789",
+      items: [
+        {
+          id: "1",
+          name: "Final Fantasy X | X-2 HD Remaster",
+          platform: "Nintendo Switch",
+          region: "Japan",
+          edition: "Standard",
+          quantity: 1,
+          image: "/placeholder-ff.jpg",
+        },
+        {
+          id: "2",
+          name: "SaGa: Scarlet Grace Ambitions",
+          platform: "Nintendo Switch",
+          region: "Asia",
+          edition: "Standard",
+          quantity: 1,
+          image: "/placeholder-saga.jpg",
+        },
+      ],
+    },
+    {
+      id: "2",
+      orderDate: "15 September 2025",
+      totalAmount: 45.5,
+      status: "SHIPPED",
+      orderNumber: "J987654321",
+      items: [
+        {
+          id: "3",
+          name: "The Legend of Zelda: Tears of the Kingdom",
+          platform: "Nintendo Switch",
+          region: "US",
+          edition: "Collector's Edition",
+          quantity: 1,
+          image: "/placeholder-zelda.jpg",
+        },
+      ],
+    },
+    {
+      id: "3",
+      orderDate: "10 September 2025",
+      totalAmount: 89.99,
+      status: "CANCELLED",
+      orderNumber: "J456789123",
+      items: [
+        {
+          id: "4",
+          name: "Persona 5 Royal",
+          platform: "PlayStation 5",
+          region: "Europe",
+          edition: "Deluxe",
+          quantity: 2,
+          image: "/placeholder-persona.jpg",
+        },
+      ],
+    },
+  ];
 
   const sortOptions = [
     {
@@ -131,6 +217,10 @@ const MyAccountPage: React.FC = () => {
     setTransactionsPerPage(Number(event.target.value));
   };
 
+  const getStatusClass = (status: string): string => {
+    return `status-badge status-${status.toLowerCase()}`;
+  };
+
   return (
     <div className="my-account-page-container">
       <div className="my-account-content">
@@ -224,8 +314,47 @@ const MyAccountPage: React.FC = () => {
               <option value="50">50</option>
             </select>
           </div>
-        </div>           
+        </div>
 
+        {/* Transactions Table */}
+        <div className="transactions-table">
+          {dummyTransactions.map((transaction) => (
+            <div key={transaction.id} className="transaction-card">
+              <div className="transaction-header">
+                <div className="transaction-header-left">
+                  <div className="transaction-info-group">
+                    <span className="transaction-label">ORDER DATE</span>
+                    <span className="transaction-value">
+                      {transaction.orderDate}
+                    </span>
+                  </div>
+
+                  <div className="transaction-info-group">
+                    <span className="transaction-label">TOTAL</span>
+                    <span className="transaction-value">
+                      ${transaction.totalAmount.toFixed(2)}
+                    </span>
+                  </div>
+
+                  <div className="transaction-info-group status-group">
+                    <span className={getStatusClass(transaction.status)}>
+                      {transaction.status}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="transaction-header-right">
+                  <div className="transaction-info-group">
+                    <span className="transaction-label">ORDER #</span>
+                    <span className="transaction-value">
+                      {transaction.orderNumber}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
