@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import { NavigationState } from "../types/navigationState";
+import Footer from "../components/Footer";
 
 import bookIcon from "../assets/bookIcon.png";
 import cardIcon from "../assets/cardIcon.png";
@@ -508,6 +509,8 @@ const MyAccountPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };
