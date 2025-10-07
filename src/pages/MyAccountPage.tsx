@@ -357,6 +357,11 @@ const MyAccountPage: React.FC = () => {
               </div>
 
               <div className="transaction-items">
+                <div className="item-actions">
+                  <button className="action-link">View order details</button>
+                  <button className="action-link">Print invoice</button>
+                </div>
+
                 {transaction.items.map((item) => (
                   <div key={item.id} className="transaction-item">
                     <div className="transaction-item-image-wrapper">

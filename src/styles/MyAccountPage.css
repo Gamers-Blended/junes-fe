@@ -267,3 +267,59 @@
   margin: 4px 0 0 0;
   font-weight: 500;
 }
+
+/* TRANSACTION TABLE - BUTTONS */
+.item-actions {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  margin-left: auto;
+  padding-left: 15px;
+}
+
+.action-link {
+  background: none;
+  border: none;
+  color: #0066cc;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.action-link:hover {
+  color: #004499;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .transaction-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .transaction-header-left,
+  .transaction-header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .transaction-item {
+    flex-direction: column;
+  }
+
+  .item-actions {
+    align-items: flex-start;
+    margin-left: 0;
+    padding-left: 0;
+    width: 100%;
+  }
+
+  .action-link {
+    width: 100%;
+    text-align: left;
+  }
+}
