@@ -13,7 +13,7 @@ interface OrderItem {
   region: string;
   edition: string;
   quantity: number;
-  image: string;
+  imageUrl: string;
 }
 
 interface Transaction {
@@ -50,7 +50,8 @@ const MyAccountPage: React.FC = () => {
           region: "Japan",
           edition: "Standard",
           quantity: 1,
-          image: "/placeholder-ff.jpg",
+          imageUrl:
+            "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_atelier_marie_remake.jpg",
         },
         {
           id: "2",
@@ -59,7 +60,8 @@ const MyAccountPage: React.FC = () => {
           region: "Asia",
           edition: "Standard",
           quantity: 1,
-          image: "/placeholder-saga.jpg",
+          imageUrl:
+            "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_atelier_marie_remake.jpg",
         },
       ],
     },
@@ -77,7 +79,8 @@ const MyAccountPage: React.FC = () => {
           region: "US",
           edition: "Collector's Edition",
           quantity: 1,
-          image: "/placeholder-zelda.jpg",
+          imageUrl:
+            "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_atelier_marie_remake.jpg",
         },
       ],
     },
@@ -95,7 +98,7 @@ const MyAccountPage: React.FC = () => {
           region: "Europe",
           edition: "Deluxe",
           quantity: 2,
-          image: "/placeholder-persona.jpg",
+          imageUrl: "/placeholder-persona.jpg",
         },
       ],
     },
@@ -280,7 +283,7 @@ const MyAccountPage: React.FC = () => {
       </div>
 
       <div className="my-orders-content">
-        <div className="my-account-header">
+        <div className="my-account-header align-left">
           <h2>Your Orders</h2>
         </div>
 
@@ -351,6 +354,27 @@ const MyAccountPage: React.FC = () => {
                     </span>
                   </div>
                 </div>
+              </div>
+
+              <div className="transaction-items">
+                {transaction.items.map((item) => (
+                  <div key={item.id} className="transaction-item">
+                    <div className="transaction-item-image-wrapper">
+                      <img
+                        src={item.imageUrl}
+                        alt={item.name}
+                        className="transaction-item-image"
+                      />
+                    </div>
+                    <div className="transaction-item-details">
+                      <h3 className="item-name">{item.name}</h3>
+                      <p className="item-details">{item.platform}</p>
+                      <p className="item-details">{item.region}</p>
+                      <p className="item-details">{item.edition}</p>
+                      <p className="item-quantity">Qty: {item.quantity}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
