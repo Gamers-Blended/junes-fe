@@ -33,6 +33,17 @@ const MyAccountPage: React.FC = () => {
   const [sortBy, setSortBy] = useState("created_on");
   const [orderBy, setOrderBy] = useState("desc");
   const [transactionsPerPage, setTransactionsPerPage] = useState(10); // Must correspond with 1st option
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageInputValue, setPageInputValue] = useState("1");
+  const [pageInfo, setPageInfo] = useState<{
+    totalElements: number;
+    totalPages: number;
+    currentPage: number;
+  }>({
+    totalElements: 3,
+    totalPages: 1,
+    currentPage: 0,
+  });
 
   // Dummy transaction data
   const dummyTransactions: Transaction[] = [
@@ -224,6 +235,79 @@ const MyAccountPage: React.FC = () => {
     return `status-badge status-${status.toLowerCase()}`;
   };
 
+  const getItemRange = () => {
+    const start = currentPage * transactionsPerPage + 1;
+    const end = Math.min(
+      start + dummyTransactions.length - 1,
+      pageInfo.totalElements
+    );
+    return { start, end };
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+      setPageInputValue((newPage + 1).toString()); // Update input to match new page
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < pageInfo.totalPages - 1) {
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+      setPageInputValue((newPage + 1).toString()); // Update input to match new page
+    }
+  };
+
+  const handlePageInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const inputValue = event.target.value;
+
+    // Allow empty string OR strings containing only digits (but can be partial)
+    if (inputValue === "" || /^\d+$/.test(inputValue)) {
+      setPageInputValue(inputValue);
+    }
+  };
+
+  const handlePageJump = () => {
+    // If empty, reset to current page (don't jump anywhere)
+    if (pageInputValue === "" || pageInputValue.trim() === "") {
+      setPageInputValue((currentPage + 1).toString());
+      return;
+    }
+
+    const pageNumber = parseInt(pageInputValue, 10);
+
+    // Validate page number
+    if (isNaN(pageNumber) || pageNumber < 1) {
+      setPageInputValue((currentPage + 1).toString());
+      return;
+    }
+
+    // Clamp between 1 and total pages
+    const clampedPage = Math.max(1, Math.min(pageNumber, pageInfo.totalPages));
+
+    // Update current page and input value
+    if (clampedPage - 1 !== currentPage) {
+      setCurrentPage(clampedPage - 1); // Convert to zero-based index
+    }
+    setPageInputValue(clampedPage.toString());
+  };
+
+  const handlePageInputKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (event.key === "Enter") {
+      handlePageJump();
+    }
+  };
+
+  const handlePageInputBlur = () => {
+    handlePageJump();
+  };
+
   return (
     <div className="my-account-page-container">
       <div className="my-account-content">
@@ -323,6 +407,7 @@ const MyAccountPage: React.FC = () => {
         <div className="transactions-table">
           {dummyTransactions.map((transaction) => (
             <div key={transaction.id} className="transaction-card">
+              {/* Transactions Table - Header */}
               <div className="transaction-header">
                 <div className="transaction-header-left">
                   <div className="transaction-info-group">
@@ -356,6 +441,7 @@ const MyAccountPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Transactions Table - Items */}
               <div className="transaction-items">
                 <div className="item-actions">
                   <button className="action-link">View order details</button>
@@ -383,6 +469,43 @@ const MyAccountPage: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Transaction Count Info with Pagination */}
+        <div className="products-info">
+          <div className="products-count">
+            Showing {getItemRange().start} - {getItemRange().end} of{" "}
+            {pageInfo.totalElements} Transactions
+          </div>
+
+          <div className="pagination-controls">
+            {currentPage > 0 && (
+              <button className="pagination-btn" onClick={handlePreviousPage}>
+                ⮜ Previous
+              </button>
+            )}
+
+            <div className="page-info">
+              Page{" "}
+              <input
+                type="number"
+                min={1}
+                max={pageInfo.totalPages}
+                value={pageInputValue}
+                onChange={handlePageInputChange}
+                onKeyDown={handlePageInputKeyDown}
+                onBlur={handlePageInputBlur}
+                className="common-input-box"
+              />{" "}
+              / {pageInfo.totalPages}
+            </div>
+
+            {currentPage < pageInfo.totalPages - 1 && (
+              <button className="pagination-btn" onClick={handleNextPage}>
+                Next ➤
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
