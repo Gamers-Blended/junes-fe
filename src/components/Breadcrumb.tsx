@@ -1,13 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { formatFullPlatformName } from "../utils/utils";
 
-interface BreadcrumbProps {
-  selectedPlatform?: string;
-  selectedCategory?: string;
+interface BreadcrumbItem {
+  label: string;
+  path: string;
 }
 
-const Breadcrumb: React.FC<BreadcrumbProps> = ({ selectedPlatform, selectedCategory }) => {
+interface BreadcrumbProps {
+  items?: BreadcrumbItem[];
+}
+
+const Breadcrumb: React.FC<BreadcrumbProps> = ({ items = [] }) => {
   return (
     <nav className="breadcrumb" aria-label="Breadcrumb">
       <ol className="breadcrumb-list">
@@ -17,21 +20,18 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ selectedPlatform, selectedCateg
           </Link>
         </li>
 
-        {selectedPlatform && (
-          <>
+        {items.map((item, index) => (
+          <React.Fragment key={index}>
             <li className="breadcrumb-separator" aria-hidden="true">
               /
             </li>
             <li className="breadcrumb-item">
-              <Link
-                to={`/products/listings/${selectedPlatform}`}
-                className="breadcrumb-link"
-              >
-                {formatFullPlatformName(selectedPlatform) + ' ' + (selectedCategory ? `${selectedCategory}` : '')}
+              <Link to={item.path} className="breadcrumb-link">
+                {item.label}
               </Link>
             </li>
-          </>
-        )}
+          </React.Fragment>
+        ))}
       </ol>
     </nav>
   );

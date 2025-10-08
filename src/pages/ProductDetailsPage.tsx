@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { apiClient } from "../utils/api.ts";
 import {
   formatPlatformName,
+  formatFullPlatformName,
   formatRegionName,
   formatEditionName,
   formatStringGeneral,
@@ -123,10 +124,10 @@ const ProductDetailsPage: React.FC = () => {
           setCurrentImageUrlList(allImages);
         }
       } catch (err) {
-          setError(
-            err instanceof Error ? err.message : "Failed to fetch product details"
-          );
-          console.error("Error fetching product details:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch product details"
+        );
+        console.error("Error fetching product details:", err);
       } finally {
         setLoading(false);
       }
@@ -344,12 +345,19 @@ const ProductDetailsPage: React.FC = () => {
   const { productDTO } = productDetails;
   const status = getStockStatus(productDTO.releaseDate, currentStock);
 
+  const breadcrumbItems = [
+    {
+      label:
+        formatFullPlatformName(selectedPlatform) +
+        " " +
+        (currentCategory ? currentCategory : ""),
+      path: `/products/listings/${selectedPlatform}`,
+    },
+  ];
+
   return (
     <div className="product-details-container">
-      <Breadcrumb
-        selectedPlatform={selectedPlatform}
-        selectedCategory={currentCategory}
-      />
+      <Breadcrumb items={breadcrumbItems} />
 
       <div className="product-variant-section">
         <h1 className="product-title">{productDTO.name}</h1>
@@ -385,10 +393,12 @@ const ProductDetailsPage: React.FC = () => {
             <div className="product-main-image-container">
               <div className="image-container">
                 <img
-                  src={appendUrlPrefix(
-                    currentImageUrlList[selectedImageIndex] ||
-                      currentProductImageUrl 
-                  ) as string}
+                  src={
+                    appendUrlPrefix(
+                      currentImageUrlList[selectedImageIndex] ||
+                        currentProductImageUrl
+                    ) as string
+                  }
                   alt={productDTO.name}
                   className="product-main-image"
                 />
@@ -553,7 +563,7 @@ const ProductDetailsPage: React.FC = () => {
         </div>
       </div>
 
-      <Footer/>
+      <Footer />
     </div>
   );
 };
