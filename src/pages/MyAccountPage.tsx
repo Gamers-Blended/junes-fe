@@ -191,7 +191,7 @@ const MyAccountPage: React.FC = () => {
       from: "myaccount",
       fieldToChange: "address",
     };
-    navigate("/changesavedinfo/", { state });
+    navigate("/savedinfo/", { state });
   };
 
   const handleMyPayments = (): void => {
@@ -200,7 +200,7 @@ const MyAccountPage: React.FC = () => {
       from: "myaccount",
       fieldToChange: "payment",
     };
-    navigate("/changesavedinfo/", { state });
+    navigate("/savedinfo/", { state });
   };
 
   const getCurrentSortValue = (): string => {

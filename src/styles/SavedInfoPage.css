@@ -1,0 +1,56 @@
+.saved-info-page-container {
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+.saved-info-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.saved-info-content h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  letter-spacing: 0.05em;
+}
+
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Add Item Card */
+.add-item-card {
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  min-height: 280px;
+  transition: all 0.2s ease;
+}
+
+.add-item-card:hover {
+  border-color: #9ca3af;
+  background-color: #f9fafb;
+}
+
+.add-icon {
+  font-size: 4rem;
+  color: #9ca3af;
+  margin-bottom: 1rem;
+  line-height: 1;
+}
+
+.add-text {
+  color: #4b5563;
+  font-weight: 500;
+  font-size: 0.95rem;
+}

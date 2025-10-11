@@ -3,6 +3,7 @@
 @import './styles/Forms.css';
 @import './styles/ProductDetailsImages.css';
 @import './styles/MyAccountPage.css';
+@import './styles/SavedInfoPage.css';
 
 html, body {
   margin: 0;
