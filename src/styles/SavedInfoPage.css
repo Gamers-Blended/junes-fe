@@ -45,12 +45,93 @@
 .add-icon {
   font-size: 4rem;
   color: #9ca3af;
-  margin-bottom: 1rem;
   line-height: 1;
 }
 
 .add-text {
   color: #4b5563;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.95rem;
+}
+
+/* SAVED ITEM CARD */
+.saved-item-card {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 1.5rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+}
+
+.default-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: #37d370;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.card-content {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.item-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.item-details {
+  font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.card-actions {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.action-link {
+  color: #2563eb;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+.action-link:hover {
+  text-decoration: underline;
+}
+
+.action-separator {
+  color: #d1d5db;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .items-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .items-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }

@@ -26,7 +26,53 @@ const SavedInfoPage: React.FC = () => {
   const isAddressMode = fieldToChange === "address";
 
   // Dummy data
-  const [savedItems, setSavedItems] = useState<SavedItem[]>([]);
+  const [savedItems, setSavedItems] = useState<SavedItem[]>([
+    {
+      id: "1",
+      type: "address",
+      name: "Name",
+      addressLine1: "Address Line 1",
+      addressLine2: "Address Line 2",
+      country: "Country",
+      zipCode: "Zip Code",
+      phoneNumber: "Phone Number",
+      isDefault: true,
+    },
+    {
+      id: "2",
+      type: "address",
+      name: "Name",
+      addressLine1: "Address Line 1",
+      addressLine2: "Address Line 2",
+      country: "Country",
+      zipCode: "Zip Code",
+      phoneNumber: "Phone Number",
+      isDefault: false,
+    },
+    {
+      id: "3",
+      type: "address",
+      name: "Name",
+      addressLine1: "Address Line 1",
+      addressLine2: "Address Line 2",
+      country: "Country",
+      zipCode: "Zip Code",
+      phoneNumber: "Phone Number",
+      isDefault: false,
+    },
+    {
+      id: "4",
+      type: "address",
+      name: "Name",
+      addressLine1: "Address Line 1",
+      addressLine2: "Address Line 2",
+      country: "Country",
+      zipCode: "Zip Code",
+      phoneNumber: "Phone Number",
+      isDefault: false,
+    },
+  ]);
+
   const canAddMoreItems = savedItems.length < MAX_NUMBER_OF_ITEMS;
 
   const renderHeader = (): JSX.Element => {
@@ -63,6 +109,47 @@ const SavedInfoPage: React.FC = () => {
     },
   ];
 
+  const renderAddressCard = (address: Address) => (
+    <div key={address.id} className="saved-item-card">
+      {address.isDefault && <div className="default-badge">Default</div>}
+
+      <div className="card-content">
+        <div className="item-name">{address.name}</div>
+        <div className="item-details">
+          <p>{address.addressLine1}</p>
+          {address.addressLine2 && <p>{address.addressLine2}</p>}
+          <p>{address.country}</p>
+          <p>{address.zipCode}</p>
+          <p>{address.phoneNumber}</p>
+        </div>
+      </div>
+
+      <div className="card-actions">
+        <button className="action-link" onClick={() => handleEdit(address.id)}>
+          Edit
+        </button>
+        <span className="action-separator">|</span>
+        <button
+          className="action-link"
+          onClick={() => handleRemove(address.id)}
+        >
+          Remove
+        </button>
+        {!address.isDefault && (
+          <>
+            <span className="action-separator">|</span>
+            <button
+              className="action-link"
+              onClick={() => handleSetDefault(address.id)}
+            >
+              Set as Default
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div className="saved-info-page-container">
       <Breadcrumb items={breadcrumbItems} />
@@ -79,6 +166,15 @@ const SavedInfoPage: React.FC = () => {
                 Add {isAddressMode ? "address" : ""}
               </div>
             </div>
+          )}
+
+          {/* Saved Items */}
+          {savedItems.map((item) =>
+            item.type === "address" ? (
+              renderAddressCard(item as Address)
+            ) : (
+              <div></div>
+            )
           )}
         </div>
       </div>
