@@ -23,11 +23,6 @@
   flex-wrap: wrap;
 }
 
-.my-account-header h1 {
-  font-size: 40px;
-  margin: 0 0 20px 0;
-}
-
 .my-account-details {
   margin-bottom: 1rem;
 }

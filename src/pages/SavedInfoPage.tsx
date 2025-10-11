@@ -155,7 +155,7 @@ const SavedInfoPage: React.FC = () => {
       <Breadcrumb items={breadcrumbItems} />
 
       <div className="saved-info-content">
-        {renderHeader()}
+        <div className="common-header">{renderHeader()}</div>
 
         <div className="items-grid">
           {/* Add Item Box - always displayed first if can add more */}

@@ -313,7 +313,7 @@ const MyAccountPage: React.FC = () => {
     <div className="my-account-page-container">
       <div className="my-account-content">
         <div className="my-account-left">
-          <div className="my-account-header">
+          <div className="common-header">
             <h1>MY ACCOUNT</h1>
           </div>
 
@@ -368,7 +368,7 @@ const MyAccountPage: React.FC = () => {
       </div>
 
       <div className="my-orders-content">
-        <div className="my-account-header align-left">
+        <div className="align-left">
           <h2>Your Orders</h2>
         </div>
 
