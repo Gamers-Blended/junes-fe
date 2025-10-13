@@ -1,20 +1,11 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { JSX } from "react";
+import { Address } from "../types/address";
+import AddressCardContent from "../components/AddressCardContent";
+import SavedInfoActionWindow from "../components/SavedInfoActionWindow.tsx";
 import Breadcrumb from "../components/Breadcrumb.tsx";
 import Footer from "../components/Footer";
-
-interface Address {
-  id: string;
-  type: "address";
-  name: string;
-  addressLine1: string;
-  addressLine2?: string;
-  country: string;
-  zipCode: string;
-  phoneNumber: string;
-  isDefault: boolean;
-}
 
 type SavedItem = Address;
 
@@ -25,28 +16,32 @@ const SavedInfoPage: React.FC = () => {
 
   const isAddressMode = fieldToChange === "address";
 
+  // States for modal
+  const [showActionWindow, setShowActionWindow] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<Address | null>(null);
+
   // Dummy data
   const [savedItems, setSavedItems] = useState<SavedItem[]>([
     {
       id: "1",
       type: "address",
-      name: "Name",
-      addressLine1: "Address Line 1",
-      addressLine2: "Address Line 2",
-      country: "Country",
-      zipCode: "Zip Code",
-      phoneNumber: "Phone Number",
+      name: "Name1",
+      addressLine1: "Address Line 11",
+      addressLine2: "Address Line 21",
+      country: "Country1",
+      zipCode: "Zip Code1",
+      phoneNumber: "Phone Number1",
       isDefault: true,
     },
     {
       id: "2",
       type: "address",
-      name: "Name",
-      addressLine1: "Address Line 1",
-      addressLine2: "Address Line 2",
-      country: "Country",
-      zipCode: "Zip Code",
-      phoneNumber: "Phone Number",
+      name: "Name2",
+      addressLine1: "Address Line 12",
+      addressLine2: "Address Line 22",
+      country: "Country2",
+      zipCode: "Zip Code2",
+      phoneNumber: "Phone Number2",
       isDefault: false,
     },
     {
@@ -92,7 +87,26 @@ const SavedInfoPage: React.FC = () => {
 
   const handleRemove = (id: string) => {
     console.log(`Remove item with id: ${id}`);
+    const item = savedItems.find((item) => item.id === id);
+    if (item) {
+      setItemToDelete(item);
+      setShowActionWindow(true);
+    }
   };
+
+  const handleConfirmDelete = () => {
+    if (itemToDelete) {
+      setSavedItems(savedItems.filter(item => item.id !== itemToDelete.id));
+      setShowActionWindow(false);
+      setItemToDelete(null);
+      console.log(`Deleted item with id: ${itemToDelete.id}`);
+    }
+  }
+
+  const handleCloseActionWindow = () => {
+    setShowActionWindow(false);
+    setItemToDelete(null);
+  }
 
   const handleSetDefault = (id: string) => {
     console.log(`Set default for item with id: ${id}`);
@@ -113,16 +127,7 @@ const SavedInfoPage: React.FC = () => {
     <div key={address.id} className="saved-item-card">
       {address.isDefault && <div className="default-badge">Default</div>}
 
-      <div className="card-content">
-        <div className="item-name">{address.name}</div>
-        <div className="item-details">
-          <p>{address.addressLine1}</p>
-          {address.addressLine2 && <p>{address.addressLine2}</p>}
-          <p>{address.country}</p>
-          <p>{address.zipCode}</p>
-          <p>{address.phoneNumber}</p>
-        </div>
-      </div>
+      <AddressCardContent {...address} />
 
       <div className="card-actions">
         <button className="action-link" onClick={() => handleEdit(address.id)}>
@@ -180,6 +185,17 @@ const SavedInfoPage: React.FC = () => {
       </div>
 
       <Footer />
+
+      {/* Action Window Modal */}
+      {showActionWindow && itemToDelete && (
+        <SavedInfoActionWindow
+          type={itemToDelete.type}
+          mode="delete"
+          addressData={itemToDelete}
+          onClose={handleCloseActionWindow}
+          onConfirm={handleConfirmDelete}
+        />
+      )}
     </div>
   );
 };

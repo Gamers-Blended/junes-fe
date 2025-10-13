@@ -1,0 +1,19 @@
+import React from "react";
+import { Address } from "../types/address";
+
+const AddressCardContent: React.FC<Address> = (address) => {
+  return (
+    <div className="card-content">
+      <div className="item-name">{address.name}</div>
+      <div className="item-details">
+        <p>{address.addressLine1}</p>
+        {address.addressLine2 && <p>{address.addressLine2}</p>}
+        <p>{address.country}</p>
+        <p>{address.zipCode}</p>
+        <p>{address.phoneNumber}</p>
+      </div>
+    </div>
+  );
+};
+
+export default AddressCardContent;

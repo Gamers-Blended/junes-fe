@@ -1,12 +1,14 @@
-@import './styles/Breadcrumb.css';
-@import './styles/ButtonsCommon.css';
-@import './styles/CommonHeader.css';
-@import './styles/Forms.css';
-@import './styles/ProductDetailsImages.css';
-@import './styles/MyAccountPage.css';
-@import './styles/SavedInfoPage.css';
+@import "./styles/Breadcrumb.css";
+@import "./styles/ButtonsCommon.css";
+@import "./styles/CommonHeader.css";
+@import "./styles/Forms.css";
+@import "./styles/ProductDetailsImages.css";
+@import "./styles/MyAccountPage.css";
+@import "./styles/SavedInfoPage.css";
+@import "./styles/SavedInfoActionWindow.css";
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -309,56 +311,6 @@ button:disabled {
   color: #4ca0ff;
 }
 
-/* QUICK SHOP WINDOW */
-.quick-shop-window-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.quick-shop-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  position: relative;
-}
-
-.quick-shop-close-button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  text-align: center;
-  padding: 0;
-  font-size: 24px;
-  font-weight: bold;
-  width: 30px;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Prevent scrolling when modal is open */
-body.modal-open {
-  overflow: hidden;
-}
-
 /* NOTIFICATION POP UP */
 .notification-popup-container {
   position: fixed;
@@ -437,16 +389,44 @@ body.modal-open {
   background-color: #00c698;
 }
 
-/* QUICK SHOP */
+/* QUICK SHOP WINDOW */
+.quick-shop-window-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
 .quick-shop-content {
-  background: white;
-  border-radius: 8px;
-  max-width: 1000px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
+  background-color: white;
   padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 1000px;
+  max-height: 90vh;
+  position: relative;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Prevent scrolling when modal is open */
+body.modal-open {
+  overflow: hidden;
 }
 
 .product-container {

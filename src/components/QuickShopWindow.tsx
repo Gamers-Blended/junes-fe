@@ -295,7 +295,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
         }),
         (
           <div className="quick-shop-content">
-            <button className="quick-shop-close-button" onClick={onClose}>
+            <button className="close-btn" onClick={onClose}>
               X
             </button>
 

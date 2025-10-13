@@ -97,6 +97,17 @@
   background-color: #00b896;
 }
 
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  text-align: center;
+  padding: 0;
+  font-size: 24px;
+  font-weight: bold;
+  width: 30px;
+}
+
 /* PRODUCT DETAILS PAGE - WISHLIST AND ADD TO CART BUTTONS */
 .product-details-buttons-container {
   display: flex;
@@ -164,4 +175,19 @@
 
 .link-button:focus {
   outline: none;
+}
+
+/* SAVED INFO ACTION WINDOW */
+.no-btn {
+  padding: 12px 32px;
+  font-size: 16px;
+  color: #000;
+}
+
+.yes-button {
+  background-color: #00d9b8;
+  border: none;
+  padding: 12px 32px;
+  font-size: 16px;
+  color: #000;
 }
