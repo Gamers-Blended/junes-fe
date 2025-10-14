@@ -10,6 +10,8 @@ import SavedInfoPage from './pages/SavedInfoPage.tsx';
 import ProductsPage from './pages/ProductsPage.tsx';
 import ProductListingPage from './pages/ProductListingPage.tsx';
 import ProductDetailsPage from './pages/ProductDetailsPage.tsx';
+import OrderDetailsPage from './pages/OrderDetailsPage.tsx';
+import InvoicePage from './pages/InvoicePage.tsx';
 import CartPage from './pages/CartPage.tsx';
 import WishListPage from './pages/WishListPage.tsx';
 import NavigationBar from "./components/NavigationBar.tsx";
@@ -28,6 +30,8 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/products/:id" element={<ProductsPage />} />
         <Route path="/products/listings/:platform" element={<ProductListingPage />} />
+        <Route path="/order/:orderId" element={<OrderDetailsPage />} />
+        <Route path="/invoice/:orderId" element={<InvoicePage />} />
         <Route path="/games/:slug" element={<ProductDetailsPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/createaccount" element={<CreateNewUserPage />} />

@@ -314,6 +314,18 @@ const MyAccountPage: React.FC = () => {
     navigate(url);
   };
 
+  const handleViewOrderDetails = (orderId: string) => {
+    const url = `/order/${orderId}`;
+    console.log(`Navigating to order details for ${orderId}`);
+    navigate(url);
+  };
+
+  const handlePrintInvoice = (orderId: string) => {
+    const url = `/invoice/${orderId}`;
+    console.log(`Navigating to invoice page for ${orderId}`);
+    navigate(url);
+  };
+
   return (
     <div className="my-account-page-container">
       <div className="my-account-content">
@@ -450,8 +462,18 @@ const MyAccountPage: React.FC = () => {
               {/* Transactions Table - Items */}
               <div className="transaction-items">
                 <div className="item-actions">
-                  <button className="action-link">View order details</button>
-                  <button className="action-link">Print invoice</button>
+                  <button
+                    className="action-link"
+                    onClick={() => handleViewOrderDetails(transaction.id)}
+                  >
+                    View order details
+                  </button>
+                  <button
+                    className="action-link"
+                    onClick={() => handlePrintInvoice(transaction.id)}
+                  >
+                    Print invoice
+                  </button>
                 </div>
 
                 {transaction.items.map((item) => (
