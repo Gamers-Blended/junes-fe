@@ -4,8 +4,8 @@ import { Address } from "../types/address";
 const AddressCardContent: React.FC<Address> = (address) => {
   return (
     <div className="card-content">
-      <div className="item-name">{address.name}</div>
-      <div className="item-details">
+      <div className="address-name">{address.name}</div>
+      <div className="address-details">
         <p>{address.addressLine1}</p>
         {address.addressLine2 && <p>{address.addressLine2}</p>}
         <p>{address.country}</p>

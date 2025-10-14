@@ -231,6 +231,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  cursor: pointer;
 }
 
 .transaction-item-details {
@@ -247,6 +248,7 @@
   color: #000;
   margin: 0;
   line-height: 1.3;
+  cursor: pointer;
 }
 
 .item-details {

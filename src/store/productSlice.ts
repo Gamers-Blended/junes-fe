@@ -7,8 +7,9 @@ export interface Item {
     platform: string;
     region: string;
     edition: string;
-    price: number;
+    price?: number;
     productImageUrl: string;
+    quantity?: number;
 }
 
 interface ProductState {

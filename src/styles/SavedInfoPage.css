@@ -75,14 +75,13 @@
   text-align: left;
 }
 
-.item-name {
+.address-name {
   font-weight: 600;
   font-size: 1rem;
 }
 
-.item-details {
+.address-details {
   font-size: 0.875rem;
-  color: #374151;
   line-height: 1.6;
 }
 

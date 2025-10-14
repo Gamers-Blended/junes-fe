@@ -2,20 +2,12 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import { NavigationState } from "../types/navigationState";
+import { useAppDispatch } from "../store/hooks";
+import { Item, setSelectedItem } from "../store/productSlice";
 import Footer from "../components/Footer";
 
 import bookIcon from "../assets/bookIcon.png";
 import cardIcon from "../assets/cardIcon.png";
-
-interface OrderItem {
-  id: string;
-  name: string;
-  platform: string;
-  region: string;
-  edition: string;
-  quantity: number;
-  imageUrl: string;
-}
 
 interface Transaction {
   id: string;
@@ -23,12 +15,11 @@ interface Transaction {
   totalAmount: number;
   status: string;
   orderNumber: string;
-  items: OrderItem[];
+  items: Item[];
 }
 
 const MyAccountPage: React.FC = () => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
-  const navigate = useNavigate();
   const [username, setUsername] = useState<string>("test name");
   const [email, setEmail] = useState<string>("test@junes.com");
   const [sortBy, setSortBy] = useState("created_on");
@@ -46,6 +37,9 @@ const MyAccountPage: React.FC = () => {
     currentPage: 0,
   });
 
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
   // Dummy transaction data
   const dummyTransactions: Transaction[] = [
     {
@@ -58,21 +52,23 @@ const MyAccountPage: React.FC = () => {
         {
           id: "1",
           name: "Final Fantasy X | X-2 HD Remaster",
+          slug: "atelier-marie-remake-the-alchemist-of-salburg",
           platform: "Nintendo Switch",
           region: "Japan",
           edition: "Standard",
           quantity: 1,
-          imageUrl:
+          productImageUrl:
             "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_atelier_marie_remake.jpg",
         },
         {
           id: "2",
           name: "SaGa: Scarlet Grace Ambitions",
+          slug: "atelier-marie-remake-the-alchemist-of-salburg",
           platform: "Nintendo Switch",
           region: "Asia",
           edition: "Standard",
           quantity: 1,
-          imageUrl:
+          productImageUrl:
             "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_atelier_marie_remake.jpg",
         },
       ],
@@ -87,11 +83,12 @@ const MyAccountPage: React.FC = () => {
         {
           id: "3",
           name: "The Legend of Zelda: Tears of the Kingdom",
+          slug: "atelier-marie-remake-the-alchemist-of-salburg",
           platform: "Nintendo Switch",
           region: "US",
           edition: "Collector's Edition",
           quantity: 1,
-          imageUrl:
+          productImageUrl:
             "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/nsw_asia_std_atelier_marie_remake.jpg",
         },
       ],
@@ -106,11 +103,12 @@ const MyAccountPage: React.FC = () => {
         {
           id: "4",
           name: "Persona 5 Royal",
+          slug: "atelier-marie-remake-the-alchemist-of-salburg",
           platform: "PlayStation 5",
           region: "Europe",
           edition: "Deluxe",
           quantity: 2,
-          imageUrl: "/placeholder-persona.jpg",
+          productImageUrl: "/placeholder-persona.jpg",
         },
       ],
     },
@@ -309,6 +307,13 @@ const MyAccountPage: React.FC = () => {
     handlePageJump();
   };
 
+  const handleNavigateToProduct = (item: Item) => {
+    const url = `/games/${item.slug}`;
+    dispatch(setSelectedItem(item));
+    console.log(`Navigating to product details for ${item.name}`);
+    navigate(url);
+  };
+
   return (
     <div className="my-account-page-container">
       <div className="my-account-content">
@@ -453,13 +458,19 @@ const MyAccountPage: React.FC = () => {
                   <div key={item.id} className="transaction-item">
                     <div className="transaction-item-image-wrapper">
                       <img
-                        src={item.imageUrl}
+                        src={item.productImageUrl}
                         alt={item.name}
                         className="transaction-item-image"
+                        onClick={() => handleNavigateToProduct(item)}
                       />
                     </div>
                     <div className="transaction-item-details">
-                      <h3 className="item-name">{item.name}</h3>
+                      <h3
+                        className="item-name"
+                        onClick={() => handleNavigateToProduct(item)}
+                      >
+                        {item.name}
+                      </h3>
                       <p className="item-details">{item.platform}</p>
                       <p className="item-details">{item.region}</p>
                       <p className="item-details">{item.edition}</p>
