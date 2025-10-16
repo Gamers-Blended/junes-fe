@@ -33,6 +33,11 @@
   background-color: #f9fafb;
 }
 
+.add-item-card.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .add-icon {
   font-size: 4rem;
   color: #9ca3af;

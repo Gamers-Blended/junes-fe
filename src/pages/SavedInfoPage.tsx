@@ -66,6 +66,17 @@ const SavedInfoPage: React.FC = () => {
       phoneNumber: "Phone Number",
       isDefault: false,
     },
+    {
+      id: "5",
+      type: "address",
+      name: "Name",
+      addressLine1: "Address Line 1",
+      addressLine2: "Address Line 2",
+      country: "Country",
+      zipCode: "Zip Code",
+      phoneNumber: "Phone Number",
+      isDefault: false,
+    },
   ]);
 
   const canAddMoreItems = savedItems.length < MAX_NUMBER_OF_ITEMS;
@@ -96,17 +107,17 @@ const SavedInfoPage: React.FC = () => {
 
   const handleConfirmDelete = () => {
     if (itemToDelete) {
-      setSavedItems(savedItems.filter(item => item.id !== itemToDelete.id));
+      setSavedItems(savedItems.filter((item) => item.id !== itemToDelete.id));
       setShowActionWindow(false);
       setItemToDelete(null);
       console.log(`Deleted item with id: ${itemToDelete.id}`);
     }
-  }
+  };
 
   const handleCloseActionWindow = () => {
     setShowActionWindow(false);
     setItemToDelete(null);
-  }
+  };
 
   const handleSetDefault = (id: string) => {
     console.log(`Set default for item with id: ${id}`);
@@ -163,15 +174,16 @@ const SavedInfoPage: React.FC = () => {
         <div className="common-header">{renderHeader()}</div>
 
         <div className="items-grid">
-          {/* Add Item Box - always displayed first if can add more */}
-          {canAddMoreItems && (
-            <div className="add-item-card" onClick={handleAddItem}>
-              <div className="add-icon">+</div>
-              <div className="add-text">
-                Add {isAddressMode ? "address" : ""}
-              </div>
-            </div>
-          )}
+          {/* Add Item Box - always displayed first */}
+
+          <div
+            className={`add-item-card ${!canAddMoreItems ? "disabled" : ""}`}
+            onClick={canAddMoreItems ? handleAddItem : undefined}
+            title={!canAddMoreItems ? 'Up to 5 items can be saved at any one time.': ''}
+          >
+            <div className="add-icon">+</div>
+            <div className="add-text">Add {isAddressMode ? "address" : ""}</div>
+          </div>
 
           {/* Saved Items */}
           {savedItems.map((item) =>
