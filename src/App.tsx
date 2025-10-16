@@ -7,6 +7,7 @@ import EmailSentPage from './pages/EmailSentPage.tsx';
 import MyAccountPage from './pages/MyAccountPage.tsx';
 import ChangeCredentialsPage from './pages/ChangeCredentialsPage.tsx';
 import SavedInfoPage from './pages/SavedInfoPage.tsx';
+import ModifyAddressPage from './pages/ModifyAddressPage.tsx';
 import ProductsPage from './pages/ProductsPage.tsx';
 import ProductListingPage from './pages/ProductListingPage.tsx';
 import ProductDetailsPage from './pages/ProductDetailsPage.tsx';
@@ -40,6 +41,7 @@ function App() {
         <Route path="/myaccount" element={<MyAccountPage />} />
         <Route path="/changecredentials" element={<ChangeCredentialsPage />} />
         <Route path="/savedinfo" element={<SavedInfoPage />} />
+        <Route path="/modifyaddress" element={<ModifyAddressPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/wishlist" element={<WishListPage />} />
       </Routes>

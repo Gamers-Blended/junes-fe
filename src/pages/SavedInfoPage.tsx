@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { NavigationState } from "../types/navigationState";
 import { JSX } from "react";
 import { Address } from "../types/address";
 import AddressCardContent from "../components/AddressCardContent";
@@ -12,6 +14,7 @@ type SavedItem = Address;
 const SavedInfoPage: React.FC = () => {
   const location = useLocation();
   const { fieldToChange } = location.state || {};
+  const navigate = useNavigate();
   const MAX_NUMBER_OF_ITEMS = 5;
 
   const isAddressMode = fieldToChange === "address";
@@ -124,7 +127,13 @@ const SavedInfoPage: React.FC = () => {
   };
 
   const handleAddItem = () => {
-    console.log("Add new item");
+    console.log("Adding a new item");
+    const state: NavigationState = {
+      from: "savedinfo",
+      fieldToChange: "address",
+      action: "add",
+    };
+    navigate("/modifyaddress/", { state });
   };
 
   const breadcrumbItems = [
@@ -179,7 +188,11 @@ const SavedInfoPage: React.FC = () => {
           <div
             className={`add-item-card ${!canAddMoreItems ? "disabled" : ""}`}
             onClick={canAddMoreItems ? handleAddItem : undefined}
-            title={!canAddMoreItems ? 'Up to 5 items can be saved at any one time.': ''}
+            title={
+              !canAddMoreItems
+                ? "Up to 5 items can be saved at any one time."
+                : ""
+            }
           >
             <div className="add-icon">+</div>
             <div className="add-text">Add {isAddressMode ? "address" : ""}</div>
