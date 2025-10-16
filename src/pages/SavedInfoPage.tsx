@@ -95,8 +95,15 @@ const SavedInfoPage: React.FC = () => {
     }
   };
 
-  const handleEdit = (id: string) => {
-    console.log(`Edit item with id: ${id}`);
+  const handleEdit = (itemToEdit: Address) => {
+    console.log(`Edit item: ${itemToEdit}`);
+    const state: NavigationState = {
+      from: "savedinfo",
+      fieldToChange: "address",
+      action: "edit",
+      item: itemToEdit,
+    };
+    navigate("/modifyaddress/", { state });
   };
 
   const handleRemove = (id: string) => {
@@ -150,7 +157,7 @@ const SavedInfoPage: React.FC = () => {
       <AddressCardContent {...address} />
 
       <div className="card-actions">
-        <button className="action-link" onClick={() => handleEdit(address.id)}>
+        <button className="action-link" onClick={() => handleEdit(address)}>
           Edit
         </button>
         <span className="action-separator">|</span>
