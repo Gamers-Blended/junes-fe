@@ -6,6 +6,7 @@ import { JSX } from "react";
 import { Address } from "../types/address";
 import AddressCardContent from "../components/AddressCardContent";
 import SavedInfoActionWindow from "../components/SavedInfoActionWindow.tsx";
+import AccountInfoChangedMessageBox from "../components/AccountInfoChangedMessageBox.tsx";
 import Breadcrumb from "../components/Breadcrumb.tsx";
 import Footer from "../components/Footer";
 
@@ -22,6 +23,9 @@ const SavedInfoPage: React.FC = () => {
   // States for modal
   const [showActionWindow, setShowActionWindow] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<Address | null>(null);
+
+  // State for success message
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   // Dummy data
   const [savedItems, setSavedItems] = useState<SavedItem[]>([
@@ -120,6 +124,7 @@ const SavedInfoPage: React.FC = () => {
       setSavedItems(savedItems.filter((item) => item.id !== itemToDelete.id));
       setShowActionWindow(false);
       setItemToDelete(null);
+      setShowSuccessMessage(true);
       console.log(`Deleted item with id: ${itemToDelete.id}`);
     }
   };
@@ -127,6 +132,10 @@ const SavedInfoPage: React.FC = () => {
   const handleCloseActionWindow = () => {
     setShowActionWindow(false);
     setItemToDelete(null);
+  };
+
+  const handleCloseSuccessMessage = () => {
+    setShowSuccessMessage(false);
   };
 
   const handleSetDefault = (id: string) => {
@@ -188,6 +197,14 @@ const SavedInfoPage: React.FC = () => {
 
       <div className="saved-info-content">
         <div className="common-header">{renderHeader()}</div>
+
+        {/* Success Message */}
+        {showSuccessMessage && (
+          <AccountInfoChangedMessageBox
+            message="Address deleted"
+            onClose={handleCloseSuccessMessage}
+          />
+        )}
 
         <div className="items-grid">
           {/* Add Item Box - always displayed first */}
