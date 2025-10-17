@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 interface BreadcrumbItem {
   label: string;
   path: string;
+  state?: any;
 }
 
 interface BreadcrumbProps {
@@ -14,6 +15,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items = [] }) => {
   return (
     <nav className="breadcrumb" aria-label="Breadcrumb">
       <ol className="breadcrumb-list">
+        {/* Root node: Home */}
         <li className="breadcrumb-item">
           <Link to="/" className="breadcrumb-link">
             Home
@@ -26,7 +28,11 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items = [] }) => {
               /
             </li>
             <li className="breadcrumb-item">
-              <Link to={item.path} className="breadcrumb-link">
+              <Link
+                to={item.path}
+                className="breadcrumb-link"
+                state={item.state}
+              >
                 {item.label}
               </Link>
             </li>
