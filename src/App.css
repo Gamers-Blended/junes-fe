@@ -6,6 +6,7 @@
 @import "./styles/MyAccountPage.css";
 @import "./styles/SavedInfoPage.css";
 @import "./styles/SavedInfoActionWindow.css";
+@import "./styles/AccountInfoChangedMessageBox.css";
 
 html,
 body {
