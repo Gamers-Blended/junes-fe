@@ -1258,3 +1258,7 @@ input[type="number"] {
 .product-detail-row-first {
   border-bottom: black 2px solid;
 }
+
+.bold {
+  font-weight: bold;
+}

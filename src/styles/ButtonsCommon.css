@@ -191,3 +191,11 @@
   font-size: 16px;
   color: #000;
 }
+
+/* MODIFY ADDRESS PAGE - ADD/UPDATE ADDRESS BUTTON */
+.modify-address-button {
+  background-color: #00d9b8;
+  border: none;
+  font-size: 16px;
+  width: 150px;
+}
