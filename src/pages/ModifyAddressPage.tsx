@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { JSX } from "react";
 import CountrySelector from "../components/CountrySelector";
+import { useAuth } from "../components/AuthContext";
+import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import Breadcrumb from "../components/Breadcrumb";
 import Footer from "../components/Footer";
 
 const ModifyAddressPage: React.FC = () => {
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
   const location = useLocation();
   const { action, item } = location.state || {};
   const [country, setCountry] = useState<string>("");
@@ -15,6 +18,8 @@ const ModifyAddressPage: React.FC = () => {
   const [addressLine, setAddressLine] = React.useState<string>("");
   const [unitNumber, setUnitNumber] = React.useState<string>("");
   const [isDefault, setIsDefault] = React.useState<boolean>(false);
+
+  useAuthRedirect(isLoggedIn);
 
   const renderHeader = (): JSX.Element => {
     switch (action) {

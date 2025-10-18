@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
+import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import { NavigationState } from "../types/navigationState";
 import { useAppDispatch } from "../store/hooks";
 import { Item, setSelectedItem } from "../store/productSlice";
@@ -153,12 +154,7 @@ const MyAccountPage: React.FC = () => {
     },
   ];
 
-  // Redirect to login if user is not logged in
-  useEffect(() => {
-    if (!isLoggedIn) {
-      navigate("/login", { replace: true });
-    }
-  }, []);
+  useAuthRedirect(isLoggedIn);
 
   const handleLogOut = (): void => {
     setIsLoggedIn(false);

@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { NavigationState } from "../types/navigationState";
 import { JSX } from "react";
 import { Address } from "../types/address";
+import { useAuth } from "../components/AuthContext";
+import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import AddressCardContent from "../components/AddressCardContent";
 import SavedInfoActionWindow from "../components/SavedInfoActionWindow.tsx";
 import AccountInfoChangedMessageBox from "../components/AccountInfoChangedMessageBox.tsx";
@@ -13,6 +15,8 @@ import Footer from "../components/Footer";
 type SavedItem = Address;
 
 const SavedInfoPage: React.FC = () => {
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
+
   const location = useLocation();
   const { fieldToChange } = location.state || {};
   const navigate = useNavigate();
@@ -85,6 +89,8 @@ const SavedInfoPage: React.FC = () => {
       isDefault: false,
     },
   ]);
+
+  useAuthRedirect(isLoggedIn);
 
   const canAddMoreItems = savedItems.length < MAX_NUMBER_OF_ITEMS;
 
