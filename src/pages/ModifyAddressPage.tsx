@@ -8,21 +8,181 @@ import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import Breadcrumb from "../components/Breadcrumb";
 import Footer from "../components/Footer";
 
+interface ValidationErrors {
+  country?: string;
+  fullName?: string;
+  phoneNumber?: string;
+  zipCode?: string;
+  addressLine?: string;
+}
+
 const ModifyAddressPage: React.FC = () => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const location = useLocation();
   const { action, item } = location.state || {};
 
   // Initialise states with existing values if editing
-  const [country, setCountry] = useState<string>(getCountryCode(item?.country || ""));
-  const [fullName, setFullName] = React.useState<string>(item?.name || "");
-  const [phoneNumber, setPhoneNumber] = React.useState<string>(item?.phoneNumber || "");
-  const [zipCode, setZipCode] = React.useState<string>(item?.zipCode || "");
-  const [addressLine, setAddressLine] = React.useState<string>(item?.addressLine || "");
-  const [unitNumber, setUnitNumber] = React.useState<string>(item?.unitNumber || "");
-  const [isDefault, setIsDefault] = React.useState<boolean>(item?.isDefault || false);
+  const [country, setCountry] = useState<string>(
+    getCountryCode(item?.country || "")
+  );
+  const [fullName, setFullName] = useState<string>(item?.name || "");
+  const [phoneNumber, setPhoneNumber] = useState<string>(
+    item?.phoneNumber || ""
+  );
+  const [zipCode, setZipCode] = useState<string>(item?.zipCode || "");
+  const [addressLine, setAddressLine] = useState<string>(
+    item?.addressLine || ""
+  );
+  const [unitNumber, setUnitNumber] = useState<string>(item?.unitNumber || "");
+  const [isDefault, setIsDefault] = useState<boolean>(item?.isDefault || false);
+
+  // Validation error states
+  const [validationError, setValidationError] = useState<ValidationErrors>({});
+  const [touched, setTouched] = useState<Set<string>>(new Set());
 
   useAuthRedirect(isLoggedIn);
+
+  const validateField = (
+    fieldName: string,
+    value: string
+  ): string | undefined => {
+    switch (fieldName) {
+      case "country":
+        if (!value || value.trim() === "")
+          return "Please select a country/region";
+        break;
+      case "fullName":
+        if (!value || value.trim() === "") {
+          return "Full name is required";
+        }
+        if (value.trim().length < 2) {
+          return "Full name must be at least 2 characters long";
+        }
+        if (!/^[a-zA-Z\s'-]+$/.test(value)) {
+          return "Full name can only contain letters, spaces, hyphens, and apostrophes";
+        }
+        break;
+
+      case "phoneNumber":
+        if (!value || value.trim() === "") {
+          return "Phone number is required";
+        }
+        // Remove spaces, dashes, and parentheses for validation
+        const cleanPhone = value.replace(/[\s\-()]/g, "");
+        if (!/^\+?[\d]{8,15}$/.test(cleanPhone)) {
+          return "Please enter a valid phone number (8-15 digits)";
+        }
+        break;
+
+      case "zipCode":
+        if (!value || value.trim() === "") {
+          return "Zip code is required";
+        }
+        if (value.trim().length < 3) {
+          return "Please enter a valid zip code";
+        }
+        break;
+
+      case "addressLine":
+        if (!value || value.trim() === "") {
+          return "Address is required";
+        }
+        if (value.trim().length < 5) {
+          return "Please enter a complete address";
+        }
+        break;
+    }
+    return undefined;
+  };
+
+  const validateAllFields = (): boolean => {
+    const newErrors: ValidationErrors = {};
+
+    newErrors.country = validateField("country", country);
+    newErrors.fullName = validateField("fullName", fullName);
+    newErrors.phoneNumber = validateField("phoneNumber", phoneNumber);
+    newErrors.zipCode = validateField("zipCode", zipCode);
+    newErrors.addressLine = validateField("addressLine", addressLine);
+
+    setValidationError(newErrors);
+
+    // Mark all fields as touched
+    setTouched(
+      new Set(["country", "fullName", "phoneNumber", "zipCode", "addressLine"])
+    );
+
+    // Return true if no errors
+    return !Object.values(newErrors).some((error) => error !== undefined);
+  };
+
+  const handleBlur = (fieldName: string) => {
+    setTouched((prev) => new Set(prev).add(fieldName));
+
+    let value = "";
+    switch (fieldName) {
+      case "country":
+        value = country;
+        break;
+      case "fullName":
+        value = fullName;
+        break;
+      case "phoneNumber":
+        value = phoneNumber;
+        break;
+      case "zipCode":
+        value = zipCode;
+        break;
+      case "addressLine":
+        value = addressLine;
+        break;
+    }
+
+    const error = validateField(fieldName, value);
+    setValidationError((prevErrors) => ({
+      ...prevErrors,
+      [fieldName]: error,
+    }));
+  };
+
+  const handleFieldChange = (fieldName: string, value: string) => {
+    // Update field value
+    switch (fieldName) {
+      case "country":
+        setCountry(value);
+        break;
+      case "fullName":
+        setFullName(value);
+        break;
+      case "phoneNumber":
+        setPhoneNumber(value);
+        break;
+      case "zipCode":
+        setZipCode(value);
+        break;
+      case "addressLine":
+        setAddressLine(value);
+        break;
+      case "unitNumber":
+        setUnitNumber(value);
+        break;
+    }
+
+    // Clear error if field has been touched
+    if (touched.has(fieldName)) {
+      const error = validateField(fieldName, value);
+      setValidationError((prevErrors) => ({
+        ...prevErrors,
+        [fieldName]: error,
+      }));
+    }
+  };
+
+  const showValidationError = (fieldName: string): boolean => {
+    return (
+      touched.has(fieldName) &&
+      !!validationError[fieldName as keyof ValidationErrors]
+    );
+  };
 
   const renderHeader = (): JSX.Element => {
     switch (action) {
@@ -36,6 +196,11 @@ const ModifyAddressPage: React.FC = () => {
   };
 
   const handleAction = () => {
+    if (!validateAllFields()) {
+      console.log("Validation failed");
+      return;
+    }
+
     if (action === "add") {
       console.log("Adding new address:", {
         country,
@@ -81,11 +246,16 @@ const ModifyAddressPage: React.FC = () => {
           <label htmlFor="country" className="label bold">
             Country/Region
           </label>
-          <CountrySelector
-            value={country}
-            onChange={(code, name) => setCountry(code)}
-            error={false}
-          />
+          <div onBlur={() => handleBlur("country")}>
+            <CountrySelector
+              value={country}
+              onChange={(code, name) => handleFieldChange("country", code)}
+              error={showValidationError("country")}
+            />
+          </div>
+          {showValidationError("country") && (
+            <div className="form-error-message">{validationError.country}</div>
+          )}
         </div>
 
         {/* Full Name */}
@@ -94,11 +264,17 @@ const ModifyAddressPage: React.FC = () => {
             Full name (First and Last name)
           </label>
           <input
-            type="fullName"
+            type="text"
             value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className={"input-field"}
+            onChange={(e) => handleFieldChange("fullName", e.target.value)}
+            onBlur={() => handleBlur("fullName")}
+            className={`input-field ${
+              showValidationError("fullName") ? "error" : ""
+            }`}
           />
+          {showValidationError("fullName") && (
+            <div className="form-error-message">{validationError.fullName}</div>
+          )}
         </div>
 
         {/* Phone Number */}
@@ -107,12 +283,20 @@ const ModifyAddressPage: React.FC = () => {
             Phone Number
           </label>
           <input
-            type="phoneNumber"
+            type="tel"
             value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            className={"input-field"}
+            onChange={(e) => handleFieldChange("phoneNumber", e.target.value)}
+            onBlur={() => handleBlur("phoneNumber")}
+            className={`input-field ${
+              showValidationError("phoneNumber") ? "error" : ""
+            }`}
           />
           <div className="align-left">May be used to assist delivery</div>
+          {showValidationError("phoneNumber") && (
+            <div className="form-error-message">
+              {validationError.phoneNumber}
+            </div>
+          )}
         </div>
 
         {/* Zip Code */}
@@ -121,24 +305,38 @@ const ModifyAddressPage: React.FC = () => {
             Zip code
           </label>
           <input
-            type="zipCode"
+            type="text"
             value={zipCode}
-            onChange={(e) => setZipCode(e.target.value)}
-            className={"input-field"}
+            onChange={(e) => handleFieldChange("zipCode", e.target.value)}
+            onBlur={() => handleBlur("zipCode")}
+            className={`input-field ${
+              showValidationError("zipCode") ? "error" : ""
+            }`}
           />
+          {showValidationError("zipCode") && (
+            <div className="form-error-message">{validationError.zipCode}</div>
+          )}
         </div>
 
         {/* Address */}
         <div className="input-group">
-          <label htmlFor="address" className="label bold">
+          <label htmlFor="addressLine" className="label bold">
             Address
           </label>
           <input
-            type="address"
+            type="text"
             value={addressLine}
-            onChange={(e) => setAddressLine(e.target.value)}
-            className={"input-field"}
+            onChange={(e) => handleFieldChange("addressLine", e.target.value)}
+            onBlur={() => handleBlur("addressLine")}
+            className={`input-field ${
+              showValidationError("addressLine") ? "error" : ""
+            }`}
           />
+          {showValidationError("addressLine") && (
+            <div className="form-error-message">
+              {validationError.addressLine}
+            </div>
+          )}
         </div>
 
         {/* Unit number */}
@@ -147,9 +345,9 @@ const ModifyAddressPage: React.FC = () => {
             Unit number
           </label>
           <input
-            type="unitNumber"
+            type="text"
             value={unitNumber}
-            onChange={(e) => setUnitNumber(e.target.value)}
+            onChange={(e) => handleFieldChange("unitNumber", e.target.value)}
             className={"input-field"}
           />
         </div>
@@ -163,7 +361,12 @@ const ModifyAddressPage: React.FC = () => {
               checked={isDefault}
               onChange={(e) => setIsDefault(e.target.checked)}
             />
-            <label className="filter-label">Make this my default address</label>
+            <label
+              className="filter-label"
+              onClick={() => setIsDefault(!isDefault)}
+            >
+              Make this my default address
+            </label>
           </div>
         </div>
 
