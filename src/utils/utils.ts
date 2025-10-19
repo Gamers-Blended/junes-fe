@@ -1,4 +1,5 @@
 import { StockStatus } from "../utils/Enums.tsx";
+import { getData } from "country-list";
 
 const URL_PREFIX = "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/";
 
@@ -161,3 +162,16 @@ export const formatCurrency = (currenySymbol: string): string => {
       return currenySymbol;
   }
 };
+
+export const getCountryCode = (countryValue: string): string => {
+  if (!countryValue) return "";
+
+  const countries = getData();
+  // Check if already code
+  const byCode = countries.find(c => c.code === countryValue);
+  if (byCode) return countryValue;
+
+  // Else find by name
+  const byName = countries.find(c => c.name === countryValue);
+  return byName ? byName.code : countryValue;
+}

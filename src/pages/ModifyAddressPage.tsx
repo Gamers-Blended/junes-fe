@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { JSX } from "react";
+import { getCountryCode } from "../utils/utils";
 import CountrySelector from "../components/CountrySelector";
 import { useAuth } from "../components/AuthContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
@@ -11,13 +12,15 @@ const ModifyAddressPage: React.FC = () => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const location = useLocation();
   const { action, item } = location.state || {};
-  const [country, setCountry] = useState<string>("");
-  const [fullName, setFullName] = React.useState<string>("");
-  const [phoneNumber, setPhoneNumber] = React.useState<string>("");
-  const [zipCode, setZipCode] = React.useState<string>("");
-  const [addressLine, setAddressLine] = React.useState<string>("");
-  const [unitNumber, setUnitNumber] = React.useState<string>("");
-  const [isDefault, setIsDefault] = React.useState<boolean>(false);
+
+  // Initialise states with existing values if editing
+  const [country, setCountry] = useState<string>(getCountryCode(item?.country || ""));
+  const [fullName, setFullName] = React.useState<string>(item?.name || "");
+  const [phoneNumber, setPhoneNumber] = React.useState<string>(item?.phoneNumber || "");
+  const [zipCode, setZipCode] = React.useState<string>(item?.zipCode || "");
+  const [addressLine, setAddressLine] = React.useState<string>(item?.addressLine || "");
+  const [unitNumber, setUnitNumber] = React.useState<string>(item?.unitNumber || "");
+  const [isDefault, setIsDefault] = React.useState<boolean>(item?.isDefault || false);
 
   useAuthRedirect(isLoggedIn);
 
@@ -26,7 +29,7 @@ const ModifyAddressPage: React.FC = () => {
       case "add":
         return <h1>ADD A NEW ADDRESS</h1>;
       case "edit":
-        return <h1>EDIT YOUR ADDRESS {item.id}</h1>;
+        return <h1>EDIT YOUR ADDRESS</h1>;
       default:
         return <h1>INVALID ACTION</h1>;
     }
@@ -37,6 +40,21 @@ const ModifyAddressPage: React.FC = () => {
       console.log("Adding new address:", {
         country,
         fullName,
+        phoneNumber,
+        zipCode,
+        addressLine,
+        unitNumber,
+        isDefault,
+      });
+    } else if (action === "edit") {
+      console.log("Updating address:", {
+        country,
+        fullName,
+        phoneNumber,
+        zipCode,
+        addressLine,
+        unitNumber,
+        isDefault,
       });
     }
   };
@@ -158,16 +176,6 @@ const ModifyAddressPage: React.FC = () => {
 
         <Footer />
       </div>
-
-      {action === "edit" && (
-        <div>
-          <p>{item.name}</p>
-          <p>
-            {item.addressLine1}, {item.country}, {item.zipCode}{" "}
-            {item.phoneNumber}
-          </p>
-        </div>
-      )}
     </div>
   );
 };

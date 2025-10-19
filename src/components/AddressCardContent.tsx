@@ -6,8 +6,8 @@ const AddressCardContent: React.FC<Address> = (address) => {
     <div className="card-content">
       <div className="address-name">{address.name}</div>
       <div className="address-details">
-        <p>{address.addressLine1}</p>
-        {address.addressLine2 && <p>{address.addressLine2}</p>}
+        <p>{address.addressLine}</p>
+        {address.unitNumber && <p>{address.unitNumber}</p>}
         <p>{address.country}</p>
         <p>{address.zipCode}</p>
         <p>{address.phoneNumber}</p>
