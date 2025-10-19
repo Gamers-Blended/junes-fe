@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Address } from "../types/address";
+import { PaymentMethod } from "../types/paymentMethod";
 import AddressCardContent from "../components/AddressCardContent";
 
 interface SavedInfoActionWindowProps {
   type?: "address" | "payment";
   mode: "add" | "edit" | "delete";
-  addressData: Address;
+  savedItemData: Address | PaymentMethod;
   onClose?: () => void;
   onConfirm?: () => void;
 }
@@ -13,7 +14,7 @@ interface SavedInfoActionWindowProps {
 const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = ({
   type = "address",
   mode = "delete",
-  addressData,
+  savedItemData,
   onClose = () => console.log("Close clicked"),
   onConfirm = () => console.log("Confirm clicked"),
 }) => {
@@ -27,6 +28,10 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = ({
     }
   };
 
+  const isAddress = (item: Address | PaymentMethod): item is Address => {
+    return type === "address";
+  };
+
   return (
     <div className="saved-info-overlay">
       <div className="saved-info-modal">
@@ -37,9 +42,9 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = ({
           </button>
         </div>
 
-        {type === "address" && (
+        {type === "address" && isAddress(savedItemData) && (
           <div className="address-content-wrapper">
-            <AddressCardContent {...addressData} />
+            <AddressCardContent {...savedItemData} />
           </div>
         )}
 

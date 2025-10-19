@@ -4,15 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { NavigationState } from "../types/navigationState";
 import { JSX } from "react";
 import { Address } from "../types/address";
+import { PaymentMethod } from "../types/paymentMethod";
 import { useAuth } from "../components/AuthContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import AddressCardContent from "../components/AddressCardContent";
+import PaymentMethodCardContent from "../components/PaymentMethodCardContent.tsx";
+import SavedItemCardActionContent from "../components/SavedItemCardActionContent.tsx";
 import SavedInfoActionWindow from "../components/SavedInfoActionWindow.tsx";
 import AccountInfoChangedMessageBox from "../components/AccountInfoChangedMessageBox.tsx";
 import Breadcrumb from "../components/Breadcrumb.tsx";
 import Footer from "../components/Footer";
 
-type SavedItem = Address;
+type SavedItem = Address | PaymentMethod;
 
 const SavedInfoPage: React.FC = () => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
@@ -23,72 +26,101 @@ const SavedInfoPage: React.FC = () => {
   const MAX_NUMBER_OF_ITEMS = 5;
 
   const isAddressMode = fieldToChange === "address";
+  const isPaymentMode = fieldToChange === "payment";
 
   // States for modal
   const [showActionWindow, setShowActionWindow] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<Address | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<
+    Address | PaymentMethod | null
+  >(null);
 
   // State for success message
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   // Dummy data
-  const [savedItems, setSavedItems] = useState<SavedItem[]>([
-    {
-      id: "1",
-      type: "address",
-      name: "Name1",
-      addressLine: "Address Line 11",
-      unitNumber: "Address Line 21",
-      country: "Singapore",
-      zipCode: "Zip Code1",
-      phoneNumber: "Phone Number1",
-      isDefault: true,
-    },
-    {
-      id: "2",
-      type: "address",
-      name: "Name2",
-      addressLine: "Address Line 12",
-      unitNumber: "Address Line 22",
-      country: "United States",
-      zipCode: "Zip Code2",
-      phoneNumber: "Phone Number2",
-      isDefault: false,
-    },
-    {
-      id: "3",
-      type: "address",
-      name: "Name",
-      addressLine: "Address Line 1",
-      unitNumber: "Address Line 2",
-      country: "Japan",
-      zipCode: "Zip Code",
-      phoneNumber: "Phone Number",
-      isDefault: false,
-    },
-    {
-      id: "4",
-      type: "address",
-      name: "Name",
-      addressLine: "Address Line 1",
-      unitNumber: "Address Line 2",
-      country: "India",
-      zipCode: "Zip Code",
-      phoneNumber: "Phone Number",
-      isDefault: false,
-    },
-    {
-      id: "5",
-      type: "address",
-      name: "Name",
-      addressLine: "Address Line 1",
-      unitNumber: "Address Line 2",
-      country: "China",
-      zipCode: "Zip Code",
-      phoneNumber: "Phone Number",
-      isDefault: false,
-    },
-  ]);
+  const [savedItems, setSavedItems] = useState<SavedItem[]>(
+    isAddressMode
+      ? [
+          {
+            id: "1",
+            type: "address",
+            name: "Name1",
+            addressLine: "Address Line 11",
+            unitNumber: "Address Line 21",
+            country: "Singapore",
+            zipCode: "Zip Code1",
+            phoneNumber: "Phone Number1",
+            isDefault: true,
+          },
+          {
+            id: "2",
+            type: "address",
+            name: "Name2",
+            addressLine: "Address Line 12",
+            unitNumber: "Address Line 22",
+            country: "United States",
+            zipCode: "Zip Code2",
+            phoneNumber: "Phone Number2",
+            isDefault: false,
+          },
+          {
+            id: "3",
+            type: "address",
+            name: "Name",
+            addressLine: "Address Line 1",
+            unitNumber: "Address Line 2",
+            country: "Japan",
+            zipCode: "Zip Code",
+            phoneNumber: "Phone Number",
+            isDefault: false,
+          },
+          {
+            id: "4",
+            type: "address",
+            name: "Name",
+            addressLine: "Address Line 1",
+            unitNumber: "Address Line 2",
+            country: "India",
+            zipCode: "Zip Code",
+            phoneNumber: "Phone Number",
+            isDefault: false,
+          },
+          {
+            id: "5",
+            type: "address",
+            name: "Name",
+            addressLine: "Address Line 1",
+            unitNumber: "Address Line 2",
+            country: "China",
+            zipCode: "Zip Code",
+            phoneNumber: "Phone Number",
+            isDefault: false,
+          },
+        ]
+      : [
+          {
+            id: "1",
+            type: "payment",
+            cardType: "Visa",
+            cardLastFour: "1111",
+            isDefault: true,
+          },
+          {
+            id: "2",
+            type: "payment",
+            cardType: "Visa",
+            cardLastFour: "1234",
+            isDefault: false,
+          },
+          {
+            id: "3",
+            type: "payment",
+            cardType: "MasterCard",
+            cardLastFour: "3333",
+            isDefault: false,
+          },
+        ]
+  );
 
   useAuthRedirect(isLoggedIn);
 
@@ -105,15 +137,19 @@ const SavedInfoPage: React.FC = () => {
     }
   };
 
-  const handleEdit = (itemToEdit: Address) => {
-    console.log(`Edit item: ${itemToEdit}`);
-    const state: NavigationState = {
-      from: "savedinfo",
-      fieldToChange: "address",
-      action: "edit",
-      item: itemToEdit,
-    };
-    navigate("/modifyaddress/", { state });
+  const handleEdit = (itemToEdit: SavedItem) => {
+    console.log(`Edit item: ${itemToEdit.type} with id: ${itemToEdit.id}`);
+    if (isAddressMode) {
+      const state: NavigationState = {
+        from: "savedinfo",
+        fieldToChange: "address",
+        action: "edit",
+        item: itemToEdit,
+      };
+      navigate("/modifyaddress/", { state });
+    } else if (isPaymentMode) {
+      console.log("Open edit payment method window");
+    }
   };
 
   const handleRemove = (id: string) => {
@@ -149,13 +185,17 @@ const SavedInfoPage: React.FC = () => {
   };
 
   const handleAddItem = () => {
-    console.log("Adding a new item");
-    const state: NavigationState = {
-      from: "savedinfo",
-      fieldToChange: "address",
-      action: "add",
-    };
-    navigate("/modifyaddress/", { state });
+    console.log(`Add new ${isAddressMode ? "address" : "payment"}`);
+    if (isAddressMode) {
+      const state: NavigationState = {
+        from: "savedinfo",
+        fieldToChange: "address",
+        action: "add",
+      };
+      navigate("/modifyaddress/", { state });
+    } else if (isPaymentMode) {
+      console.log("Open add payment method window");
+    }
   };
 
   const breadcrumbItems = [
@@ -170,30 +210,26 @@ const SavedInfoPage: React.FC = () => {
       {address.isDefault && <div className="default-badge">Default</div>}
 
       <AddressCardContent {...address} />
+      <SavedItemCardActionContent
+        item={address}
+        onEdit={() => handleEdit(address)}
+        onRemove={() => handleRemove(address.id)}
+        onSetDefault={() => handleSetDefault(address.id)}
+      />
+    </div>
+  );
 
-      <div className="card-actions">
-        <button className="action-link" onClick={() => handleEdit(address)}>
-          Edit
-        </button>
-        <span className="action-separator">|</span>
-        <button
-          className="action-link"
-          onClick={() => handleRemove(address.id)}
-        >
-          Remove
-        </button>
-        {!address.isDefault && (
-          <>
-            <span className="action-separator">|</span>
-            <button
-              className="action-link"
-              onClick={() => handleSetDefault(address.id)}
-            >
-              Set as Default
-            </button>
-          </>
-        )}
-      </div>
+  const renderPaymentMethodCard = (paymentMethod: PaymentMethod) => (
+    <div key={paymentMethod.id} className="saved-item-card">
+      {paymentMethod.isDefault && <div className="default-badge">Default</div>}
+
+      <PaymentMethodCardContent {...paymentMethod} />
+      <SavedItemCardActionContent
+        item={paymentMethod}
+        onEdit={() => handleEdit(paymentMethod)}
+        onRemove={() => handleRemove(paymentMethod.id)}
+        onSetDefault={() => handleSetDefault(paymentMethod.id)}
+      />
     </div>
   );
 
@@ -225,16 +261,16 @@ const SavedInfoPage: React.FC = () => {
             }
           >
             <div className="add-icon">+</div>
-            <div className="add-text">Add {isAddressMode ? "address" : ""}</div>
+            <div className="add-text">
+              Add {isAddressMode ? "address" : "payment method"}
+            </div>
           </div>
 
           {/* Saved Items */}
           {savedItems.map((item) =>
-            item.type === "address" ? (
-              renderAddressCard(item as Address)
-            ) : (
-              <div></div>
-            )
+            item.type === "address"
+              ? renderAddressCard(item as Address)
+              : renderPaymentMethodCard(item as PaymentMethod)
           )}
         </div>
       </div>
@@ -246,7 +282,7 @@ const SavedInfoPage: React.FC = () => {
         <SavedInfoActionWindow
           type={itemToDelete.type}
           mode="delete"
-          addressData={itemToDelete}
+          savedItemData={itemToDelete}
           onClose={handleCloseActionWindow}
           onConfirm={handleConfirmDelete}
         />

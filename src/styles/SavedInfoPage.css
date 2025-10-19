@@ -75,17 +75,17 @@
   letter-spacing: 0.025em;
 }
 
-.card-content {
+.saved-item-card-content {
   flex-grow: 1;
   text-align: left;
 }
 
-.address-name {
+.saved-item-card-name {
   font-weight: 600;
   font-size: 1rem;
 }
 
-.address-details {
+.saved-item-card-details {
   font-size: 0.875rem;
   line-height: 1.6;
 }
