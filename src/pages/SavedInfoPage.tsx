@@ -30,6 +30,7 @@ const SavedInfoPage: React.FC = () => {
 
   // States for modal
   const [showActionWindow, setShowActionWindow] = useState(false);
+  const [isAddPaymentMode, setIsAddPaymentMode] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<
     Address | PaymentMethod | null
   >(null);
@@ -137,6 +138,22 @@ const SavedInfoPage: React.FC = () => {
     }
   };
 
+  const handleAddItem = () => {
+    console.log(`Add new ${isAddressMode ? "address" : "payment"}`);
+    if (isAddressMode) {
+      const state: NavigationState = {
+        from: "savedinfo",
+        fieldToChange: "address",
+        action: "add",
+      };
+      navigate("/modifyaddress/", { state });
+    } else if (isPaymentMode) {
+      console.log("Open add payment method window");
+      setIsAddPaymentMode(true);
+      setShowActionWindow(true);
+    }
+  };
+
   const handleEdit = (itemToEdit: SavedItem) => {
     console.log(`Edit item: ${itemToEdit.type} with id: ${itemToEdit.id}`);
     if (isAddressMode) {
@@ -182,20 +199,6 @@ const SavedInfoPage: React.FC = () => {
 
   const handleSetDefault = (id: string) => {
     console.log(`Set default for item with id: ${id}`);
-  };
-
-  const handleAddItem = () => {
-    console.log(`Add new ${isAddressMode ? "address" : "payment"}`);
-    if (isAddressMode) {
-      const state: NavigationState = {
-        from: "savedinfo",
-        fieldToChange: "address",
-        action: "add",
-      };
-      navigate("/modifyaddress/", { state });
-    } else if (isPaymentMode) {
-      console.log("Open add payment method window");
-    }
   };
 
   const breadcrumbItems = [
@@ -278,15 +281,27 @@ const SavedInfoPage: React.FC = () => {
       <Footer />
 
       {/* Action Window Modal */}
-      {showActionWindow && itemToDelete && (
+      {/* Address - Delete */}
+      {showActionWindow && itemToDelete && itemToDelete.type === "address" && (
         <SavedInfoActionWindow
-          type={itemToDelete.type}
+          type="address"
           mode="delete"
-          savedItemData={itemToDelete}
+          savedItemData={itemToDelete as Address}
           onClose={handleCloseActionWindow}
           onConfirm={handleConfirmDelete}
         />
       )}
+
+      {/* Payment - Add */}
+      {showActionWindow && isAddPaymentMode && (
+        <SavedInfoActionWindow
+          type="payment"
+          mode="add"
+          onClose={handleCloseActionWindow}
+        />
+      )}
+
+      
     </div>
   );
 };
