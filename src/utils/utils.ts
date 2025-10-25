@@ -103,6 +103,14 @@ export const formatNumberArrays = (numbers: string[]) => {
   return numbers.join(", ");
 };
 
+export const formatCardNumber = (cardNumber: string) => {
+  return cardNumber
+    .replace(/\D/g, "") // Remove non-digit
+    .substring(0, 16) // Limit to 16 digits
+    .replace(/(\d{4})/g, "$1 ") // Add space every 4 digits
+    .trim(); // Remove trailing space
+};
+
 // Convert [yyy,mm,dd] date array to DD Month YYYY format
 export const convertDate = (dateArray: number[]) => {
   if (!dateArray || dateArray.length === 0) return "Not Available";

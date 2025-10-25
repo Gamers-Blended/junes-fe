@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
 import AddressCardContent from "../components/AddressCardContent";
+import { formatCardNumber } from "../utils/utils";
 
 // Discriminated union type guard
 type SavedInfoActionWindowProps =
@@ -45,9 +46,17 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const isAddress = (item: Address | PaymentMethod): item is Address => {
-    return type === "address";
-  };
+  // Form state for payment methods
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardHolderName, setCardHolderName] = useState(
+    type === "payment" && savedItemData ? savedItemData.cardHolderName : ""
+  );
+  const [expirationMonth, setExpirationMonth] = useState(
+    type === "payment" && savedItemData ? savedItemData.expirationMonth : ""
+  );
+  const [expirationYear, setExpirationYear] = useState(
+    type === "payment" && savedItemData ? savedItemData.expirationYear : ""
+  );
 
   const handleAction = () => {
     if (type === "payment" && mode === "add") {
@@ -69,6 +78,10 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     }
   };
 
+  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCardNumber(formatCardNumber(e.target.value));
+  };
+
   const getTitle = () => {
     if (type === "payment" && mode === "add") return "Add payment method";
     if (type === "payment" && mode === "edit") return "Edit payment method";
@@ -87,13 +100,43 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     if (type === "address" && mode === "delete") return "Yes";
   };
 
+  const months = Array.from({ length: 12 }, (_, i) =>
+    String(i + 1).padStart(2, "0")
+  );
+
+  const years = Array.from({ length: 10 }, (_, i) => String(2025 + i));
+
+  const renderSavePaymentForm = () => {
+    const billingAddress =
+      type === "payment" && savedItemData
+        ? savedItemData.billingAddressId
+        : null;
+
+    return (
+      <div className="save-payment-form-container">
+        {/* Left Column - Card Details */}
+        <div className="save-payment-left-column">
+          <div className="save-payment-form-group">
+            <label className="label bold">Card number</label>
+            <input
+              type="text"
+              value={cardNumber}
+              onChange={handleCardNumberChange}
+              className="input-field"
+              maxLength={16}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="saved-info-overlay">
       <div className="saved-info-modal">
+        {/* Header */}
         <div className="saved-info-header">
-          <h2 className="saved-info-title">
-            {getTitle()}
-          </h2>
+          <h2 className="saved-info-title">{getTitle()}</h2>
           <button className="close-btn" onClick={onClose}>
             X
           </button>
@@ -109,8 +152,9 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         {/* Add Payment Method */}
         {type === "payment" && mode === "add" && (
           <div className="payment-content-wrapper">
+            {renderSavePaymentForm()}
             <p>Junes accepts all major credit and debit cards:</p>
-            </div>
+          </div>
         )}
 
         <div className="btn-container">

@@ -3,5 +3,9 @@ export interface PaymentMethod {
   type: "payment";
   cardType: string;
   cardLastFour: string;
+  cardHolderName: string;
+  expirationMonth: string;
+  expirationYear: string;
+  billingAddressId: string;
   isDefault: boolean;
 }
