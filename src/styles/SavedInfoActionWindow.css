@@ -39,6 +39,33 @@
   padding: 20px 24px;
 }
 
+/* PAYMENT METHOD */
+.add-edit-payment-form-container {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 2rem;
+}
+
+.add-edit-payment-left-column {
+  flex: 1;
+}
+
+.add-edit-payment-form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.expiration-inputs-container {
+  display: flex;
+  gap: 12px;
+}
+
+.expiration-select {
+  flex: 1;
+  min-width: 0;
+}
+
 .btn-container {
   display: flex;
   justify-content: center;

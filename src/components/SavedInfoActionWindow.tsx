@@ -3,6 +3,7 @@ import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
 import AddressCardContent from "../components/AddressCardContent";
 import { formatCardNumber } from "../utils/utils";
+import { CARD_NUMBER_LENGTH } from "../utils/inputValidationUtils";
 
 // Discriminated union type guard
 type SavedInfoActionWindowProps =
@@ -106,25 +107,69 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
   const years = Array.from({ length: 10 }, (_, i) => String(2025 + i));
 
-  const renderSavePaymentForm = () => {
+  const renderAddOrEditPaymentMethodForm = () => {
     const billingAddress =
       type === "payment" && savedItemData
         ? savedItemData.billingAddressId
         : null;
 
     return (
-      <div className="save-payment-form-container">
+      <div className="add-edit-payment-form-container">
         {/* Left Column - Card Details */}
-        <div className="save-payment-left-column">
-          <div className="save-payment-form-group">
+        <div className="add-edit-payment-left-column">
+          {/* Card Number */}
+          <div className="input-group padding-bottom">
             <label className="label bold">Card number</label>
             <input
               type="text"
               value={cardNumber}
               onChange={handleCardNumberChange}
               className="input-field"
-              maxLength={16}
+              maxLength={CARD_NUMBER_LENGTH + 3} // +3 for spaces
             />
+          </div>
+
+          {/* Cardholder Name */}
+          <div className="input-group padding-bottom">
+            <label className="label bold">Name on card</label>
+            <input
+              type="text"
+              value={cardHolderName}
+              onChange={(e) => setCardHolderName(e.target.value)}
+              className="input-field"
+            />
+          </div>
+
+          {/* Expiration Date */}
+          <div className="add-edit-payment-form-row">
+            <div className="input-group padding-bottom">
+              <label className="label bold">Expiration date</label>
+              <div className="expiration-inputs-container">
+                <select
+                  value={expirationMonth}
+                  onChange={(e) => setExpirationMonth(e.target.value)}
+                  className="input-field expiration-select"
+                >
+                  {months.map((month) => (
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={expirationYear}
+                  onChange={(e) => setExpirationYear(e.target.value)}
+                  className="input-field expiration-select"
+                >
+                  {years.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -152,7 +197,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         {/* Add Payment Method */}
         {type === "payment" && mode === "add" && (
           <div className="payment-content-wrapper">
-            {renderSavePaymentForm()}
+            {renderAddOrEditPaymentMethodForm()}
             <p>Junes accepts all major credit and debit cards:</p>
           </div>
         )}

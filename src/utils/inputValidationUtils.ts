@@ -3,6 +3,7 @@ export const USERNAME_MIN_LENGTH = 6;
 export const USERNAME_MAX_LENGTH = 20;
 export const PASSWORD_MIN_LENGTH = 6;
 export const PASSWORD_MAX_LENGTH = 50;
+export const CARD_NUMBER_LENGTH = 16;
 
 export const validateEmail = (email: string): string => {
   if (!email.trim()) {

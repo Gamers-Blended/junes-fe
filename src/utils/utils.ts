@@ -1,5 +1,6 @@
 import { StockStatus } from "../utils/Enums.tsx";
 import { getData } from "country-list";
+import { CARD_NUMBER_LENGTH } from "../utils/inputValidationUtils";
 
 const URL_PREFIX = "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/";
 
@@ -104,11 +105,11 @@ export const formatNumberArrays = (numbers: string[]) => {
 };
 
 export const formatCardNumber = (cardNumber: string) => {
-  return cardNumber
-    .replace(/\D/g, "") // Remove non-digit
-    .substring(0, 16) // Limit to 16 digits
-    .replace(/(\d{4})/g, "$1 ") // Add space every 4 digits
-    .trim(); // Remove trailing space
+  const cleanValue = cardNumber.replace(/\D/g, "");
+  const limitedValue = cleanValue.slice(0, CARD_NUMBER_LENGTH);
+  
+  // Format as groups of 4 without trailing space
+  return limitedValue.replace(/(\d{4})(?=\d)/g, '$1 ');
 };
 
 // Convert [yyy,mm,dd] date array to DD Month YYYY format
