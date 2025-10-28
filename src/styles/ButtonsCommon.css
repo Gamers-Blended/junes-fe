@@ -179,7 +179,6 @@
 
 /* SAVED INFO ACTION WINDOW */
 .no-btn {
-  padding: 12px 32px;
   font-size: 16px;
   color: #000;
 }
@@ -187,7 +186,6 @@
 .yes-button {
   background-color: #00d9b8;
   border: none;
-  padding: 12px 32px;
   font-size: 16px;
   color: #000;
 }

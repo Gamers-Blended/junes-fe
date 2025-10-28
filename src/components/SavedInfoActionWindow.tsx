@@ -5,6 +5,12 @@ import AddressCardContent from "../components/AddressCardContent";
 import { formatCardNumber } from "../utils/utils";
 import { CARD_NUMBER_LENGTH } from "../utils/inputValidationUtils";
 
+import visaIcon from "../assets/acceptedCardsIcons/visaIcon.png";
+import masterCardIcon from "../assets/acceptedCardsIcons/masterCardIcon.png";
+import americanExpressIcon from "../assets/acceptedCardsIcons/americanExpressIcon.png";
+import jcbIcon from "../assets/acceptedCardsIcons/jcbIcon.png";
+import unionPayIcon from "../assets/acceptedCardsIcons/unionPayIcon.png";
+
 // Discriminated union type guard
 type SavedInfoActionWindowProps =
   | {
@@ -172,6 +178,25 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
             </div>
           </div>
         </div>
+
+        {/* Right Column - Accepted Cards */}
+        <div className="add-edit-payment-right-column">
+          <p className="accepted-cards-text">
+            Junes accepts all major credit and debit cards:
+          </p>
+          <div className="card-logos-container">
+            <div className="card-logo-row">
+              <img src={visaIcon} alt="Visa" className="card-logo"/>
+              <img src={masterCardIcon} alt="MasterCard" className="card-logo"/>
+              <img src={americanExpressIcon} alt="American Express" className="card-logo"/>
+            </div>
+
+            <div className="card-logo-row">
+              <img src={jcbIcon} alt="JCB" className="card-logo"/>
+              <img src={unionPayIcon} alt="UnionPay" className="card-logo"/>
+            </div>
+          </div>
+        </div>
       </div>
     );
   };
@@ -198,7 +223,6 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         {type === "payment" && mode === "add" && (
           <div className="payment-content-wrapper">
             {renderAddOrEditPaymentMethodForm()}
-            <p>Junes accepts all major credit and debit cards:</p>
           </div>
         )}
 
