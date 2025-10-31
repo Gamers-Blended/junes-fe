@@ -64,11 +64,15 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   const [cardHolderName, setCardHolderName] = useState(
     type === "payment" && savedItemData ? savedItemData.cardHolderName : ""
   );
+  // Get current date for default expiration
+  const currentDate = new Date();
+  const currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0"); // 0-indexed
+  const currentYear = String(currentDate.getFullYear());
   const [expirationMonth, setExpirationMonth] = useState(
-    type === "payment" && savedItemData ? savedItemData.expirationMonth : ""
+    type === "payment" && savedItemData ? savedItemData.expirationMonth : currentMonth
   );
   const [expirationYear, setExpirationYear] = useState(
-    type === "payment" && savedItemData ? savedItemData.expirationYear : ""
+    type === "payment" && savedItemData ? savedItemData.expirationYear : currentYear
   );
 
   // Validation states
@@ -289,9 +293,26 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
             <input
               type="text"
               value={cardHolderName}
-              onChange={(e) => setCardHolderName(e.target.value)}
-              className="input-field"
+              onChange={(e) =>
+                handlePaymentFieldChange(
+                  PaymentFormField.CARD_HOLDER_NAME,
+                  e.target.value
+                )
+              }
+              onBlur={() =>
+                handlePaymentBlur(PaymentFormField.CARD_HOLDER_NAME)
+              }
+              className={`input-field ${
+                showPaymentValidationError(PaymentFormField.CARD_HOLDER_NAME)
+                  ? "error"
+                  : ""
+              }`}
             />
+            {showPaymentValidationError(PaymentFormField.CARD_HOLDER_NAME) && (
+              <div className="form-error-message">
+                {paymentValidationError.cardHolderName}
+              </div>
+            )}
           </div>
 
           {/* Expiration Date */}
@@ -301,8 +322,22 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
               <div className="expiration-inputs-container">
                 <select
                   value={expirationMonth}
-                  onChange={(e) => setExpirationMonth(e.target.value)}
-                  className="input-field expiration-select"
+                  onChange={(e) =>
+                    handlePaymentFieldChange(
+                      PaymentFormField.EXPIRATION_MONTH,
+                      e.target.value
+                    )
+                  }
+                  onBlur={() =>
+                    handlePaymentBlur(PaymentFormField.EXPIRATION_MONTH)
+                  }
+                  className={`input-field expiration-select ${
+                    showPaymentValidationError(
+                      PaymentFormField.EXPIRATION_MONTH
+                    )
+                      ? "error"
+                      : ""
+                  }`}
                 >
                   {months.map((month) => (
                     <option key={month} value={month}>
@@ -313,8 +348,20 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
                 <select
                   value={expirationYear}
-                  onChange={(e) => setExpirationYear(e.target.value)}
-                  className="input-field expiration-select"
+                  onChange={(e) =>
+                    handlePaymentFieldChange(
+                      PaymentFormField.EXPIRATION_YEAR,
+                      e.target.value
+                    )
+                  }
+                  onBlur={() =>
+                    handlePaymentBlur(PaymentFormField.EXPIRATION_YEAR)
+                  }
+                  className={`input-field expiration-select ${
+                    showPaymentValidationError(PaymentFormField.EXPIRATION_YEAR)
+                      ? "error"
+                      : ""
+                  }`}
                 >
                   {years.map((year) => (
                     <option key={year} value={year}>
@@ -323,6 +370,15 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
                   ))}
                 </select>
               </div>
+              {(showPaymentValidationError(PaymentFormField.EXPIRATION_MONTH) ||
+                showPaymentValidationError(
+                  PaymentFormField.EXPIRATION_YEAR
+                )) && (
+                <div className="form-error-message">
+                  {paymentValidationError.expirationMonth ||
+                    paymentValidationError.expirationYear}
+                </div>
+              )}
             </div>
           </div>
         </div>

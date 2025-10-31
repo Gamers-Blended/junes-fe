@@ -1,5 +1,6 @@
 import { PaymentFormField } from "./Enums";
 
+const CARD_NUMBER_MIN_LENGTH = 13;
 export const CARD_NUMBER_WITHOUT_SPACES_LENGTH = 16;
 export const CARD_NUMBER_WITH_SPACES_LENGTH = 19;
 
@@ -18,7 +19,7 @@ export interface PaymentFormData {
 }
 
 /**
- * Validates card number with Luhn algorithm
+ * Validates card number with Luhn algorithm (e.g. 4242 4242 4242 4242)
  * @param cardNumber - card number to validate (with or without spaces)
  * @returns true if valid, false otherwise
  */
@@ -48,9 +49,9 @@ export const luhnCheck = (cardNumber: string): boolean => {
  * Check if card has expired
  * @param month - Expiration month (01 - 12)
  * @param year - Expiration year (YYYY)
- * @returns  true if expired, false otherwise
+ * @returns true if expired, false otherwise
  */
-export const isCardExpired = (month: string, year: string): boolean => {
+const isCardExpired = (month: string, year: string): boolean => {
   if (!month || !year) return false;
 
   const currentDate = new Date();
@@ -88,8 +89,11 @@ export const validatePaymentField = (
       if (!/^\d+$/.test(cleanCardNumber)) {
         return "Card number must contain only digits";
       }
-      if (cleanCardNumber.length < 13 || cleanCardNumber.length > 19) {
-        return "Card number must be between 13 and 19 digits";
+      if (
+        cleanCardNumber.length < CARD_NUMBER_MIN_LENGTH ||
+        cleanCardNumber.length > CARD_NUMBER_WITH_SPACES_LENGTH
+      ) {
+        return `Card number must be between ${CARD_NUMBER_MIN_LENGTH} and ${CARD_NUMBER_WITH_SPACES_LENGTH} digits`;
       }
       if (!luhnCheck(cleanCardNumber)) {
         return "Please enter a valid card number";
@@ -103,14 +107,14 @@ export const validatePaymentField = (
       if (value.trim().length < 2) {
         return "Cardholder name must be at least 2 characters long";
       }
-      if (!/^[a-zA-Z\s'-]$/.test(value)) {
+      if (!/^[a-zA-Z\s'-]+$/.test(value)) {
         return "Cardholder name can only contain letters, spaces, hypens, and apostrophes";
       }
       break;
 
     case PaymentFormField.EXPIRATION_MONTH:
       if (!value || value.trim() === "") {
-        return "Expiration month is required";
+        return "Please select an expiration month";
       }
       const monthNum = parseInt(value, 10);
       if (isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
@@ -127,7 +131,7 @@ export const validatePaymentField = (
 
     case PaymentFormField.EXPIRATION_YEAR:
       if (!value || value.trim() === "") {
-        return "Expiration year is required";
+        return "Please select an expiration year";
       }
       const yearNum = parseInt(value, 10);
       const currentYear = new Date().getFullYear();

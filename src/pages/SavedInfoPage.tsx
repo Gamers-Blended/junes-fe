@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, JSX } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { NavigationState } from "../types/navigationState";
-import { JSX } from "react";
 import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
-import { useAuth } from "../components/AuthContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
+import { useAuth } from "../components/AuthContext";
 import AddressCardContent from "../components/AddressCardContent";
 import PaymentMethodCardContent from "../components/PaymentMethodCardContent.tsx";
 import SavedItemCardActionContent from "../components/SavedItemCardActionContent.tsx";
