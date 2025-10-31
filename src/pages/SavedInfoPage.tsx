@@ -104,6 +104,10 @@ const SavedInfoPage: React.FC = () => {
             type: "payment",
             cardType: "Visa",
             cardLastFour: "1111",
+            cardHolderName: "test card",
+            expirationMonth: "08",
+            expirationYear: "2028",
+            billingAddressId: "123",
             isDefault: true,
           },
           {
@@ -111,6 +115,10 @@ const SavedInfoPage: React.FC = () => {
             type: "payment",
             cardType: "Visa",
             cardLastFour: "1234",
+            cardHolderName: "test card",
+            expirationMonth: "08",
+            expirationYear: "2028",
+            billingAddressId: "123",
             isDefault: false,
           },
           {
@@ -118,6 +126,10 @@ const SavedInfoPage: React.FC = () => {
             type: "payment",
             cardType: "MasterCard",
             cardLastFour: "3333",
+            cardHolderName: "test card",
+            expirationMonth: "08",
+            expirationYear: "2028",
+            billingAddressId: "123",
             isDefault: false,
           },
         ]
@@ -186,6 +198,10 @@ const SavedInfoPage: React.FC = () => {
       setShowSuccessMessage(true);
       console.log(`Deleted item with id: ${itemToDelete.id}`);
     }
+  };
+
+  const handleAddPaymentMethod = () => {
+    console.log("added!");
   };
 
   const handleCloseActionWindow = () => {
@@ -297,11 +313,10 @@ const SavedInfoPage: React.FC = () => {
         <SavedInfoActionWindow
           type="payment"
           mode="add"
+          onAdd={handleAddPaymentMethod}
           onClose={handleCloseActionWindow}
         />
       )}
-
-      
     </div>
   );
 };

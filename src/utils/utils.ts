@@ -1,6 +1,6 @@
 import { StockStatus } from "../utils/Enums.tsx";
 import { getData } from "country-list";
-import { CARD_NUMBER_LENGTH } from "../utils/inputValidationUtils";
+import { CARD_NUMBER_WITHOUT_SPACES_LENGTH } from "../utils/paymentValidation.ts";
 
 const URL_PREFIX = "https://pub-6e933b871f074c2c83657430de8cf735.r2.dev/";
 
@@ -106,7 +106,7 @@ export const formatNumberArrays = (numbers: string[]) => {
 
 export const formatCardNumber = (cardNumber: string) => {
   const cleanValue = cardNumber.replace(/\D/g, "");
-  const limitedValue = cleanValue.slice(0, CARD_NUMBER_LENGTH);
+  const limitedValue = cleanValue.slice(0, CARD_NUMBER_WITHOUT_SPACES_LENGTH);
   
   // Format as groups of 4 without trailing space
   return limitedValue.replace(/(\d{4})(?=\d)/g, '$1 ');

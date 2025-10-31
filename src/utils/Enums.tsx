@@ -12,3 +12,10 @@ export enum StockStatus {
     OUT_OF_STOCK = 'Out of Stock',
     PRE_ORDER = 'Pre-order'
 }
+
+export enum PaymentFormField {
+    CARD_NUMBER = 'cardNumber',
+    CARD_HOLDER_NAME = 'cardHolderName',
+    EXPIRATION_MONTH = 'expirationMonth',
+    EXPIRATION_YEAR = 'expirationYear'
+}

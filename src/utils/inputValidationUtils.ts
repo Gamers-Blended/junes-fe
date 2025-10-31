@@ -3,7 +3,6 @@ export const USERNAME_MIN_LENGTH = 6;
 export const USERNAME_MAX_LENGTH = 20;
 export const PASSWORD_MIN_LENGTH = 6;
 export const PASSWORD_MAX_LENGTH = 50;
-export const CARD_NUMBER_LENGTH = 16;
 
 export const validateEmail = (email: string): string => {
   if (!email.trim()) {
@@ -39,14 +38,20 @@ export const validateNewPasswordCreation = (password: string): string => {
     return "Password is required";
   }
 
-  if (password.length < PASSWORD_MIN_LENGTH || password.length > PASSWORD_MAX_LENGTH) {
+  if (
+    password.length < PASSWORD_MIN_LENGTH ||
+    password.length > PASSWORD_MAX_LENGTH
+  ) {
     return `Password must be between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters`;
   }
 
   return "";
 };
 
-export const validateConfirmPassword = (password: string, confirmPassword: string): string => {
+export const validateConfirmPassword = (
+  password: string,
+  confirmPassword: string
+): string => {
   if (password !== confirmPassword) {
     return "Passwords do not match";
   }
@@ -59,7 +64,10 @@ export const validateUsername = (username: string): string => {
     return "Username is required";
   }
 
-  if (username.length < USERNAME_MIN_LENGTH || username.length > USERNAME_MAX_LENGTH) {
+  if (
+    username.length < USERNAME_MIN_LENGTH ||
+    username.length > USERNAME_MAX_LENGTH
+  ) {
     return `Username must be between ${USERNAME_MIN_LENGTH} and ${USERNAME_MAX_LENGTH} characters`;
   }
 

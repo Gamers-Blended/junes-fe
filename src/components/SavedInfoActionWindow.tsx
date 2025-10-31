@@ -3,7 +3,13 @@ import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
 import AddressCardContent from "../components/AddressCardContent";
 import { formatCardNumber } from "../utils/utils";
-import { CARD_NUMBER_LENGTH } from "../utils/inputValidationUtils";
+import { PaymentFormField } from "../utils/Enums";
+import {
+  CARD_NUMBER_WITH_SPACES_LENGTH,
+  validatePaymentField,
+  validateAllPaymentFields,
+  PaymentValidationErrors,
+} from "../utils/paymentValidation";
 
 import visaIcon from "../assets/acceptedCardsIcons/visaIcon.png";
 import masterCardIcon from "../assets/acceptedCardsIcons/masterCardIcon.png";
@@ -65,8 +71,37 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     type === "payment" && savedItemData ? savedItemData.expirationYear : ""
   );
 
+  // Validation states
+  const [paymentValidationError, setPaymentValidationError] =
+    useState<PaymentValidationErrors>({});
+  const [paymentTouched, setPaymentTouched] = useState<Set<string>>(new Set());
+
   const handleAction = () => {
     if (type === "payment" && mode === "add") {
+      // Validate payment fields
+      const { errors: paymentErrors, isValid: isPaymentValid } =
+        validateAllPaymentFields({
+          cardNumber,
+          cardHolderName,
+          expirationMonth,
+          expirationYear,
+        });
+
+      setPaymentValidationError(paymentErrors);
+      setPaymentTouched(
+        new Set([
+          PaymentFormField.CARD_NUMBER,
+          PaymentFormField.CARD_HOLDER_NAME,
+          PaymentFormField.EXPIRATION_MONTH,
+          PaymentFormField.EXPIRATION_YEAR,
+        ])
+      );
+
+      if (!isPaymentValid) {
+        console.log("Validation failed");
+        return;
+      }
+
       const onAdd = props.onAdd || (() => console.log("Add clicked"));
       onAdd();
     } else if (type === "payment" && mode === "edit") {
@@ -85,8 +120,111 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     }
   };
 
+  // Card number needs to be formatted before processing
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCardNumber(formatCardNumber(e.target.value));
+    const formattedCardNumber = formatCardNumber(e.target.value);
+    setCardNumber(formattedCardNumber);
+
+    // Clear error if field has been touched
+    if (paymentTouched.has(PaymentFormField.CARD_NUMBER)) {
+      const error = validatePaymentField(
+        PaymentFormField.CARD_NUMBER,
+        formattedCardNumber,
+        {
+          cardNumber: formattedCardNumber,
+          cardHolderName,
+          expirationMonth,
+          expirationYear,
+        }
+      );
+      setPaymentValidationError((prevErrors) => ({
+        ...prevErrors,
+        cardNumber: error,
+      }));
+    }
+  };
+
+  const handlePaymentFieldChange = (fieldName: string, value: string) => {
+    switch (fieldName) {
+      case PaymentFormField.CARD_HOLDER_NAME:
+        setCardHolderName(value);
+        break;
+      case PaymentFormField.EXPIRATION_MONTH:
+        setExpirationMonth(value);
+        break;
+      case PaymentFormField.EXPIRATION_YEAR:
+        setExpirationYear(value);
+        break;
+    }
+
+    // Clear error if field has been touched
+    if (paymentTouched.has(fieldName)) {
+      const error = validatePaymentField(
+        fieldName as keyof PaymentValidationErrors,
+        value,
+        {
+          cardNumber,
+          cardHolderName:
+            fieldName === PaymentFormField.CARD_HOLDER_NAME
+              ? value
+              : cardHolderName,
+          expirationMonth:
+            fieldName === PaymentFormField.EXPIRATION_MONTH
+              ? value
+              : expirationMonth,
+          expirationYear:
+            fieldName === PaymentFormField.EXPIRATION_YEAR
+              ? value
+              : expirationYear,
+        }
+      );
+      setPaymentValidationError((prevErrors) => ({
+        ...prevErrors,
+        [fieldName]: error,
+      }));
+    }
+  };
+
+  const handlePaymentBlur = (fieldName: string) => {
+    setPaymentTouched((prev) => new Set(prev).add(fieldName));
+
+    let value = "";
+    switch (fieldName) {
+      case PaymentFormField.CARD_NUMBER:
+        value = cardNumber;
+        break;
+      case PaymentFormField.CARD_HOLDER_NAME:
+        value = cardHolderName;
+        break;
+      case PaymentFormField.EXPIRATION_MONTH:
+        value = expirationMonth;
+        break;
+      case PaymentFormField.EXPIRATION_YEAR:
+        value = expirationYear;
+        break;
+    }
+
+    const error = validatePaymentField(
+      fieldName as keyof PaymentValidationErrors,
+      value,
+      {
+        cardNumber,
+        cardHolderName,
+        expirationMonth,
+        expirationYear,
+      }
+    );
+    setPaymentValidationError((prevErrors) => ({
+      ...prevErrors,
+      [fieldName]: error,
+    }));
+  };
+
+  const showPaymentValidationError = (fieldName: string): boolean => {
+    return (
+      paymentTouched.has(fieldName) &&
+      !!paymentValidationError[fieldName as keyof PaymentValidationErrors]
+    );
   };
 
   const getTitle = () => {
@@ -130,9 +268,19 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
               type="text"
               value={cardNumber}
               onChange={handleCardNumberChange}
-              className="input-field"
-              maxLength={CARD_NUMBER_LENGTH + 3} // +3 for spaces
+              onBlur={() => handlePaymentBlur(PaymentFormField.CARD_NUMBER)}
+              className={`input-field ${
+                showPaymentValidationError(PaymentFormField.CARD_NUMBER)
+                  ? "error"
+                  : ""
+              }`}
+              maxLength={CARD_NUMBER_WITH_SPACES_LENGTH}
             />
+            {showPaymentValidationError(PaymentFormField.CARD_NUMBER) && (
+              <div className="form-error-message">
+                {paymentValidationError.cardNumber}
+              </div>
+            )}
           </div>
 
           {/* Cardholder Name */}
@@ -186,14 +334,22 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
           </p>
           <div className="card-logos-container">
             <div className="card-logo-row">
-              <img src={visaIcon} alt="Visa" className="card-logo"/>
-              <img src={masterCardIcon} alt="MasterCard" className="card-logo"/>
-              <img src={americanExpressIcon} alt="American Express" className="card-logo"/>
+              <img src={visaIcon} alt="Visa" className="card-logo" />
+              <img
+                src={masterCardIcon}
+                alt="MasterCard"
+                className="card-logo"
+              />
+              <img
+                src={americanExpressIcon}
+                alt="American Express"
+                className="card-logo"
+              />
             </div>
 
             <div className="card-logo-row">
-              <img src={jcbIcon} alt="JCB" className="card-logo"/>
-              <img src={unionPayIcon} alt="UnionPay" className="card-logo"/>
+              <img src={jcbIcon} alt="JCB" className="card-logo" />
+              <img src={unionPayIcon} alt="UnionPay" className="card-logo" />
             </div>
           </div>
         </div>
