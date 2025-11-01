@@ -20,8 +20,8 @@ export interface PaymentFormData {
 
 /**
  * Validates card number with Luhn algorithm (e.g. 4242 4242 4242 4242)
- * @param cardNumber - card number to validate (with or without spaces)
- * @returns true if valid, false otherwise
+ * @param cardNumber - Card number to validate (with or without spaces)
+ * @returns True if valid, false otherwise
  */
 export const luhnCheck = (cardNumber: string): boolean => {
   const digits = cardNumber.replace(/\s/g, "");
@@ -49,7 +49,7 @@ export const luhnCheck = (cardNumber: string): boolean => {
  * Check if card has expired
  * @param month - Expiration month (01 - 12)
  * @param year - Expiration year (YYYY)
- * @returns true if expired, false otherwise
+ * @returns True if expired, false otherwise
  */
 const isCardExpired = (month: string, year: string): boolean => {
   if (!month || !year) return false;
@@ -70,7 +70,7 @@ const isCardExpired = (month: string, year: string): boolean => {
 /**
  * Validates 1 payment field
  * @param fieldName - Name of field to validate
- * @param value  - Value to validate
+ * @param value - Value to validate
  * @param allValues - All payment values (for expiration date validation)
  * @returns Error message if validation fails, undefined otherwise
  */

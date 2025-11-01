@@ -44,7 +44,7 @@ const SavedInfoPage: React.FC = () => {
           {
             id: "1",
             type: "address",
-            name: "Name1",
+            fullName: "Name1",
             addressLine: "Address Line 11",
             unitNumber: "Address Line 21",
             country: "Singapore",
@@ -55,7 +55,7 @@ const SavedInfoPage: React.FC = () => {
           {
             id: "2",
             type: "address",
-            name: "Name2",
+            fullName: "Name2",
             addressLine: "Address Line 12",
             unitNumber: "Address Line 22",
             country: "United States",
@@ -66,7 +66,7 @@ const SavedInfoPage: React.FC = () => {
           {
             id: "3",
             type: "address",
-            name: "Name",
+            fullName: "Name",
             addressLine: "Address Line 1",
             unitNumber: "Address Line 2",
             country: "Japan",
@@ -77,7 +77,7 @@ const SavedInfoPage: React.FC = () => {
           {
             id: "4",
             type: "address",
-            name: "Name",
+            fullName: "Name",
             addressLine: "Address Line 1",
             unitNumber: "Address Line 2",
             country: "India",
@@ -88,7 +88,7 @@ const SavedInfoPage: React.FC = () => {
           {
             id: "5",
             type: "address",
-            name: "Name",
+            fullName: "Name",
             addressLine: "Address Line 1",
             unitNumber: "Address Line 2",
             country: "China",

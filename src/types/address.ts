@@ -1,7 +1,7 @@
 export interface Address {
   id: string;
   type: "address";
-  name: string;
+  fullName: string;
   addressLine: string;
   unitNumber?: string;
   country: string;
