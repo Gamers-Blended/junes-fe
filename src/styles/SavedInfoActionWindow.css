@@ -119,3 +119,30 @@
 body.saved-info-modal-open {
   overflow: hidden;
 }
+
+/* PAYMENT METHOD - DELETE */
+.delete-payment-container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.payment-form-header {
+  font-weight: bold;
+  font-size: 20px;
+  text-align: left;
+  padding: 20px 24px;
+}
+
+.delete-payment-form {
+  text-align: left;
+  line-height: 1.5;
+  padding-left: 24px;
+}
+
+/* Update button container for delete view */
+.saved-info-modal .btn-container {
+  justify-content: flex-end;
+  padding: 1rem 24px;
+}

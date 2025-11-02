@@ -185,6 +185,7 @@ const SavedInfoPage: React.FC = () => {
     const item = savedItems.find((item) => item.id === id);
     if (item) {
       setItemToDelete(item);
+      setIsAddPaymentMode(false);
       setShowActionWindow(true);
     }
   };
@@ -206,6 +207,7 @@ const SavedInfoPage: React.FC = () => {
   const handleCloseActionWindow = () => {
     setShowActionWindow(false);
     setItemToDelete(null);
+    setIsAddPaymentMode(false);
   };
 
   const handleCloseSuccessMessage = () => {
@@ -314,6 +316,17 @@ const SavedInfoPage: React.FC = () => {
           mode="add"
           onAdd={handleAddPaymentMethod}
           onClose={handleCloseActionWindow}
+        />
+      )}
+
+      {/* Payment - Delete */}
+      {showActionWindow && itemToDelete && itemToDelete.type === "payment" && (
+        <SavedInfoActionWindow
+          type="payment"
+          mode="delete"
+          savedItemData={itemToDelete as PaymentMethod}
+          onClose={handleCloseActionWindow}
+          onConfirm={handleConfirmDelete}
         />
       )}
     </div>

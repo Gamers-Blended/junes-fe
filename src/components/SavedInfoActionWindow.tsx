@@ -69,10 +69,14 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   const currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0"); // 0-indexed
   const currentYear = String(currentDate.getFullYear());
   const [expirationMonth, setExpirationMonth] = useState(
-    type === "payment" && savedItemData ? savedItemData.expirationMonth : currentMonth
+    type === "payment" && savedItemData
+      ? savedItemData.expirationMonth
+      : currentMonth
   );
   const [expirationYear, setExpirationYear] = useState(
-    type === "payment" && savedItemData ? savedItemData.expirationYear : currentYear
+    type === "payment" && savedItemData
+      ? savedItemData.expirationYear
+      : currentYear
   );
 
   // Validation states
@@ -413,6 +417,30 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     );
   };
 
+  const renderRemovePaymentMethodText = () => {
+    // Only render cardType when this component is handling a payment method
+    if (type !== "payment" || !savedItemData) return null;
+
+    const payment = savedItemData as PaymentMethod;
+
+    return (
+      <div className="delete-payment-form-container">
+        <div className="payment-form-header">
+          {payment.cardType} ending in {payment.cardLastFour}
+        </div>
+        <div className="delete-payment-form">
+          If you do not want this payment method to be displayed in your list of
+          payment options, <br />
+          click "Remove".
+          <br />
+          (Disabling this payment method will neither cancel any of your open
+          orders nor fail any <br />
+          automatic payments set up that use this method.)
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="saved-info-overlay">
       <div className="saved-info-modal">
@@ -435,6 +463,13 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         {type === "payment" && mode === "add" && (
           <div className="payment-content-wrapper">
             {renderAddOrEditPaymentMethodForm()}
+          </div>
+        )}
+
+        {/* Delete Payment Method */}
+        {type === "payment" && mode === "delete" && savedItemData && (
+          <div className="payment-content-wrapper">
+            {renderRemovePaymentMethodText()}
           </div>
         )}
 
