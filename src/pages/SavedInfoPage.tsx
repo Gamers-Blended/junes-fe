@@ -2,6 +2,7 @@ import React, { useState, JSX } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { NavigationState } from "../types/navigationState";
+import { SavedInfoType, SavedInfoAction } from "../utils/Enums.tsx";
 import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
@@ -24,8 +25,8 @@ const SavedInfoPage: React.FC = () => {
   const navigate = useNavigate();
   const MAX_NUMBER_OF_ITEMS = 5;
 
-  const isAddressMode = fieldToChange === "address";
-  const isPaymentMode = fieldToChange === "payment";
+  const isAddressMode = fieldToChange === SavedInfoType.ADDRESS;
+  const isPaymentMode = fieldToChange === SavedInfoType.PAYMENT;
 
   // States for modal
   const [showActionWindow, setShowActionWindow] = useState(false);
@@ -43,7 +44,7 @@ const SavedInfoPage: React.FC = () => {
       ? [
           {
             id: "1",
-            type: "address",
+            type: SavedInfoType.ADDRESS,
             fullName: "Name1",
             addressLine: "Address Line 11",
             unitNumber: "Address Line 21",
@@ -54,7 +55,7 @@ const SavedInfoPage: React.FC = () => {
           },
           {
             id: "2",
-            type: "address",
+            type: SavedInfoType.ADDRESS,
             fullName: "Name2",
             addressLine: "Address Line 12",
             unitNumber: "Address Line 22",
@@ -65,7 +66,7 @@ const SavedInfoPage: React.FC = () => {
           },
           {
             id: "3",
-            type: "address",
+            type: SavedInfoType.ADDRESS,
             fullName: "Name",
             addressLine: "Address Line 1",
             unitNumber: "Address Line 2",
@@ -76,7 +77,7 @@ const SavedInfoPage: React.FC = () => {
           },
           {
             id: "4",
-            type: "address",
+            type: SavedInfoType.ADDRESS,
             fullName: "Name",
             addressLine: "Address Line 1",
             unitNumber: "Address Line 2",
@@ -87,7 +88,7 @@ const SavedInfoPage: React.FC = () => {
           },
           {
             id: "5",
-            type: "address",
+            type: SavedInfoType.ADDRESS,
             fullName: "Name",
             addressLine: "Address Line 1",
             unitNumber: "Address Line 2",
@@ -100,7 +101,7 @@ const SavedInfoPage: React.FC = () => {
       : [
           {
             id: "1",
-            type: "payment",
+            type: SavedInfoType.PAYMENT,
             cardType: "Visa",
             cardLastFour: "1111",
             cardHolderName: "test card",
@@ -111,7 +112,7 @@ const SavedInfoPage: React.FC = () => {
           },
           {
             id: "2",
-            type: "payment",
+            type: SavedInfoType.PAYMENT,
             cardType: "Visa",
             cardLastFour: "1234",
             cardHolderName: "test card",
@@ -122,7 +123,7 @@ const SavedInfoPage: React.FC = () => {
           },
           {
             id: "3",
-            type: "payment",
+            type: SavedInfoType.PAYMENT,
             cardType: "MasterCard",
             cardLastFour: "3333",
             cardHolderName: "test card",
@@ -140,9 +141,9 @@ const SavedInfoPage: React.FC = () => {
 
   const renderHeader = (): JSX.Element => {
     switch (fieldToChange) {
-      case "address":
+      case SavedInfoType.ADDRESS:
         return <h1>MY ADDRESSES</h1>;
-      case "payment":
+      case SavedInfoType.PAYMENT:
         return <h1>MY PAYMENTS</h1>;
       default:
         return <h1>SAVED INFO</h1>;
@@ -150,12 +151,12 @@ const SavedInfoPage: React.FC = () => {
   };
 
   const handleAddItem = () => {
-    console.log(`Add new ${isAddressMode ? "address" : "payment"}`);
+    console.log(`Add new ${isAddressMode ? SavedInfoType.ADDRESS : SavedInfoType.PAYMENT}`);
     if (isAddressMode) {
       const state: NavigationState = {
         from: "savedinfo",
-        fieldToChange: "address",
-        action: "add",
+        fieldToChange: SavedInfoType.ADDRESS,
+        action: SavedInfoAction.ADD,
       };
       navigate("/modifyaddress/", { state });
     } else if (isPaymentMode) {
@@ -170,8 +171,8 @@ const SavedInfoPage: React.FC = () => {
     if (isAddressMode) {
       const state: NavigationState = {
         from: "savedinfo",
-        fieldToChange: "address",
-        action: "edit",
+        fieldToChange: SavedInfoType.ADDRESS,
+        action: SavedInfoAction.EDIT,
         item: itemToEdit,
       };
       navigate("/modifyaddress/", { state });
@@ -282,13 +283,13 @@ const SavedInfoPage: React.FC = () => {
           >
             <div className="add-icon">+</div>
             <div className="add-text">
-              Add {isAddressMode ? "address" : "payment method"}
+              Add {isAddressMode ? SavedInfoType.ADDRESS : "payment method"}
             </div>
           </div>
 
           {/* Saved Items */}
           {savedItems.map((item) =>
-            item.type === "address"
+            item.type === SavedInfoType.ADDRESS
               ? renderAddressCard(item as Address)
               : renderPaymentMethodCard(item as PaymentMethod)
           )}
@@ -299,10 +300,10 @@ const SavedInfoPage: React.FC = () => {
 
       {/* Action Window Modal */}
       {/* Address - Delete */}
-      {showActionWindow && itemToDelete && itemToDelete.type === "address" && (
+      {showActionWindow && itemToDelete && itemToDelete.type === SavedInfoType.ADDRESS && (
         <SavedInfoActionWindow
-          type="address"
-          mode="delete"
+          type={SavedInfoType.ADDRESS}
+          mode={SavedInfoAction.DELETE}
           savedItemData={itemToDelete as Address}
           onClose={handleCloseActionWindow}
           onConfirm={handleConfirmDelete}
@@ -312,18 +313,18 @@ const SavedInfoPage: React.FC = () => {
       {/* Payment - Add */}
       {showActionWindow && isAddPaymentMode && (
         <SavedInfoActionWindow
-          type="payment"
-          mode="add"
+          type={SavedInfoType.PAYMENT}
+          mode={SavedInfoAction.ADD}
           onAdd={handleAddPaymentMethod}
           onClose={handleCloseActionWindow}
         />
       )}
 
       {/* Payment - Delete */}
-      {showActionWindow && itemToDelete && itemToDelete.type === "payment" && (
+      {showActionWindow && itemToDelete && itemToDelete.type === SavedInfoType.PAYMENT && (
         <SavedInfoActionWindow
-          type="payment"
-          mode="delete"
+          type={SavedInfoType.PAYMENT}
+          mode={SavedInfoAction.DELETE}
           savedItemData={itemToDelete as PaymentMethod}
           onClose={handleCloseActionWindow}
           onConfirm={handleConfirmDelete}

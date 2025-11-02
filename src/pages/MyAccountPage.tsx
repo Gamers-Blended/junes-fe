@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import { NavigationState } from "../types/navigationState";
+import { SavedInfoType } from "../utils/Enums.tsx";
 import { useAppDispatch } from "../store/hooks";
 import { Item, setSelectedItem } from "../store/productSlice";
 import Footer from "../components/Footer";
@@ -183,7 +184,7 @@ const MyAccountPage: React.FC = () => {
     console.log("Directing user to my addresses");
     const state: NavigationState = {
       from: "myaccount",
-      fieldToChange: "address",
+      fieldToChange: SavedInfoType.ADDRESS,
     };
     navigate("/savedinfo/", { state });
   };
@@ -192,7 +193,7 @@ const MyAccountPage: React.FC = () => {
     console.log("Directing user to my payments");
     const state: NavigationState = {
       from: "myaccount",
-      fieldToChange: "payment",
+      fieldToChange: SavedInfoType.PAYMENT,
     };
     navigate("/savedinfo/", { state });
   };

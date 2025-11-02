@@ -13,6 +13,17 @@ export enum StockStatus {
   PRE_ORDER = "Pre-order",
 }
 
+export enum SavedInfoType {
+  ADDRESS = "address",
+  PAYMENT = "payment",
+}
+
+export enum SavedInfoAction {
+  ADD = "add",
+  EDIT = "edit",
+  DELETE = "delete",
+}
+
 export enum AddressFormField {
   COUNTRY = "country",
   FULL_NAME = "fullName",

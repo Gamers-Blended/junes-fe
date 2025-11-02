@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
+import { SavedInfoType, SavedInfoAction } from "../utils/Enums.tsx";
 import AddressCardContent from "../components/AddressCardContent";
 import { formatCardNumber } from "../utils/utils";
 import { PaymentFormField } from "../utils/Enums";
@@ -20,30 +21,30 @@ import unionPayIcon from "../assets/acceptedCardsIcons/unionPayIcon.png";
 // Discriminated union type guard
 type SavedInfoActionWindowProps =
   | {
-      type: "address";
-      mode: "delete";
+      type: SavedInfoType.ADDRESS;
+      mode: SavedInfoAction.DELETE;
       savedItemData: Address;
       onClose?: () => void;
       onConfirm?: () => void;
     }
   | {
-      type: "payment";
-      mode: "add";
+      type: SavedInfoType.PAYMENT;
+      mode: SavedInfoAction.ADD;
       savedItemData?: undefined;
       onAdd?: () => void;
       onClose?: () => void;
     }
   | {
-      type: "payment";
-      mode: "edit";
+      type: SavedInfoType.PAYMENT;
+      mode: SavedInfoAction.EDIT;
       savedItemData: PaymentMethod;
       onEdit?: () => void;
       onClose?: () => void;
       onConfirm?: () => void;
     }
   | {
-      type: "payment";
-      mode: "delete";
+      type: SavedInfoType.PAYMENT;
+      mode: SavedInfoAction.DELETE;
       savedItemData: PaymentMethod;
       onClose?: () => void;
       onConfirm?: () => void;
@@ -62,19 +63,19 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   // Form state for payment methods
   const [cardNumber, setCardNumber] = useState("");
   const [cardHolderName, setCardHolderName] = useState(
-    type === "payment" && savedItemData ? savedItemData.cardHolderName : ""
+    type === SavedInfoType.PAYMENT && savedItemData ? savedItemData.cardHolderName : ""
   );
   // Get current date for default expiration
   const currentDate = new Date();
   const currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0"); // 0-indexed
   const currentYear = String(currentDate.getFullYear());
   const [expirationMonth, setExpirationMonth] = useState(
-    type === "payment" && savedItemData
+    type === SavedInfoType.PAYMENT && savedItemData
       ? savedItemData.expirationMonth
       : currentMonth
   );
   const [expirationYear, setExpirationYear] = useState(
-    type === "payment" && savedItemData
+    type === SavedInfoType.PAYMENT && savedItemData
       ? savedItemData.expirationYear
       : currentYear
   );
@@ -85,7 +86,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   const [paymentTouched, setPaymentTouched] = useState<Set<string>>(new Set());
 
   const handleAction = () => {
-    if (type === "payment" && mode === "add") {
+    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.ADD) {
       // Validate payment fields
       const { errors: paymentErrors, isValid: isPaymentValid } =
         validateAllPaymentFields({
@@ -112,7 +113,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
       const onAdd = props.onAdd || (() => console.log("Add clicked"));
       onAdd();
-    } else if (type === "payment" && mode === "edit") {
+    } else if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.EDIT) {
       if (currentPage === 1) {
         setCurrentPage(2);
       } else {
@@ -236,21 +237,21 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   };
 
   const getTitle = () => {
-    if (type === "payment" && mode === "add") return "Add payment method";
-    if (type === "payment" && mode === "edit") return "Edit payment method";
-    if (type === "payment" && mode === "delete") return "Remove payment method";
-    if (type === "address" && mode === "delete") return "Confirm deletion";
+    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.ADD) return "Add payment method";
+    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.EDIT) return "Edit payment method";
+    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.DELETE) return "Remove payment method";
+    if (type === SavedInfoType.ADDRESS && mode === SavedInfoAction.DELETE) return "Confirm deletion";
     return "";
   };
 
   const getButtonText = () => {
-    if (type === "payment" && mode === "add") return "Add Card";
-    if (type === "payment" && mode === "delete") return "Remove";
-    if (type === "payment" && mode === "edit" && currentPage === 1)
+    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.ADD) return "Add Card";
+    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.DELETE) return "Remove";
+    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.EDIT && currentPage === 1)
       return "Save";
-    if (type === "payment" && mode === "edit" && currentPage === 2)
+    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.EDIT && currentPage === 2)
       return "Use This Address";
-    if (type === "address" && mode === "delete") return "Yes";
+    if (type === SavedInfoType.ADDRESS && mode === SavedInfoAction.DELETE) return "Yes";
   };
 
   const months = Array.from({ length: 12 }, (_, i) =>
@@ -261,7 +262,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
   const renderAddOrEditPaymentMethodForm = () => {
     const billingAddress =
-      type === "payment" && savedItemData
+      type === SavedInfoType.PAYMENT && savedItemData
         ? savedItemData.billingAddressId
         : null;
 
@@ -419,7 +420,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
   const renderRemovePaymentMethodText = () => {
     // Only render cardType when this component is handling a payment method
-    if (type !== "payment" || !savedItemData) return null;
+    if (type !== SavedInfoType.PAYMENT || !savedItemData) return null;
 
     const payment = savedItemData as PaymentMethod;
 
@@ -453,21 +454,21 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         </div>
 
         {/* Delete Address */}
-        {type === "address" && savedItemData && (
+        {type === SavedInfoType.ADDRESS && savedItemData && (
           <div className="address-content-wrapper">
             <AddressCardContent {...savedItemData} />
           </div>
         )}
 
         {/* Add Payment Method */}
-        {type === "payment" && mode === "add" && (
+        {type === SavedInfoType.PAYMENT && mode === SavedInfoAction.ADD && (
           <div className="payment-content-wrapper">
             {renderAddOrEditPaymentMethodForm()}
           </div>
         )}
 
         {/* Delete Payment Method */}
-        {type === "payment" && mode === "delete" && savedItemData && (
+        {type === SavedInfoType.PAYMENT && mode === SavedInfoAction.DELETE && savedItemData && (
           <div className="payment-content-wrapper">
             {renderRemovePaymentMethodText()}
           </div>
@@ -475,7 +476,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
         <div className="btn-container">
           <button className="common-button no-btn" onClick={onClose}>
-            {type === "address" && mode === "delete" ? "No" : "Cancel"}
+            {type === SavedInfoType.ADDRESS && mode === SavedInfoAction.DELETE ? "No" : "Cancel"}
           </button>
           <button className="common-button yes-button" onClick={handleAction}>
             {getButtonText()}

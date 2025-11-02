@@ -1,6 +1,8 @@
+import { SavedInfoType } from "../utils/Enums.tsx";
+
 export interface Address {
   id: string;
-  type: "address";
+  type: SavedInfoType.ADDRESS;
   fullName: string;
   addressLine: string;
   unitNumber?: string;
