@@ -36,7 +36,17 @@ const SavedInfoPage: React.FC = () => {
   >(null);
 
   // State for success message
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<{
+    type: SavedInfoType.ADDRESS | SavedInfoType.PAYMENT;
+    action: "added" | "deleted" | "updated";
+  } | null>(null);
+
+  const breadcrumbItems = [
+    {
+      label: "My Account",
+      path: "/myaccount/",
+    },
+  ];
 
   // Dummy data
   const [savedItems, setSavedItems] = useState<SavedItem[]>(
@@ -150,8 +160,18 @@ const SavedInfoPage: React.FC = () => {
     }
   };
 
+  const getSuccessMessage = () => {
+    if (!successMessage) return "";
+
+    const { type, action } = successMessage;
+    // e.g. Address deleted
+    return `${type.charAt(0).toUpperCase() + type.slice(1)} ${action}`;
+  };
+
   const handleAddItem = () => {
-    console.log(`Add new ${isAddressMode ? SavedInfoType.ADDRESS : SavedInfoType.PAYMENT}`);
+    console.log(
+      `Add new ${isAddressMode ? SavedInfoType.ADDRESS : SavedInfoType.PAYMENT}`
+    );
     if (isAddressMode) {
       const state: NavigationState = {
         from: "savedinfo",
@@ -196,13 +216,24 @@ const SavedInfoPage: React.FC = () => {
       setSavedItems(savedItems.filter((item) => item.id !== itemToDelete.id));
       setShowActionWindow(false);
       setItemToDelete(null);
-      setShowSuccessMessage(true);
+      setSuccessMessage({
+        type:
+          itemToDelete.type === SavedInfoType.ADDRESS
+            ? SavedInfoType.ADDRESS
+            : SavedInfoType.PAYMENT,
+        action: "deleted",
+      });
       console.log(`Deleted item with id: ${itemToDelete.id}`);
     }
   };
 
   const handleAddPaymentMethod = () => {
     console.log("added!");
+    setShowActionWindow(false);
+    setSuccessMessage({
+      type: SavedInfoType.PAYMENT,
+      action: "added",
+    });
   };
 
   const handleCloseActionWindow = () => {
@@ -212,19 +243,12 @@ const SavedInfoPage: React.FC = () => {
   };
 
   const handleCloseSuccessMessage = () => {
-    setShowSuccessMessage(false);
+    setSuccessMessage(null);
   };
 
   const handleSetDefault = (id: string) => {
     console.log(`Set default for item with id: ${id}`);
   };
-
-  const breadcrumbItems = [
-    {
-      label: "My Account",
-      path: "/myaccount/",
-    },
-  ];
 
   const renderAddressCard = (address: Address) => (
     <div key={address.id} className="saved-item-card">
@@ -262,9 +286,9 @@ const SavedInfoPage: React.FC = () => {
         <div className="common-header">{renderHeader()}</div>
 
         {/* Success Message */}
-        {showSuccessMessage && (
+        {successMessage && (
           <AccountInfoChangedMessageBox
-            message="Address deleted"
+            message={getSuccessMessage()}
             onClose={handleCloseSuccessMessage}
           />
         )}
@@ -300,15 +324,17 @@ const SavedInfoPage: React.FC = () => {
 
       {/* Action Window Modal */}
       {/* Address - Delete */}
-      {showActionWindow && itemToDelete && itemToDelete.type === SavedInfoType.ADDRESS && (
-        <SavedInfoActionWindow
-          type={SavedInfoType.ADDRESS}
-          mode={SavedInfoAction.DELETE}
-          savedItemData={itemToDelete as Address}
-          onClose={handleCloseActionWindow}
-          onConfirm={handleConfirmDelete}
-        />
-      )}
+      {showActionWindow &&
+        itemToDelete &&
+        itemToDelete.type === SavedInfoType.ADDRESS && (
+          <SavedInfoActionWindow
+            type={SavedInfoType.ADDRESS}
+            mode={SavedInfoAction.DELETE}
+            savedItemData={itemToDelete as Address}
+            onClose={handleCloseActionWindow}
+            onConfirm={handleConfirmDelete}
+          />
+        )}
 
       {/* Payment - Add */}
       {showActionWindow && isAddPaymentMode && (
@@ -321,15 +347,17 @@ const SavedInfoPage: React.FC = () => {
       )}
 
       {/* Payment - Delete */}
-      {showActionWindow && itemToDelete && itemToDelete.type === SavedInfoType.PAYMENT && (
-        <SavedInfoActionWindow
-          type={SavedInfoType.PAYMENT}
-          mode={SavedInfoAction.DELETE}
-          savedItemData={itemToDelete as PaymentMethod}
-          onClose={handleCloseActionWindow}
-          onConfirm={handleConfirmDelete}
-        />
-      )}
+      {showActionWindow &&
+        itemToDelete &&
+        itemToDelete.type === SavedInfoType.PAYMENT && (
+          <SavedInfoActionWindow
+            type={SavedInfoType.PAYMENT}
+            mode={SavedInfoAction.DELETE}
+            savedItemData={itemToDelete as PaymentMethod}
+            onClose={handleCloseActionWindow}
+            onConfirm={handleConfirmDelete}
+          />
+        )}
     </div>
   );
 };
