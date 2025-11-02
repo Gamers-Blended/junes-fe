@@ -5,6 +5,8 @@ import { NavigationState } from "../types/navigationState";
 import { SavedInfoType, SavedInfoAction } from "../utils/Enums.tsx";
 import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
+import { mockPaymentMethodList } from "../mocks/data/paymentMethod.ts";
+import { mockAddressList } from "../mocks/data/address.ts";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import { useAuth } from "../components/AuthContext";
 import AddressCardContent from "../components/AddressCardContent";
@@ -51,98 +53,8 @@ const SavedInfoPage: React.FC = () => {
   // Dummy data
   const [savedItems, setSavedItems] = useState<SavedItem[]>(
     isAddressMode
-      ? [
-          {
-            id: "1",
-            type: SavedInfoType.ADDRESS,
-            fullName: "Name1",
-            addressLine: "Address Line 11",
-            unitNumber: "Address Line 21",
-            country: "Singapore",
-            zipCode: "Zip Code1",
-            phoneNumber: "Phone Number1",
-            isDefault: true,
-          },
-          {
-            id: "2",
-            type: SavedInfoType.ADDRESS,
-            fullName: "Name2",
-            addressLine: "Address Line 12",
-            unitNumber: "Address Line 22",
-            country: "United States",
-            zipCode: "Zip Code2",
-            phoneNumber: "Phone Number2",
-            isDefault: false,
-          },
-          {
-            id: "3",
-            type: SavedInfoType.ADDRESS,
-            fullName: "Name",
-            addressLine: "Address Line 1",
-            unitNumber: "Address Line 2",
-            country: "Japan",
-            zipCode: "Zip Code",
-            phoneNumber: "Phone Number",
-            isDefault: false,
-          },
-          {
-            id: "4",
-            type: SavedInfoType.ADDRESS,
-            fullName: "Name",
-            addressLine: "Address Line 1",
-            unitNumber: "Address Line 2",
-            country: "India",
-            zipCode: "Zip Code",
-            phoneNumber: "Phone Number",
-            isDefault: false,
-          },
-          {
-            id: "5",
-            type: SavedInfoType.ADDRESS,
-            fullName: "Name",
-            addressLine: "Address Line 1",
-            unitNumber: "Address Line 2",
-            country: "China",
-            zipCode: "Zip Code",
-            phoneNumber: "Phone Number",
-            isDefault: false,
-          },
-        ]
-      : [
-          {
-            id: "1",
-            type: SavedInfoType.PAYMENT,
-            cardType: "Visa",
-            cardLastFour: "1111",
-            cardHolderName: "test card",
-            expirationMonth: "08",
-            expirationYear: "2028",
-            billingAddressId: "123",
-            isDefault: true,
-          },
-          {
-            id: "2",
-            type: SavedInfoType.PAYMENT,
-            cardType: "Visa",
-            cardLastFour: "1234",
-            cardHolderName: "test card",
-            expirationMonth: "08",
-            expirationYear: "2028",
-            billingAddressId: "123",
-            isDefault: false,
-          },
-          {
-            id: "3",
-            type: SavedInfoType.PAYMENT,
-            cardType: "MasterCard",
-            cardLastFour: "3333",
-            cardHolderName: "test card",
-            expirationMonth: "08",
-            expirationYear: "2028",
-            billingAddressId: "123",
-            isDefault: false,
-          },
-        ]
+      ? mockAddressList
+      : mockPaymentMethodList
   );
 
   useAuthRedirect(isLoggedIn);
