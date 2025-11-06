@@ -12,7 +12,7 @@ export const mockPaymentMethodList: SavedItem[] = [
     cardHolderName: "test card",
     expirationMonth: "08",
     expirationYear: "2028",
-    billingAddressId: "123",
+    billingAddressId: "1",
     isDefault: true,
   },
   {
@@ -23,7 +23,7 @@ export const mockPaymentMethodList: SavedItem[] = [
     cardHolderName: "test card",
     expirationMonth: "08",
     expirationYear: "2028",
-    billingAddressId: "123",
+    billingAddressId: "1",
     isDefault: false,
   },
   {
@@ -34,7 +34,7 @@ export const mockPaymentMethodList: SavedItem[] = [
     cardHolderName: "test card",
     expirationMonth: "08",
     expirationYear: "2028",
-    billingAddressId: "123",
+    billingAddressId: "2",
     isDefault: false,
   },
   {

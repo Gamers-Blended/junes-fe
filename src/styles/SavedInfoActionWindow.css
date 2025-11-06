@@ -120,6 +120,26 @@ body.saved-info-modal-open {
   overflow: hidden;
 }
 
+/* PAYMENT METHOD - EDIT - BILLING ADDRESS */
+.edit-payment-right-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  border-left: 1px solid #d1d5db;
+  padding-left: 1rem;
+}
+
+.billing-address-display {
+  line-height: 1.6;
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.billing-address-display p {
+  margin: 0;
+}
+
 /* PAYMENT METHOD - DELETE */
 .delete-payment-container {
   padding: 24px;

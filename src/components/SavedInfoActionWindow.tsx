@@ -17,6 +17,7 @@ import masterCardIcon from "../assets/acceptedCardsIcons/masterCardIcon.png";
 import americanExpressIcon from "../assets/acceptedCardsIcons/americanExpressIcon.png";
 import jcbIcon from "../assets/acceptedCardsIcons/jcbIcon.png";
 import unionPayIcon from "../assets/acceptedCardsIcons/unionPayIcon.png";
+import { mockAddressList } from "../mocks/data/address.ts";
 
 // Discriminated union type guard
 type SavedInfoActionWindowProps =
@@ -417,7 +418,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     );
   };
 
-  const renderAddOrEditPaymentMethodForm = () => {
+  const renderAddPaymentMethodForm = () => {
     const billingAddress =
       type === SavedInfoType.PAYMENT && savedItemData
         ? savedItemData.billingAddressId
@@ -455,6 +456,55 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
               <img src={unionPayIcon} alt="UnionPay" className="card-logo" />
             </div>
           </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderEditPaymentMethodFormPage1 = () => {
+    if (type !== SavedInfoType.PAYMENT || !savedItemData) return null;
+
+    const payment = savedItemData as PaymentMethod;
+    const billingAddress = mockAddressList.find(
+      (addr) => addr.id === payment.billingAddressId
+    );
+
+    return (
+      <div className="add-edit-payment-form-container">
+        {/* Left Column - Card Details without Card Number */}
+        <div className="add-edit-payment-left-column">
+          {renderPaymentFormFields(false)}
+        </div>
+
+        {/* Right Column - Billing Adress */}
+        <div className="edit-payment-right-column">
+          <label className="label bold">Billing address</label>
+          {billingAddress ? (
+            <div className="billing-address-display">
+              <p>{billingAddress.fullName}</p>
+              <p>{billingAddress.addressLine}</p>
+              {billingAddress.unitNumber && <p>{billingAddress.unitNumber}</p>}
+              <p>{billingAddress.country}</p>
+              <p>{billingAddress.zipCode}</p>
+              <p>{billingAddress.phoneNumber}</p>
+
+              <button
+                className="action-link align-left"
+                onClick={() => setCurrentPage(2)}
+              >
+                Change
+              </button>
+            </div>
+          ) : (
+            <div className="billing-address-display">
+              <button
+                className="action-link align-left"
+                onClick={() => setCurrentPage(2)}
+              >
+                Choose a billing address
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -505,13 +555,15 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         {/* Add Payment Method */}
         {type === SavedInfoType.PAYMENT && mode === SavedInfoAction.ADD && (
           <div className="payment-content-wrapper">
-            {renderAddOrEditPaymentMethodForm()}
+            {renderAddPaymentMethodForm()}
           </div>
         )}
 
         {/* Edit Payment Method */}
         {type === SavedInfoType.PAYMENT && mode === SavedInfoAction.EDIT && (
-          <div className="payment-content-wrapper">edit</div>
+          <div className="payment-content-wrapper">
+            {renderEditPaymentMethodFormPage1()}
+          </div>
         )}
 
         {/* Delete Payment Method */}
