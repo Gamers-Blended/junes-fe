@@ -59,12 +59,22 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   } = props;
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedBillingAddressId, setSelectedBillingAddressId] = useState<
+    string | null
+  >(
+    type === SavedInfoType.PAYMENT && savedItemData
+      ? savedItemData.billingAddressId
+      : null
+  );
 
   // Form state for payment methods
   const [cardNumber, setCardNumber] = useState("");
   const [cardHolderName, setCardHolderName] = useState(
-    type === SavedInfoType.PAYMENT && savedItemData ? savedItemData.cardHolderName : ""
+    type === SavedInfoType.PAYMENT && savedItemData
+      ? savedItemData.cardHolderName
+      : ""
   );
+
   // Get current date for default expiration
   const currentDate = new Date();
   const currentMonth = String(currentDate.getMonth() + 1).padStart(2, "0"); // 0-indexed
@@ -87,6 +97,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
   const handleAction = () => {
     if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.ADD) {
+      // Add mode for payment
       // Validate payment fields
       const { errors: paymentErrors, isValid: isPaymentValid } =
         validateAllPaymentFields({
@@ -113,13 +124,16 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
       const onAdd = props.onAdd || (() => console.log("Add clicked"));
       onAdd();
-    } else if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.EDIT) {
+    } else if (
+      type === SavedInfoType.PAYMENT &&
+      mode === SavedInfoAction.EDIT
+    ) {
+      // Edit mode for payment
       if (currentPage === 1) {
         setCurrentPage(2);
       } else {
-        const onConfirm =
-          props.onConfirm || (() => console.log("Confirm clicked"));
-        onConfirm();
+        const onEdit = props.onEdit || (() => console.log("Edit confirmed"));
+        onEdit();
       }
     } else {
       // Delete mode for address and payment
@@ -237,21 +251,44 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   };
 
   const getTitle = () => {
-    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.ADD) return "Add payment method";
-    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.EDIT) return "Edit payment method";
-    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.DELETE) return "Remove payment method";
-    if (type === SavedInfoType.ADDRESS && mode === SavedInfoAction.DELETE) return "Confirm deletion";
+    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.ADD)
+      return "Add payment method";
+    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.EDIT)
+      return "Edit payment method";
+    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.DELETE)
+      return "Remove payment method";
+    if (type === SavedInfoType.ADDRESS && mode === SavedInfoAction.DELETE)
+      return "Confirm deletion";
     return "";
   };
 
   const getButtonText = () => {
-    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.ADD) return "Add Card";
-    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.DELETE) return "Remove";
-    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.EDIT && currentPage === 1)
+    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.ADD)
+      return "Add Card";
+    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.DELETE)
+      return "Remove";
+    if (
+      type === SavedInfoType.PAYMENT &&
+      mode === SavedInfoAction.EDIT &&
+      currentPage === 1
+    )
       return "Save";
-    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.EDIT && currentPage === 2)
+    if (
+      type === SavedInfoType.PAYMENT &&
+      mode === SavedInfoAction.EDIT &&
+      currentPage === 2
+    )
       return "Use This Address";
-    if (type === SavedInfoType.ADDRESS && mode === SavedInfoAction.DELETE) return "Yes";
+    if (type === SavedInfoType.ADDRESS && mode === SavedInfoAction.DELETE)
+      return "Yes";
+  };
+
+  const shouldHideCancelButton = () => {
+    return (
+      type === SavedInfoType.PAYMENT &&
+      mode === SavedInfoAction.EDIT &&
+      currentPage === 2
+    );
   };
 
   const months = Array.from({ length: 12 }, (_, i) =>
@@ -260,17 +297,12 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
   const years = Array.from({ length: 10 }, (_, i) => String(2025 + i));
 
-  const renderAddOrEditPaymentMethodForm = () => {
-    const billingAddress =
-      type === SavedInfoType.PAYMENT && savedItemData
-        ? savedItemData.billingAddressId
-        : null;
-
+  // Common payment form fields component
+  const renderPaymentFormFields = (includeCardNumber: boolean = true) => {
     return (
-      <div className="add-edit-payment-form-container">
-        {/* Left Column - Card Details */}
-        <div className="add-edit-payment-left-column">
-          {/* Card Number */}
+      <>
+        {/* Card Number - only for ADD mode */}
+        {includeCardNumber && (
           <div className="input-group padding-bottom">
             <label className="label bold">Card number</label>
             <input
@@ -291,101 +323,111 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
               </div>
             )}
           </div>
+        )}
 
-          {/* Cardholder Name */}
+        {/* Cardholder Name */}
+        <div className="input-group padding-bottom">
+          <label className="label bold">Name on card</label>
+          <input
+            type="text"
+            value={cardHolderName}
+            onChange={(e) =>
+              handlePaymentFieldChange(
+                PaymentFormField.CARD_HOLDER_NAME,
+                e.target.value
+              )
+            }
+            onBlur={() => handlePaymentBlur(PaymentFormField.CARD_HOLDER_NAME)}
+            className={`input-field ${
+              showPaymentValidationError(PaymentFormField.CARD_HOLDER_NAME)
+                ? "error"
+                : ""
+            }`}
+          />
+          {showPaymentValidationError(PaymentFormField.CARD_HOLDER_NAME) && (
+            <div className="form-error-message">
+              {paymentValidationError.cardHolderName}
+            </div>
+          )}
+        </div>
+
+        {/* Expiration Date */}
+        <div className="add-edit-payment-form-row">
           <div className="input-group padding-bottom">
-            <label className="label bold">Name on card</label>
-            <input
-              type="text"
-              value={cardHolderName}
-              onChange={(e) =>
-                handlePaymentFieldChange(
-                  PaymentFormField.CARD_HOLDER_NAME,
-                  e.target.value
-                )
-              }
-              onBlur={() =>
-                handlePaymentBlur(PaymentFormField.CARD_HOLDER_NAME)
-              }
-              className={`input-field ${
-                showPaymentValidationError(PaymentFormField.CARD_HOLDER_NAME)
-                  ? "error"
-                  : ""
-              }`}
-            />
-            {showPaymentValidationError(PaymentFormField.CARD_HOLDER_NAME) && (
+            <label className="label bold">Expiration date</label>
+            <div className="expiration-inputs-container">
+              <select
+                value={expirationMonth}
+                onChange={(e) =>
+                  handlePaymentFieldChange(
+                    PaymentFormField.EXPIRATION_MONTH,
+                    e.target.value
+                  )
+                }
+                onBlur={() =>
+                  handlePaymentBlur(PaymentFormField.EXPIRATION_MONTH)
+                }
+                className={`input-field expiration-select ${
+                  showPaymentValidationError(PaymentFormField.EXPIRATION_MONTH)
+                    ? "error"
+                    : ""
+                }`}
+              >
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={expirationYear}
+                onChange={(e) =>
+                  handlePaymentFieldChange(
+                    PaymentFormField.EXPIRATION_YEAR,
+                    e.target.value
+                  )
+                }
+                onBlur={() =>
+                  handlePaymentBlur(PaymentFormField.EXPIRATION_YEAR)
+                }
+                className={`input-field expiration-select ${
+                  showPaymentValidationError(PaymentFormField.EXPIRATION_YEAR)
+                    ? "error"
+                    : ""
+                }`}
+              >
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {(showPaymentValidationError(PaymentFormField.EXPIRATION_MONTH) ||
+              showPaymentValidationError(PaymentFormField.EXPIRATION_YEAR)) && (
               <div className="form-error-message">
-                {paymentValidationError.cardHolderName}
+                {paymentValidationError.expirationMonth ||
+                  paymentValidationError.expirationYear}
               </div>
             )}
           </div>
+        </div>
+      </>
+    );
+  };
 
-          {/* Expiration Date */}
-          <div className="add-edit-payment-form-row">
-            <div className="input-group padding-bottom">
-              <label className="label bold">Expiration date</label>
-              <div className="expiration-inputs-container">
-                <select
-                  value={expirationMonth}
-                  onChange={(e) =>
-                    handlePaymentFieldChange(
-                      PaymentFormField.EXPIRATION_MONTH,
-                      e.target.value
-                    )
-                  }
-                  onBlur={() =>
-                    handlePaymentBlur(PaymentFormField.EXPIRATION_MONTH)
-                  }
-                  className={`input-field expiration-select ${
-                    showPaymentValidationError(
-                      PaymentFormField.EXPIRATION_MONTH
-                    )
-                      ? "error"
-                      : ""
-                  }`}
-                >
-                  {months.map((month) => (
-                    <option key={month} value={month}>
-                      {month}
-                    </option>
-                  ))}
-                </select>
+  const renderAddOrEditPaymentMethodForm = () => {
+    const billingAddress =
+      type === SavedInfoType.PAYMENT && savedItemData
+        ? savedItemData.billingAddressId
+        : null;
 
-                <select
-                  value={expirationYear}
-                  onChange={(e) =>
-                    handlePaymentFieldChange(
-                      PaymentFormField.EXPIRATION_YEAR,
-                      e.target.value
-                    )
-                  }
-                  onBlur={() =>
-                    handlePaymentBlur(PaymentFormField.EXPIRATION_YEAR)
-                  }
-                  className={`input-field expiration-select ${
-                    showPaymentValidationError(PaymentFormField.EXPIRATION_YEAR)
-                      ? "error"
-                      : ""
-                  }`}
-                >
-                  {years.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {(showPaymentValidationError(PaymentFormField.EXPIRATION_MONTH) ||
-                showPaymentValidationError(
-                  PaymentFormField.EXPIRATION_YEAR
-                )) && (
-                <div className="form-error-message">
-                  {paymentValidationError.expirationMonth ||
-                    paymentValidationError.expirationYear}
-                </div>
-              )}
-            </div>
-          </div>
+    return (
+      <div className="add-edit-payment-form-container">
+        {/* Left Column - Card Details */}
+        <div className="add-edit-payment-left-column">
+          {renderPaymentFormFields(true)}
         </div>
 
         {/* Right Column - Accepted Cards */}
@@ -467,16 +509,26 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
           </div>
         )}
 
-        {/* Delete Payment Method */}
-        {type === SavedInfoType.PAYMENT && mode === SavedInfoAction.DELETE && savedItemData && (
-          <div className="payment-content-wrapper">
-            {renderRemovePaymentMethodText()}
-          </div>
+        {/* Edit Payment Method */}
+        {type === SavedInfoType.PAYMENT && mode === SavedInfoAction.EDIT && (
+          <div className="payment-content-wrapper">edit</div>
         )}
 
+        {/* Delete Payment Method */}
+        {type === SavedInfoType.PAYMENT &&
+          mode === SavedInfoAction.DELETE &&
+          savedItemData && (
+            <div className="payment-content-wrapper">
+              {renderRemovePaymentMethodText()}
+            </div>
+          )}
+
+        {/* Buttons */}
         <div className="btn-container">
           <button className="common-button no-btn" onClick={onClose}>
-            {type === SavedInfoType.ADDRESS && mode === SavedInfoAction.DELETE ? "No" : "Cancel"}
+            {type === SavedInfoType.ADDRESS && mode === SavedInfoAction.DELETE
+              ? "No"
+              : "Cancel"}
           </button>
           <button className="common-button yes-button" onClick={handleAction}>
             {getButtonText()}

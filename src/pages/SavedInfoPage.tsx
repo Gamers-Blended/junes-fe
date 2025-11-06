@@ -30,12 +30,18 @@ const SavedInfoPage: React.FC = () => {
   const isAddressMode = fieldToChange === SavedInfoType.ADDRESS;
   const isPaymentMode = fieldToChange === SavedInfoType.PAYMENT;
 
-  // States for modal
-  const [showActionWindow, setShowActionWindow] = useState(false);
-  const [isAddPaymentMode, setIsAddPaymentMode] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<
-    Address | PaymentMethod | null
-  >(null);
+  // State for modal
+  const [actionWindowState, setActionWindowState] = useState<{
+    isOpen: boolean;
+    type: SavedInfoType | null;
+    mode: SavedInfoAction | null;
+    item: SavedItem | null;
+  }>({
+    isOpen: false,
+    type: null,
+    mode: null,
+    item: null,
+  });
 
   // State for success message
   const [successMessage, setSuccessMessage] = useState<{
@@ -52,9 +58,7 @@ const SavedInfoPage: React.FC = () => {
 
   // Dummy data
   const [savedItems, setSavedItems] = useState<SavedItem[]>(
-    isAddressMode
-      ? mockAddressList
-      : mockPaymentMethodList
+    isAddressMode ? mockAddressList : mockPaymentMethodList
   );
 
   useAuthRedirect(isLoggedIn);
@@ -80,6 +84,8 @@ const SavedInfoPage: React.FC = () => {
     return `${type.charAt(0).toUpperCase() + type.slice(1)} ${action}`;
   };
 
+  // Handlers
+  // For address, go to new page
   const handleAddItem = () => {
     console.log(
       `Add new ${isAddressMode ? SavedInfoType.ADDRESS : SavedInfoType.PAYMENT}`
@@ -93,11 +99,16 @@ const SavedInfoPage: React.FC = () => {
       navigate("/modifyaddress/", { state });
     } else if (isPaymentMode) {
       console.log("Open add payment method window");
-      setIsAddPaymentMode(true);
-      setShowActionWindow(true);
+      setActionWindowState({
+        isOpen: true,
+        type: SavedInfoType.PAYMENT,
+        mode: SavedInfoAction.ADD,
+        item: null,
+      });
     }
   };
 
+  // For address, go to new page
   const handleEdit = (itemToEdit: SavedItem) => {
     console.log(`Edit item: ${itemToEdit.type} with id: ${itemToEdit.id}`);
     if (isAddressMode) {
@@ -110,6 +121,12 @@ const SavedInfoPage: React.FC = () => {
       navigate("/modifyaddress/", { state });
     } else if (isPaymentMode) {
       console.log("Open edit payment method window");
+      setActionWindowState({
+        isOpen: true,
+        type: SavedInfoType.PAYMENT,
+        mode: SavedInfoAction.EDIT,
+        item: itemToEdit,
+      });
     }
   };
 
@@ -117,41 +134,74 @@ const SavedInfoPage: React.FC = () => {
     console.log(`Remove item with id: ${id}`);
     const item = savedItems.find((item) => item.id === id);
     if (item) {
-      setItemToDelete(item);
-      setIsAddPaymentMode(false);
-      setShowActionWindow(true);
+      setActionWindowState({
+        isOpen: true,
+        type: item.type,
+        mode: SavedInfoAction.DELETE,
+        item: item,
+      });
     }
   };
 
   const handleConfirmDelete = () => {
-    if (itemToDelete) {
-      setSavedItems(savedItems.filter((item) => item.id !== itemToDelete.id));
-      setShowActionWindow(false);
-      setItemToDelete(null);
-      setSuccessMessage({
-        type:
-          itemToDelete.type === SavedInfoType.ADDRESS
-            ? SavedInfoType.ADDRESS
-            : SavedInfoType.PAYMENT,
-        action: "deleted",
-      });
-      console.log(`Deleted item with id: ${itemToDelete.id}`);
-    }
+    if (!actionWindowState.item) return;
+
+    const idToDelete = actionWindowState.item.id;
+    const itemType = actionWindowState.type;
+
+    setSavedItems((prev) => prev.filter((item) => item.id !== idToDelete));
+    setSuccessMessage({
+      type:
+        itemType === SavedInfoType.ADDRESS
+          ? SavedInfoType.ADDRESS
+          : SavedInfoType.PAYMENT,
+      action: "deleted",
+    });
+    console.log(`Deleted item with id: ${idToDelete}`);
+    setActionWindowState({
+      isOpen: false,
+      type: itemType,
+      mode: SavedInfoAction.DELETE,
+      item: null,
+    });
   };
 
+  // Payment Handlers to be passed to modal
   const handleAddPaymentMethod = () => {
-    console.log("added!");
-    setShowActionWindow(false);
+    console.log("add payment method");
+    setActionWindowState({
+      isOpen: false,
+      type: SavedInfoType.PAYMENT,
+      mode: SavedInfoAction.ADD,
+      item: null,
+    });
     setSuccessMessage({
       type: SavedInfoType.PAYMENT,
       action: "added",
     });
   };
 
+  const handleEditPaymentMethod = () => {
+    console.log("edit payment method");
+    setActionWindowState({
+      isOpen: false,
+      type: SavedInfoType.PAYMENT,
+      mode: SavedInfoAction.EDIT,
+      item: null,
+    });
+    setSuccessMessage({
+      type: SavedInfoType.PAYMENT,
+      action: "updated",
+    });
+  };
+
   const handleCloseActionWindow = () => {
-    setShowActionWindow(false);
-    setItemToDelete(null);
-    setIsAddPaymentMode(false);
+    setActionWindowState({
+      isOpen: false,
+      type: null,
+      mode: null,
+      item: null,
+    });
   };
 
   const handleCloseSuccessMessage = () => {
@@ -235,39 +285,52 @@ const SavedInfoPage: React.FC = () => {
       <Footer />
 
       {/* Action Window Modal */}
+      {/* Payment */}
+      {actionWindowState.isOpen && isPaymentMode && (
+        <>
+          {actionWindowState.mode === SavedInfoAction.ADD && (
+            <SavedInfoActionWindow
+              type={SavedInfoType.PAYMENT}
+              mode={SavedInfoAction.ADD}
+              onAdd={handleAddPaymentMethod}
+              onClose={handleCloseActionWindow}
+            />
+          )}
+
+          {actionWindowState.mode === SavedInfoAction.EDIT &&
+            actionWindowState.item && (
+              <SavedInfoActionWindow
+                type={SavedInfoType.PAYMENT}
+                mode={SavedInfoAction.EDIT}
+                savedItemData={actionWindowState.item as PaymentMethod}
+                onEdit={handleEditPaymentMethod}
+                onClose={handleCloseActionWindow}
+              />
+            )}
+
+          {actionWindowState.mode === SavedInfoAction.DELETE &&
+            actionWindowState.item && (
+              <SavedInfoActionWindow
+                type={SavedInfoType.PAYMENT}
+                mode={SavedInfoAction.DELETE}
+                savedItemData={actionWindowState.item as PaymentMethod}
+                onConfirm={handleConfirmDelete}
+                onClose={handleCloseActionWindow}
+              />
+            )}
+        </>
+      )}
+
       {/* Address - Delete */}
-      {showActionWindow &&
-        itemToDelete &&
-        itemToDelete.type === SavedInfoType.ADDRESS && (
+      {actionWindowState.isOpen &&
+        actionWindowState.mode === SavedInfoAction.DELETE &&
+        actionWindowState.item?.type === SavedInfoType.ADDRESS && (
           <SavedInfoActionWindow
             type={SavedInfoType.ADDRESS}
             mode={SavedInfoAction.DELETE}
-            savedItemData={itemToDelete as Address}
-            onClose={handleCloseActionWindow}
+            savedItemData={actionWindowState.item as Address}
             onConfirm={handleConfirmDelete}
-          />
-        )}
-
-      {/* Payment - Add */}
-      {showActionWindow && isAddPaymentMode && (
-        <SavedInfoActionWindow
-          type={SavedInfoType.PAYMENT}
-          mode={SavedInfoAction.ADD}
-          onAdd={handleAddPaymentMethod}
-          onClose={handleCloseActionWindow}
-        />
-      )}
-
-      {/* Payment - Delete */}
-      {showActionWindow &&
-        itemToDelete &&
-        itemToDelete.type === SavedInfoType.PAYMENT && (
-          <SavedInfoActionWindow
-            type={SavedInfoType.PAYMENT}
-            mode={SavedInfoAction.DELETE}
-            savedItemData={itemToDelete as PaymentMethod}
             onClose={handleCloseActionWindow}
-            onConfirm={handleConfirmDelete}
           />
         )}
     </div>
