@@ -191,6 +191,10 @@
   color: #000;
 }
 
+.larger-width {
+  width: 150px;
+}
+
 /* MODIFY ADDRESS PAGE - ADD/UPDATE ADDRESS BUTTON */
 .modify-address-button {
   background-color: #00d9b8;

@@ -554,11 +554,11 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         </div>
 
         {/* Buttons for Page 2 */}
-        <div className="address-buttons-container">
-          <button className="add-address-btn" onClick={handleAddAddress}>
+        <div className="btn-container">
+          <button className="common-button no-btn larger-width" onClick={handleAddAddress}>
             Add An Address
           </button>
-          <button className="use-address-btn" onClick={handleAction}>
+          <button className="common-button yes-button larger-width" onClick={handleAction}>
             Use This Address
           </button>
         </div>
