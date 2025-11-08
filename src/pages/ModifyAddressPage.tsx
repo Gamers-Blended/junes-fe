@@ -11,12 +11,16 @@ import {
   validateAllAddressFields,
   AddressValidationErrors,
 } from "../utils/addressValidation";
-import { AddressFormField } from "../utils/Enums";
+import {
+  AddressFormField,
+  SavedInfoType,
+  SavedInfoAction,
+} from "../utils/Enums";
 
 const ModifyAddressPage: React.FC = () => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const location = useLocation();
-  const { action, item } = location.state || {};
+  const { action, item, from, fieldToChange } = location.state || {};
 
   // Initialise states with existing values if editing
   const [country, setCountry] = useState<string>(
@@ -117,13 +121,26 @@ const ModifyAddressPage: React.FC = () => {
 
   const renderHeader = (): JSX.Element => {
     switch (action) {
-      case "add":
+      case SavedInfoAction.ADD:
         return <h1>ADD A NEW ADDRESS</h1>;
-      case "edit":
+      case SavedInfoAction.EDIT:
         return <h1>EDIT YOUR ADDRESS</h1>;
       default:
         return <h1>INVALID ACTION</h1>;
     }
+  };
+
+  const getBreadcrumbInfo = () => {
+    const isPaymentContext = from === "savedinfofrompayment";
+
+    return {
+      label: isPaymentContext ? "My Payments" : "My Addresses",
+      state: {
+        fieldToChange: isPaymentContext
+          ? SavedInfoType.PAYMENT
+          : SavedInfoType.ADDRESS,
+      },
+    };
   };
 
   const handleAction = () => {
@@ -153,7 +170,7 @@ const ModifyAddressPage: React.FC = () => {
       return;
     }
 
-    if (action === "add") {
+    if (action === SavedInfoAction.ADD) {
       console.log("Adding new address:", {
         country,
         fullName,
@@ -163,7 +180,7 @@ const ModifyAddressPage: React.FC = () => {
         unitNumber,
         isDefault,
       });
-    } else if (action === "edit") {
+    } else if (action === SavedInfoAction.EDIT) {
       console.log("Updating address:", {
         country,
         fullName,
@@ -176,6 +193,8 @@ const ModifyAddressPage: React.FC = () => {
     }
   };
 
+  const breadcrumbInfo = getBreadcrumbInfo();
+
   return (
     <div className="modify-address-page-container">
       <div>
@@ -183,9 +202,9 @@ const ModifyAddressPage: React.FC = () => {
           items={[
             { label: "My Account", path: "/myaccount/" },
             {
-              label: "My Addresses",
+              label: breadcrumbInfo.label,
               path: "/savedinfo/",
-              state: { fieldToChange: "address" },
+              state: breadcrumbInfo.state,
             },
           ]}
         />
@@ -326,7 +345,7 @@ const ModifyAddressPage: React.FC = () => {
           className="common-button modify-address-button"
           onClick={handleAction}
         >
-          {action === "add" ? "Add Address" : "Update Address"}
+          {action === SavedInfoAction.ADD ? "Add Address" : "Update Address"}
         </button>
 
         <Footer />

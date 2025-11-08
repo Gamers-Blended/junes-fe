@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { NavigationState } from "../types/navigationState";
 import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
 import { SavedInfoType, SavedInfoAction } from "../utils/Enums.tsx";
@@ -91,11 +93,15 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
       : currentYear
   );
 
+  // For adding address
+  const navigate = useNavigate();
+
   // Validation states
   const [paymentValidationError, setPaymentValidationError] =
     useState<PaymentValidationErrors>({});
   const [paymentTouched, setPaymentTouched] = useState<Set<string>>(new Set());
 
+  // Handler for buttons
   const handleAction = () => {
     if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.ADD) {
       // Add mode for payment
@@ -130,18 +136,24 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
       mode === SavedInfoAction.EDIT
     ) {
       // Edit mode for payment
-      if (currentPage === 1) {
-        setCurrentPage(2);
-      } else {
-        const onEdit = props.onEdit || (() => console.log("Edit confirmed"));
-        onEdit();
-      }
+      const onEdit = props.onEdit || (() => console.log("Edit confirmed"));
+      onEdit();
     } else {
       // Delete mode for address and payment
       const onConfirm =
         props.onConfirm || (() => console.log("Confirm clicked"));
       onConfirm();
     }
+  };
+
+  // Handler for adding address
+  const handleAddAddress = () => {
+    const state: NavigationState = {
+      from: "savedinfofrompayment",
+      fieldToChange: SavedInfoType.ADDRESS,
+      action: SavedInfoAction.ADD,
+    };
+    navigate("/modifyaddress/", { state });
   };
 
   // Card number needs to be formatted before processing
@@ -418,6 +430,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     );
   };
 
+  // Render functions for different modes
   const renderAddPaymentMethodForm = () => {
     const billingAddress =
       type === SavedInfoType.PAYMENT && savedItemData
@@ -480,6 +493,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         <div className="edit-payment-right-column">
           <label className="label bold">Billing address</label>
           {billingAddress ? (
+            // CASE I: Payment method has a linked billing address
             <div className="billing-address-display">
               <p>{billingAddress.fullName}</p>
               <p>{billingAddress.addressLine}</p>
@@ -496,6 +510,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
               </button>
             </div>
           ) : (
+            // CASE II: No linked billing address
             <div className="billing-address-display">
               <button
                 className="action-link align-left"
@@ -505,6 +520,56 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
               </button>
             </div>
           )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderEditPaymentMethodFormPage2 = () => {
+    if (type !== SavedInfoType.PAYMENT) return null;
+
+    const payment = savedItemData as PaymentMethod;
+    const billingAddress = mockAddressList.find(
+      (addr) => addr.id === payment.billingAddressId
+    );
+
+    return (
+      <div className="select-billing-address-container">
+        <label className="label bold padding-bottom">
+          Select a billing address
+        </label>
+        <div className="billing-address-list">
+          {mockAddressList.map((address) => (
+            <div
+              key={address.id}
+              className={`billing-address-item ${
+                billingAddress?.id === address.id ? "selected" : ""
+              }`}
+              onClick={() => setSelectedBillingAddressId(address.id)}
+            >
+              <input
+                type="radio"
+                name="billingAddress"
+                checked={billingAddress?.id === address.id}
+                onChange={() => setSelectedBillingAddressId(address.id)}
+                className="address-radio"
+              />
+              <div className="address-details">
+                <strong>{address.fullName}</strong>, {address.addressLine},{" "}
+                {address.country}, {address.zipCode}, {address.phoneNumber}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Buttons for Page 2 */}
+        <div className="address-buttons-container">
+          <button className="add-address-btn" onClick={handleAddAddress}>
+            Add An Address
+          </button>
+          <button className="use-address-btn" onClick={handleAction}>
+            Use This Address
+          </button>
         </div>
       </div>
     );
@@ -562,7 +627,9 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         {/* Edit Payment Method */}
         {type === SavedInfoType.PAYMENT && mode === SavedInfoAction.EDIT && (
           <div className="payment-content-wrapper">
-            {renderEditPaymentMethodFormPage1()}
+            {currentPage === 1
+              ? renderEditPaymentMethodFormPage1()
+              : renderEditPaymentMethodFormPage2()}
           </div>
         )}
 
@@ -575,17 +642,23 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
             </div>
           )}
 
-        {/* Buttons */}
-        <div className="btn-container">
-          <button className="common-button no-btn" onClick={onClose}>
-            {type === SavedInfoType.ADDRESS && mode === SavedInfoAction.DELETE
-              ? "No"
-              : "Cancel"}
-          </button>
-          <button className="common-button yes-button" onClick={handleAction}>
-            {getButtonText()}
-          </button>
-        </div>
+        {/* Buttons - Only show for non-Edit Payment mode page 2 */}
+        {!(
+          type === SavedInfoType.PAYMENT &&
+          mode === SavedInfoAction.EDIT &&
+          currentPage === 2
+        ) && (
+          <div className="btn-container">
+            <button className="common-button no-btn" onClick={onClose}>
+              {type === SavedInfoType.ADDRESS && mode === SavedInfoAction.DELETE
+                ? "No"
+                : "Cancel"}
+            </button>
+            <button className="common-button yes-button" onClick={handleAction}>
+              {getButtonText()}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
