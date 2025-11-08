@@ -93,7 +93,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
       : currentYear
   );
 
-  // For adding address
+  // For adding address under edit payment mode
   const navigate = useNavigate();
 
   // Validation states
@@ -294,14 +294,6 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
       return "Use This Address";
     if (type === SavedInfoType.ADDRESS && mode === SavedInfoAction.DELETE)
       return "Yes";
-  };
-
-  const shouldHideCancelButton = () => {
-    return (
-      type === SavedInfoType.PAYMENT &&
-      mode === SavedInfoAction.EDIT &&
-      currentPage === 2
-    );
   };
 
   const months = Array.from({ length: 12 }, (_, i) =>
@@ -528,10 +520,9 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   const renderEditPaymentMethodFormPage2 = () => {
     if (type !== SavedInfoType.PAYMENT) return null;
 
-    const payment = savedItemData as PaymentMethod;
-    const billingAddress = mockAddressList.find(
-      (addr) => addr.id === payment.billingAddressId
-    );
+    const handleAddressSelect = (addressId: string) => {
+      setSelectedBillingAddressId(addressId);
+    };
 
     return (
       <div className="select-billing-address-container">
@@ -543,15 +534,15 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
             <div
               key={address.id}
               className={`billing-address-item ${
-                billingAddress?.id === address.id ? "selected" : ""
+                selectedBillingAddressId === address.id ? "selected" : ""
               }`}
-              onClick={() => setSelectedBillingAddressId(address.id)}
+              onClick={() => handleAddressSelect(address.id)}
             >
               <input
                 type="radio"
                 name="billingAddress"
-                checked={billingAddress?.id === address.id}
-                onChange={() => setSelectedBillingAddressId(address.id)}
+                checked={selectedBillingAddressId === address.id}
+                onChange={() => {}}
                 className="address-radio"
               />
               <div className="address-details">
