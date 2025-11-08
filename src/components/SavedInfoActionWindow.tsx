@@ -530,38 +530,58 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
           Select a billing address
         </label>
         <div className="billing-address-list">
-          {mockAddressList.map((address) => (
-            <div
-              key={address.id}
-              className={`billing-address-item ${
-                selectedBillingAddressId === address.id ? "selected" : ""
-              }`}
-              onClick={() => handleAddressSelect(address.id)}
-            >
-              <input
-                type="radio"
-                name="billingAddress"
-                checked={selectedBillingAddressId === address.id}
-                onChange={() => {}}
-                className="address-radio"
-              />
-              <div className="address-details">
-                <strong>{address.fullName}</strong>, {address.addressLine},{" "}
-                {address.country}, {address.zipCode}, {address.phoneNumber}
+          {mockAddressList.length > 0 ? (
+            mockAddressList.map((address) => (
+              <div
+                key={address.id}
+                className={`billing-address-item ${
+                  selectedBillingAddressId === address.id ? "selected" : ""
+                }`}
+                onClick={() => handleAddressSelect(address.id)}
+              >
+                <input
+                  type="radio"
+                  name="billingAddress"
+                  checked={selectedBillingAddressId === address.id}
+                  onChange={() => {}}
+                  className="address-radio"
+                />
+                <div className="address-details">
+                  <strong>{address.fullName}</strong>, {address.addressLine},{" "}
+                  {address.country}, {address.zipCode}, {address.phoneNumber}
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="billing-address-display">
+              <p>No address found</p>
+              <button
+                className="action-link align-left"
+                onClick={handleAddAddress}
+              >
+                Add an address
+              </button>
             </div>
-          ))}
+          )}
         </div>
 
         {/* Buttons for Page 2 */}
-        <div className="btn-container">
-          <button className="common-button no-btn larger-width" onClick={handleAddAddress}>
-            Add An Address
-          </button>
-          <button className="common-button yes-button larger-width" onClick={handleAction}>
-            Use This Address
-          </button>
-        </div>
+        {mockAddressList.length > 0 && (
+          <div className="btn-container">
+            <button
+              className="common-button no-btn larger-width"
+              onClick={handleAddAddress}
+            >
+              Add An Address
+            </button>
+            <button
+              className="common-button yes-button larger-width"
+              onClick={handleAction}
+            >
+              Use This Address
+            </button>
+          </div>
+        )}
       </div>
     );
   };
