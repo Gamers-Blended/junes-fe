@@ -46,7 +46,7 @@ const SavedInfoPage: React.FC = () => {
   // State for success message
   const [successMessage, setSuccessMessage] = useState<{
     type: SavedInfoType.ADDRESS | SavedInfoType.PAYMENT;
-    action: "added" | "deleted" | "updated";
+    action: "added" | "removed" | "updated" | "default_updated";
   } | null>(null);
 
   const breadcrumbItems = [
@@ -80,7 +80,13 @@ const SavedInfoPage: React.FC = () => {
     if (!successMessage) return "";
 
     const { type, action } = successMessage;
-    // e.g. Address deleted
+
+    // e.g. Default address updated
+    if (action === "default_updated") {
+      return `Default ${type} updated`;
+    }
+
+    // e.g. Address removed
     return `${type.charAt(0).toUpperCase() + type.slice(1)} ${action}`;
   };
 
@@ -155,7 +161,7 @@ const SavedInfoPage: React.FC = () => {
         itemType === SavedInfoType.ADDRESS
           ? SavedInfoType.ADDRESS
           : SavedInfoType.PAYMENT,
-      action: "deleted",
+      action: "removed",
     });
     console.log(`Deleted item with id: ${idToDelete}`);
     setActionWindowState({
@@ -208,8 +214,12 @@ const SavedInfoPage: React.FC = () => {
     setSuccessMessage(null);
   };
 
-  const handleSetDefault = (id: string) => {
+  const handleSetDefault = (id: string, type: string) => {
     console.log(`Set default for item with id: ${id}`);
+    setSuccessMessage({
+      type: type === "address" ? SavedInfoType.ADDRESS : SavedInfoType.PAYMENT,
+      action: "default_updated",
+    });
   };
 
   const renderAddressCard = (address: Address) => (
@@ -221,7 +231,7 @@ const SavedInfoPage: React.FC = () => {
         item={address}
         onEdit={() => handleEdit(address)}
         onRemove={() => handleRemove(address.id)}
-        onSetDefault={() => handleSetDefault(address.id)}
+        onSetDefault={() => handleSetDefault(address.id, SavedInfoType.ADDRESS)}
       />
     </div>
   );
@@ -235,7 +245,9 @@ const SavedInfoPage: React.FC = () => {
         item={paymentMethod}
         onEdit={() => handleEdit(paymentMethod)}
         onRemove={() => handleRemove(paymentMethod.id)}
-        onSetDefault={() => handleSetDefault(paymentMethod.id)}
+        onSetDefault={() =>
+          handleSetDefault(paymentMethod.id, SavedInfoType.PAYMENT)
+        }
       />
     </div>
   );
