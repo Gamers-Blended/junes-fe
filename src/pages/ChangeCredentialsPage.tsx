@@ -1,12 +1,20 @@
 import { useLocation } from "react-router-dom";
 import { JSX } from "react";
+import Breadcrumb from "../components/Breadcrumb.tsx";
 
 const ChangeCredentialsPage: React.FC = () => {
   const location = useLocation();
-  const { credentialToChange } = location.state || {};
+  const { fieldToChange } = location.state || {};
+
+  const breadcrumbItems = [
+    {
+      label: "My Account",
+      path: "/myaccount/",
+    },
+  ];
 
   const renderHeader = (): JSX.Element => {
-    switch (credentialToChange) {
+    switch (fieldToChange) {
       case "password":
         return <h1>CHANGE PASSWORD</h1>;
       case "email":
@@ -17,7 +25,10 @@ const ChangeCredentialsPage: React.FC = () => {
   };
 
   return (
-    <div className="change-credentials-page-container">{renderHeader()}</div>
+    <div className="change-credentials-page-container">
+      <Breadcrumb items={breadcrumbItems} />
+      {renderHeader()}
+    </div>
   );
 };
 
