@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
+import { Credentials } from "../utils/Enums";
 import { validateEmail, validatePassword } from "../utils/inputValidationUtils";
+import {
+  createPasswordChangeHandler,
+  createInputChangeHandler,
+} from "../utils/FormHandlers";
 import { FormErrors } from "../types/formErrors";
 import { useAuth } from "../components/AuthContext";
 import Footer from "../components/Footer";
@@ -39,23 +44,16 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setEmail(e.target.value);
-    // Clear error when user starts typing
-    if (errors.email) {
-      setErrors((prev) => ({ ...prev, email: "" }));
-    }
-  };
+  const handleEmailChange = createInputChangeHandler(
+    setEmail,
+    setErrors,
+    Credentials.EMAIL
+  );
 
-  const handlePasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    setPassword(e.target.value);
-    // Clear error when user starts typing
-    if (errors.password) {
-      setErrors((prev) => ({ ...prev, password: "" }));
-    }
-  };
+  const handlePasswordChange = createPasswordChangeHandler(
+    setPassword,
+    setErrors
+  );
 
   const handleCreateAccount = (): void => {
     console.log("Routing to create account page");

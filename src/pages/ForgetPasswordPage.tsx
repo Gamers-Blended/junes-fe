@@ -2,7 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { NavigationState } from "../types/navigationState";
 import { FormErrors } from "../types/formErrors";
+import { Credentials } from "../utils/Enums";
 import { validateEmail } from "../utils/inputValidationUtils";
+import { createInputChangeHandler } from "../utils/FormHandlers";
 
 const ForgetPasswordPage: React.FC = () => {
   const navigate = useNavigate();
@@ -26,13 +28,11 @@ const ForgetPasswordPage: React.FC = () => {
     }
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setEmail(e.target.value);
-    // Clear error when user starts typing
-    if (errors.email) {
-      setErrors((prev) => ({ ...prev, email: "" }));
-    }
-  };
+  const handleEmailChange = createInputChangeHandler(
+    setEmail,
+    setErrors,
+    Credentials.EMAIL
+  );
 
   const handleLoginAsExistingCustomer = (): void => {
     console.log("Routing to login page");
