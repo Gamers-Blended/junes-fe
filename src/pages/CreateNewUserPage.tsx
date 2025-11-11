@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { NavigationState } from "../types/navigationState";
 import { FormErrors } from "../types/formErrors";
+import { Credentials } from "../utils/Enums";
 import {
   USERNAME_MIN_LENGTH,
   USERNAME_MAX_LENGTH,
@@ -13,6 +14,11 @@ import {
   validateNewPasswordCreation,
   validateConfirmPassword,
 } from "../utils/inputValidationUtils";
+import {
+  createPasswordChangeHandler,
+  createConfirmPasswordChangeHandler,
+  createInputChangeHandler,
+} from "../utils/FormHandlers";
 
 const CreateNewUserPage: React.FC = () => {
   const navigate = useNavigate();
@@ -40,48 +46,32 @@ const CreateNewUserPage: React.FC = () => {
     // If no errors, proceed sign in
     if (!newErrors.email && !newErrors.password) {
       console.log("User created");
-      const state: NavigationState = { from: 'createUser', email };
+      const state: NavigationState = { from: "createUser", email };
       navigate("/emailsent/", { state });
     }
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setEmail(e.target.value);
-    // Clear error when user starts typing
-    if (errors.email) {
-      setErrors((prev) => ({ ...prev, email: "" }));
-    }
-  };
+  const handleEmailChange = createInputChangeHandler(
+    setEmail,
+    setErrors,
+    Credentials.EMAIL
+  );
 
-  const handleUsernameChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    setUsername(e.target.value);
-    // Clear error when user starts typing
-    if (errors.username) {
-      setErrors((prev) => ({ ...prev, username: "" }));
-    }
-  };
+  const handleUsernameChange = createInputChangeHandler(
+    setUsername,
+    setErrors,
+    "username"
+  );
 
-  const handlePasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    setPassword(e.target.value);
-    // Clear error when user starts typing
-    if (errors.password) {
-      setErrors((prev) => ({ ...prev, password: "" }));
-    }
-  };
+  const handlePasswordChange = createPasswordChangeHandler(
+    setPassword,
+    setErrors
+  );
 
-  const handleConfirmPasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    setConfirmPassword(e.target.value);
-    // Clear error when user starts typing
-    if (errors.confirmPassword) {
-      setErrors((prev) => ({ ...prev, confirmPassword: "" }));
-    }
-  };
+  const handleConfirmPasswordChange = createConfirmPasswordChangeHandler(
+    setConfirmPassword,
+    setErrors
+  );
 
   const validateConfirmPasswordOnBlur = (): void => {
     if (password !== confirmPassword) {
@@ -107,11 +97,11 @@ const CreateNewUserPage: React.FC = () => {
         <div className="form-container">
           {/* Email Input */}
           <div className="input-group">
-            <label htmlFor="email" className="label">
+            <label htmlFor={Credentials.EMAIL} className="label">
               Email
             </label>
             <input
-              type="email"
+              type={Credentials.EMAIL}
               placeholder="Must be unique"
               value={email}
               onChange={handleEmailChange}
@@ -141,12 +131,12 @@ const CreateNewUserPage: React.FC = () => {
 
           {/* Password Input */}
           <div className="input-group">
-            <label htmlFor="password" className="label">
+            <label htmlFor={Credentials.PASSWORD} className="label">
               Password
             </label>
             <div className="password-container">
               <input
-                type={showPassword ? "text" : "password"}
+                type={showPassword ? "text" : Credentials.PASSWORD}
                 placeholder={`Between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters`}
                 value={password}
                 onChange={handlePasswordChange}
@@ -173,7 +163,7 @@ const CreateNewUserPage: React.FC = () => {
               Type Password Again
             </label>
             <input
-              type="password"
+              type={Credentials.PASSWORD} 
               placeholder="Re-type your password"
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}

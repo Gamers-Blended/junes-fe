@@ -20,7 +20,7 @@ import {
 const ModifyAddressPage: React.FC = () => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const location = useLocation();
-  const { action, item, from, fieldToChange } = location.state || {};
+  const { action, item, from } = location.state || {};
 
   // Initialise states with existing values if editing
   const [country, setCountry] = useState<string>(

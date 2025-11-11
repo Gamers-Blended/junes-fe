@@ -13,6 +13,11 @@ export enum StockStatus {
   PRE_ORDER = "Pre-order",
 }
 
+export enum Credentials {
+  EMAIL = "email",
+  PASSWORD = "password",
+}
+
 export enum SavedInfoType {
   ADDRESS = "address",
   PAYMENT = "payment",
