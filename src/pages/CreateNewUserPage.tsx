@@ -44,7 +44,7 @@ const CreateNewUserPage: React.FC = () => {
     setErrors(newErrors);
 
     // If no errors, proceed sign in
-    if (!newErrors.email && !newErrors.password) {
+    if (!newErrors.email && !newErrors.password && !newErrors.username && !newErrors.confirmPassword) {
       console.log("User created");
       const state: NavigationState = { from: "createUser", email };
       navigate("/emailsent/", { state });
