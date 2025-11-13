@@ -16,6 +16,7 @@ export enum StockStatus {
 export enum Credentials {
   EMAIL = "email",
   PASSWORD = "password",
+  CONFIRM_PASSWORD = "confirmPassword",
 }
 
 export enum SavedInfoType {
