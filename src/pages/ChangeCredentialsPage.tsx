@@ -77,10 +77,10 @@ const ChangeCredentialsPage: React.FC = () => {
                 {/* Confirm Password Input */}
                 <FormInput
                   label="Confirm password"
-                  type={Credentials.CONFIRM_PASSWORD}
+                  type={Credentials.PASSWORD}
                   value={confirmPassword}
                   onChange={handleConfirmPasswordChange}
-                  error={errors.password}
+                  error={errors.confirmPassword}
                   showPasswordToggle={true}
                 />
               </>
