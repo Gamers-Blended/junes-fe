@@ -8,6 +8,7 @@ import {
   PASSWORD_MAX_LENGTH,
   validateNewPasswordCreation,
   validateConfirmPassword,
+  validatePasswordMatch,
 } from "../utils/inputValidationUtils";
 import {
   createPasswordChangeHandler,
@@ -84,12 +85,7 @@ const ChangeCredentialsPage: React.FC = () => {
   );
 
   const validateConfirmPasswordOnBlur = (): void => {
-    if (password !== confirmPassword) {
-      setErrors((prev) => ({
-        ...prev,
-        confirmPassword: "Passwords do not match",
-      }));
-    }
+    validatePasswordMatch(password, confirmPassword, setErrors);
   };
 
   return (

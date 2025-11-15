@@ -1,3 +1,6 @@
+import React from "react";
+import { FormErrors } from "../types/formErrors";
+
 const EMAIL_MAX_LENGTH = 254;
 export const USERNAME_MIN_LENGTH = 6;
 export const USERNAME_MAX_LENGTH = 20;
@@ -57,6 +60,19 @@ export const validateConfirmPassword = (
   }
 
   return "";
+};
+
+export const validatePasswordMatch = (
+  password: string,
+  confirmPassword: string,
+  setErrors: React.Dispatch<React.SetStateAction<FormErrors>>
+): void => {
+  if (password !== confirmPassword) {
+    setErrors((prev) => ({
+      ...prev,
+      confirmPassword: "Passwords do not match",
+    }));
+  }
 };
 
 export const validateUsername = (username: string): string => {

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
 import { NavigationState } from "../types/navigationState";
 import { FormErrors } from "../types/formErrors";
 import { Credentials } from "../utils/Enums";
@@ -13,12 +12,14 @@ import {
   validateUsername,
   validateNewPasswordCreation,
   validateConfirmPassword,
+  validatePasswordMatch,
 } from "../utils/inputValidationUtils";
 import {
   createPasswordChangeHandler,
   createConfirmPasswordChangeHandler,
   createInputChangeHandler,
 } from "../utils/FormHandlers";
+import { FormInput } from "../components/FormInput.tsx";
 
 const CreateNewUserPage: React.FC = () => {
   const navigate = useNavigate();
@@ -26,7 +27,6 @@ const CreateNewUserPage: React.FC = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errors, setErrors] = useState<FormErrors>({
     email: "",
     password: "",
@@ -44,7 +44,12 @@ const CreateNewUserPage: React.FC = () => {
     setErrors(newErrors);
 
     // If no errors, proceed sign in
-    if (!newErrors.email && !newErrors.password && !newErrors.username && !newErrors.confirmPassword) {
+    if (
+      !newErrors.email &&
+      !newErrors.password &&
+      !newErrors.username &&
+      !newErrors.confirmPassword
+    ) {
       console.log("User created");
       const state: NavigationState = { from: "createUser", email };
       navigate("/emailsent/", { state });
@@ -74,12 +79,7 @@ const CreateNewUserPage: React.FC = () => {
   );
 
   const validateConfirmPasswordOnBlur = (): void => {
-    if (password !== confirmPassword) {
-      setErrors((prev) => ({
-        ...prev,
-        confirmPassword: "Passwords do not match",
-      }));
-    }
+    validatePasswordMatch(password, confirmPassword, setErrors);
   };
 
   const handleLoginAsExistingCustomer = (): void => {
@@ -96,84 +96,53 @@ const CreateNewUserPage: React.FC = () => {
 
         <div className="form-container">
           {/* Email Input */}
-          <div className="input-group">
-            <label htmlFor={Credentials.EMAIL} className="label">
-              Email
-            </label>
-            <input
-              type={Credentials.EMAIL}
-              placeholder="Must be unique"
-              value={email}
-              onChange={handleEmailChange}
-              className={`input-field ${errors.email ? "error" : ""}`}
-            />
-            {errors.email && (
-              <p className="form-error-message">{errors.email}</p>
-            )}
-          </div>
+          <FormInput
+            label="Email"
+            type={Credentials.EMAIL}
+            placeholder="Must be unique"
+            value={email}
+            onChange={handleEmailChange}
+            error={errors.email}
+            className={`input-field ${errors.email ? "error" : ""}`}
+          />
 
           {/* Username Input */}
-          <div className="input-group">
-            <label htmlFor="username" className="label">
-              Username
-            </label>
-            <input
-              type="text"
-              placeholder={`Must be unique, between ${USERNAME_MIN_LENGTH} and ${USERNAME_MAX_LENGTH} characters`}
-              value={username}
-              onChange={handleUsernameChange}
-              className={`input-field ${errors.username ? "error" : ""}`}
-            />
-            {errors.username && (
-              <p className="form-error-message">{errors.username}</p>
-            )}
-          </div>
+          <FormInput
+            label="Username"
+            type="username"
+            placeholder={`Must be unique, between ${USERNAME_MIN_LENGTH} and ${USERNAME_MAX_LENGTH} characters`}
+            value={username}
+            onChange={handleUsernameChange}
+            error={errors.username}
+            className={`input-field ${errors.username ? "error" : ""}`}
+          />
 
           {/* Password Input */}
-          <div className="input-group">
-            <label htmlFor={Credentials.PASSWORD} className="label">
-              Password
-            </label>
-            <div className="password-container">
-              <input
-                type={showPassword ? "text" : Credentials.PASSWORD}
-                placeholder={`Between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters`}
-                value={password}
-                onChange={handlePasswordChange}
-                className={`input-field password-input ${
-                  errors.password ? "error" : ""
-                }`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="eye-toggle"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-            {errors.password && (
-              <p className="form-error-message">{errors.password}</p>
-            )}
-          </div>
+          <FormInput
+            label="Password"
+            type={Credentials.PASSWORD}
+            placeholder={`Between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters`}
+            value={password}
+            onChange={handlePasswordChange}
+            error={errors.password}
+            className={`input-field password-input ${
+              errors.password ? "error" : ""
+            }`}
+            showPasswordToggle={true}
+          />
 
           {/* Confirm Password Input */}
-          <div className="input-group">
-            <label htmlFor="confirmPassword" className="label">
-              Type Password Again
-            </label>
-            <input
-              type={Credentials.PASSWORD} 
-              placeholder="Re-type your password"
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-              onBlur={validateConfirmPasswordOnBlur}
-              className={`input-field ${errors.confirmPassword ? "error" : ""}`}
-            />
-            {errors.confirmPassword && (
-              <p className="form-error-message">{errors.confirmPassword}</p>
-            )}
-          </div>
+          <FormInput
+            label="Type Password Again"
+            type={Credentials.PASSWORD}
+            placeholder="Re-type your password"
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+            onBlur={validateConfirmPasswordOnBlur}
+            error={errors.confirmPassword}
+            className={`input-field ${errors.confirmPassword ? "error" : ""}`}
+            showPasswordToggle={true}
+          />
 
           {/* Create Button & Links */}
           <div className="actions-container">

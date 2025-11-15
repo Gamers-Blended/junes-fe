@@ -5,6 +5,7 @@ import { FormErrors } from "../types/formErrors";
 import { Credentials } from "../utils/Enums";
 import { validateEmail } from "../utils/inputValidationUtils";
 import { createInputChangeHandler } from "../utils/FormHandlers";
+import { FormInput } from "../components/FormInput.tsx";
 
 const ForgetPasswordPage: React.FC = () => {
   const navigate = useNavigate();
@@ -53,21 +54,15 @@ const ForgetPasswordPage: React.FC = () => {
           </p>
 
           {/* Email Input */}
-          <div className="input-group">
-            <label htmlFor="email" className="label">
-              Email
-            </label>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={handleEmailChange}
-              className={`input-field ${errors.email ? "error" : ""}`}
-            />
-            {errors.email && (
-              <p className="form-error-message">{errors.email}</p>
-            )}
-          </div>
+          <FormInput
+            label="Email"
+            type={Credentials.EMAIL}
+            placeholder="Email"
+            value={email}
+            onChange={handleEmailChange}
+            error={errors.email}
+            className={`input-field ${errors.email ? "error" : ""}`}
+          />
 
           {/* Create Button & Links */}
           <div className="actions-container">

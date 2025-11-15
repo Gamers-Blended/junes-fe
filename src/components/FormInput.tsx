@@ -74,11 +74,7 @@ export const FormInput: React.FC<FormInputProps> = ({
         inputElement
       )}
 
-      {error && (
-        <p id={`${inputID}-error`} className="form-error-message" role="alert">
-          {error}
-        </p>
-      )}
+      {error && <p className="form-error-message">{error}</p>}
     </div>
   );
 };

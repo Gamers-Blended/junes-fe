@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
 import { Credentials } from "../utils/Enums";
 import { validateEmail, validatePassword } from "../utils/inputValidationUtils";
 import {
@@ -10,6 +9,7 @@ import {
 import { FormErrors } from "../types/formErrors";
 import { useAuth } from "../components/AuthContext";
 import Footer from "../components/Footer";
+import { FormInput } from "../components/FormInput.tsx";
 
 const LoginPage: React.FC = () => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
@@ -74,49 +74,29 @@ const LoginPage: React.FC = () => {
 
         <div className="form-container">
           {/* Email Input */}
-          <div className="input-group">
-            <label htmlFor="email" className="label">
-              Email
-            </label>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={handleEmailChange}
-              className={`input-field ${errors.email ? "error" : ""}`}
-            />
-            {errors.email && (
-              <p className="form-error-message">{errors.email}</p>
-            )}
-          </div>
+          <FormInput
+            label="Email"
+            type={Credentials.EMAIL}
+            placeholder="Email"
+            value={email}
+            onChange={handleEmailChange}
+            error={errors.email}
+            className={`input-field ${errors.email ? "error" : ""}`}
+          />
 
           {/* Password Input */}
-          <div className="input-group">
-            <label htmlFor="password" className="label">
-              Password
-            </label>
-            <div className="password-container">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={password}
-                onChange={handlePasswordChange}
-                className={`input-field password-input ${
-                  errors.password ? "error" : ""
-                }`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="eye-toggle"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-            {errors.password && (
-              <p className="form-error-message">{errors.password}</p>
-            )}
-          </div>
+          <FormInput
+            label="Password"
+            type={Credentials.PASSWORD}
+            placeholder="Password"
+            value={password}
+            onChange={handlePasswordChange}
+            error={errors.password}
+            className={`input-field password-input ${
+              errors.password ? "error" : ""
+            }`}
+            showPasswordToggle={true}
+          />
 
           {/* Sign In Button and Links */}
           <div className="actions-container">
