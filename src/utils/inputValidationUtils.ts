@@ -52,17 +52,6 @@ export const validateNewPasswordCreation = (password: string): string => {
   return "";
 };
 
-export const validateConfirmPassword = (
-  password: string,
-  confirmPassword: string
-): string => {
-  if (password !== confirmPassword) {
-    return "Passwords do not match";
-  }
-
-  return "";
-};
-
 export const validateUsername = (username: string): string => {
   if (!username.trim()) {
     return "Username is required";
@@ -91,7 +80,23 @@ export const validateUsername = (username: string): string => {
   return "";
 };
 
-export const validateWordsMatch = (
+// Returns an error message string if the two words do not match
+export const validateMatch = (
+  firstWord: string,
+  secondWord: string,
+  fieldName: string
+): string => {
+  if (firstWord !== secondWord) {
+    return `${
+      fieldName.charAt(0).toUpperCase() + fieldName.slice(1)
+    }s do not match`;
+  }
+
+  return "";
+};
+
+// Sets errors in state
+export const setMatchValidationError = (
   firstWord: string,
   secondWord: string,
   setErrors: React.Dispatch<React.SetStateAction<FormErrors>>,

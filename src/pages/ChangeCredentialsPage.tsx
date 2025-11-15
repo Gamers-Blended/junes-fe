@@ -7,8 +7,9 @@ import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_MAX_LENGTH,
   validateNewPasswordCreation,
-  validateConfirmPassword,
-  validateWordsMatch,
+  validateEmail,
+  validateMatch,
+  setMatchValidationError,
 } from "../utils/inputValidationUtils";
 import { createInputChangeHandler } from "../utils/FormHandlers";
 import { FormInput } from "../components/FormInput.tsx";
@@ -59,13 +60,18 @@ const ChangeCredentialsPage: React.FC = () => {
 
     if (isPasswordMode) {
       newErrors.password = validateNewPasswordCreation(password);
-      newErrors.confirmPassword = validateConfirmPassword(
+      newErrors.confirmPassword = validateMatch(
         password,
-        confirmPassword
+        confirmPassword,
+        Credentials.PASSWORD
       );
     } else {
-      newErrors.email = "";
-      newErrors.confirmEmail = "";
+      newErrors.email = validateEmail(email);
+      newErrors.confirmEmail = validateMatch(
+        email,
+        confirmEmail,
+        Credentials.EMAIL
+      );
     }
 
     setErrors(newErrors);
@@ -117,7 +123,7 @@ const ChangeCredentialsPage: React.FC = () => {
   );
 
   const validateConfirmPasswordOnBlur = (): void => {
-    validateWordsMatch(
+    setMatchValidationError(
       password,
       confirmPassword,
       setErrors,
@@ -126,7 +132,7 @@ const ChangeCredentialsPage: React.FC = () => {
   };
 
   const validateConfirmEmailOnBlur = (): void => {
-    validateWordsMatch(
+    setMatchValidationError(
       email,
       confirmEmail,
       setErrors,

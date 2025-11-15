@@ -11,8 +11,8 @@ import {
   validateEmail,
   validateUsername,
   validateNewPasswordCreation,
-  validateConfirmPassword,
-  validateWordsMatch,
+  validateMatch,
+  setMatchValidationError,
 } from "../utils/inputValidationUtils";
 import { createInputChangeHandler } from "../utils/FormHandlers";
 import { FormInput } from "../components/FormInput.tsx";
@@ -34,7 +34,11 @@ const CreateNewUserPage: React.FC = () => {
       email: validateEmail(email),
       password: validateNewPasswordCreation(password),
       username: validateUsername(username),
-      confirmPassword: validateConfirmPassword(password, confirmPassword),
+      confirmPassword: validateMatch(
+        password,
+        confirmPassword,
+        Credentials.PASSWORD
+      ),
     };
 
     setErrors(newErrors);
@@ -77,7 +81,7 @@ const CreateNewUserPage: React.FC = () => {
   );
 
   const validateConfirmPasswordOnBlur = (): void => {
-    validateWordsMatch(
+    setMatchValidationError(
       password,
       confirmPassword,
       setErrors,
