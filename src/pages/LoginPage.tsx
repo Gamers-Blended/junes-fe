@@ -2,10 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Credentials } from "../utils/Enums";
 import { validateEmail, validatePassword } from "../utils/inputValidationUtils";
-import {
-  createPasswordChangeHandler,
-  createInputChangeHandler,
-} from "../utils/FormHandlers";
+import { createInputChangeHandler } from "../utils/FormHandlers";
 import { FormErrors } from "../types/formErrors";
 import { useAuth } from "../components/AuthContext";
 import Footer from "../components/Footer";
@@ -16,7 +13,6 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [errors, setErrors] = useState<FormErrors>({ email: "", password: "" });
 
   // Redirect to home if user is already logged in
@@ -50,9 +46,10 @@ const LoginPage: React.FC = () => {
     Credentials.EMAIL
   );
 
-  const handlePasswordChange = createPasswordChangeHandler(
+  const handlePasswordChange = createInputChangeHandler(
     setPassword,
-    setErrors
+    setErrors,
+    Credentials.PASSWORD
   );
 
   const handleCreateAccount = (): void => {

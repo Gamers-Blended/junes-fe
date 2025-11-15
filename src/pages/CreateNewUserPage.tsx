@@ -12,13 +12,9 @@ import {
   validateUsername,
   validateNewPasswordCreation,
   validateConfirmPassword,
-  validatePasswordMatch,
+  validateWordsMatch,
 } from "../utils/inputValidationUtils";
-import {
-  createPasswordChangeHandler,
-  createConfirmPasswordChangeHandler,
-  createInputChangeHandler,
-} from "../utils/FormHandlers";
+import { createInputChangeHandler } from "../utils/FormHandlers";
 import { FormInput } from "../components/FormInput.tsx";
 
 const CreateNewUserPage: React.FC = () => {
@@ -65,21 +61,28 @@ const CreateNewUserPage: React.FC = () => {
   const handleUsernameChange = createInputChangeHandler(
     setUsername,
     setErrors,
-    "username"
+    Credentials.USERNAME
   );
 
-  const handlePasswordChange = createPasswordChangeHandler(
+  const handlePasswordChange = createInputChangeHandler(
     setPassword,
-    setErrors
+    setErrors,
+    Credentials.PASSWORD
   );
 
-  const handleConfirmPasswordChange = createConfirmPasswordChangeHandler(
+  const handleConfirmPasswordChange = createInputChangeHandler(
     setConfirmPassword,
-    setErrors
+    setErrors,
+    Credentials.CONFIRM_PASSWORD
   );
 
   const validateConfirmPasswordOnBlur = (): void => {
-    validatePasswordMatch(password, confirmPassword, setErrors);
+    validateWordsMatch(
+      password,
+      confirmPassword,
+      setErrors,
+      Credentials.CONFIRM_PASSWORD
+    );
   };
 
   const handleLoginAsExistingCustomer = (): void => {

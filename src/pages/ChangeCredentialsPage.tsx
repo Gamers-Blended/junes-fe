@@ -8,12 +8,9 @@ import {
   PASSWORD_MAX_LENGTH,
   validateNewPasswordCreation,
   validateConfirmPassword,
-  validatePasswordMatch,
+  validateWordsMatch,
 } from "../utils/inputValidationUtils";
-import {
-  createPasswordChangeHandler,
-  createConfirmPasswordChangeHandler,
-} from "../utils/FormHandlers";
+import { createInputChangeHandler } from "../utils/FormHandlers";
 import { FormInput } from "../components/FormInput.tsx";
 import Breadcrumb from "../components/Breadcrumb.tsx";
 
@@ -22,9 +19,12 @@ const ChangeCredentialsPage: React.FC = () => {
   const navigate = useNavigate();
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [confirmEmail, setConfirmEmail] = useState<string>("");
   const [errors, setErrors] = useState<FormErrors>({
     email: "",
     password: "",
+    confirmEmail: "",
     confirmPassword: "",
   });
 
@@ -50,42 +50,88 @@ const ChangeCredentialsPage: React.FC = () => {
   };
 
   const handleUpdate = (): void => {
-    const newErrors: FormErrors = {
+    let newErrors: FormErrors = {
       email: "",
-      password: validateNewPasswordCreation(password),
-      confirmPassword: validateConfirmPassword(password, confirmPassword),
+      password: "",
+      confirmEmail: "",
+      confirmPassword: "",
     };
+
+    if (isPasswordMode) {
+      newErrors.password = validateNewPasswordCreation(password);
+      newErrors.confirmPassword = validateConfirmPassword(
+        password,
+        confirmPassword
+      );
+    } else {
+      newErrors.email = "";
+      newErrors.confirmEmail = "";
+    }
 
     setErrors(newErrors);
 
     // If no errors, proceed update
-    if (!newErrors.email && !newErrors.password && !newErrors.confirmPassword) {
+    if (
+      !newErrors.email &&
+      !newErrors.password &&
+      !newErrors.confirmEmail &&
+      !newErrors.confirmPassword
+    ) {
       console.log(`Credentials (${fieldToChange}) updated!`);
-      const state: NavigationState = {
-        from: "changecredentials",
-        successMessage: `${
-          fieldToChange.charAt(0).toUpperCase() + fieldToChange.slice(1)
-        } changed`,
-      };
-
       if (fieldToChange === Credentials.PASSWORD) {
+        const state: NavigationState = {
+          from: "changecredentials",
+          successMessage: `${
+            fieldToChange.charAt(0).toUpperCase() + fieldToChange.slice(1)
+          } changed`,
+        };
         navigate("/myaccount/", { state });
+      } else if (fieldToChange === Credentials.EMAIL) {
+        navigate("/emailsent/");
       }
     }
   };
 
-  const handlePasswordChange = createPasswordChangeHandler(
+  const handlePasswordChange = createInputChangeHandler(
     setPassword,
-    setErrors
+    setErrors,
+    Credentials.PASSWORD
   );
 
-  const handleConfirmPasswordChange = createConfirmPasswordChangeHandler(
+  const handleConfirmPasswordChange = createInputChangeHandler(
     setConfirmPassword,
-    setErrors
+    setErrors,
+    Credentials.CONFIRM_PASSWORD
+  );
+
+  const handleEmailChange = createInputChangeHandler(
+    setEmail,
+    setErrors,
+    Credentials.EMAIL
+  );
+
+  const handleConfirmEmailChange = createInputChangeHandler(
+    setConfirmEmail,
+    setErrors,
+    Credentials.CONFIRM_EMAIL
   );
 
   const validateConfirmPasswordOnBlur = (): void => {
-    validatePasswordMatch(password, confirmPassword, setErrors);
+    validateWordsMatch(
+      password,
+      confirmPassword,
+      setErrors,
+      Credentials.CONFIRM_PASSWORD
+    );
+  };
+
+  const validateConfirmEmailOnBlur = (): void => {
+    validateWordsMatch(
+      email,
+      confirmEmail,
+      setErrors,
+      Credentials.CONFIRM_EMAIL
+    );
   };
 
   return (
@@ -99,7 +145,7 @@ const ChangeCredentialsPage: React.FC = () => {
           </div>
 
           <div className="form-container">
-            {isPasswordMode && (
+            {isPasswordMode ? (
               <>
                 {/* New Password Input */}
                 <FormInput
@@ -130,12 +176,41 @@ const ChangeCredentialsPage: React.FC = () => {
                   showPasswordToggle={true}
                 />
               </>
+            ) : (
+              <>
+                Old Email: {email}
+                {/* New Email Input */}
+                <FormInput
+                  label="New email"
+                  type={Credentials.EMAIL}
+                  placeholder="Email"
+                  value={email}
+                  onChange={handleEmailChange}
+                  error={errors.email}
+                  className={`input-field password-input ${
+                    errors.email ? "error" : ""
+                  }`}
+                />
+                {/* Confirm Email Input */}
+                <FormInput
+                  label="Confirm email"
+                  type={Credentials.EMAIL}
+                  placeholder="Re-type your email"
+                  value={confirmEmail}
+                  onChange={handleConfirmEmailChange}
+                  onBlur={validateConfirmEmailOnBlur}
+                  error={errors.confirmEmail}
+                  className={`input-field ${
+                    errors.confirmEmail ? "error" : ""
+                  }`}
+                />
+              </>
             )}
 
             {/* Update Button */}
             <div className="actions-container">
               <button onClick={handleUpdate} className="form-button">
-                Update {isPasswordMode ? "Password" : ""}
+                Update {isPasswordMode ? "Password" : "Email"}
               </button>
             </div>
           </div>

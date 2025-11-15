@@ -1,5 +1,6 @@
 import React from "react";
 import { FormErrors } from "../types/formErrors";
+import { Credentials } from "./Enums";
 
 const EMAIL_MAX_LENGTH = 254;
 export const USERNAME_MIN_LENGTH = 6;
@@ -62,19 +63,6 @@ export const validateConfirmPassword = (
   return "";
 };
 
-export const validatePasswordMatch = (
-  password: string,
-  confirmPassword: string,
-  setErrors: React.Dispatch<React.SetStateAction<FormErrors>>
-): void => {
-  if (password !== confirmPassword) {
-    setErrors((prev) => ({
-      ...prev,
-      confirmPassword: "Passwords do not match",
-    }));
-  }
-};
-
 export const validateUsername = (username: string): string => {
   if (!username.trim()) {
     return "Username is required";
@@ -101,4 +89,25 @@ export const validateUsername = (username: string): string => {
   }
 
   return "";
+};
+
+export const validateWordsMatch = (
+  firstWord: string,
+  secondWord: string,
+  setErrors: React.Dispatch<React.SetStateAction<FormErrors>>,
+  fieldName: string
+): void => {
+  if (firstWord !== secondWord) {
+    if (fieldName === Credentials.CONFIRM_PASSWORD) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: "Passwords do not match",
+      }));
+    } else if (fieldName === Credentials.CONFIRM_EMAIL) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmEmail: "Emails do not match",
+      }));
+    }
+  }
 };
