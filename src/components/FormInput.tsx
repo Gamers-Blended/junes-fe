@@ -8,6 +8,7 @@ interface FormInputProps {
   placeholder?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   error?: string;
   id?: string;
   name?: string;
@@ -21,6 +22,7 @@ export const FormInput: React.FC<FormInputProps> = ({
   placeholder,
   value,
   onChange,
+  onBlur,
   error,
   id,
   name,
@@ -43,6 +45,7 @@ export const FormInput: React.FC<FormInputProps> = ({
       placeholder={placeholder}
       value={value}
       onChange={onChange}
+      onBlur={onBlur}
       className={`input-field ${isPasswordField ? "password-input" : ""} ${
         error ? "error" : ""
       } ${className}`}

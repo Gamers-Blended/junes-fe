@@ -1,7 +1,14 @@
-import { useLocation } from "react-router-dom";
 import { useState, JSX } from "react";
-import { Credentials } from "../utils/Enums.tsx";
+import { useLocation, useNavigate } from "react-router-dom";
+import { NavigationState } from "../types/navigationState";
 import { FormErrors } from "../types/formErrors";
+import { Credentials } from "../utils/Enums.tsx";
+import {
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  validateNewPasswordCreation,
+  validateConfirmPassword,
+} from "../utils/inputValidationUtils";
 import {
   createPasswordChangeHandler,
   createConfirmPasswordChangeHandler,
@@ -11,8 +18,7 @@ import Breadcrumb from "../components/Breadcrumb.tsx";
 
 const ChangeCredentialsPage: React.FC = () => {
   const location = useLocation();
-  const { fieldToChange } = location.state || {};
-  const isPasswordMode = fieldToChange === Credentials.PASSWORD;
+  const navigate = useNavigate();
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [errors, setErrors] = useState<FormErrors>({
@@ -20,6 +26,9 @@ const ChangeCredentialsPage: React.FC = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const { fieldToChange } = location.state || {};
+  const isPasswordMode = fieldToChange === Credentials.PASSWORD;
 
   const breadcrumbItems = [
     {
@@ -39,7 +48,30 @@ const ChangeCredentialsPage: React.FC = () => {
     }
   };
 
-  const handleUpdate = (): void => {};
+  const handleUpdate = (): void => {
+    const newErrors: FormErrors = {
+      email: "",
+      password: validateNewPasswordCreation(password),
+      confirmPassword: validateConfirmPassword(password, confirmPassword),
+    };
+
+    setErrors(newErrors);
+
+    // If no errors, proceed update
+    if (!newErrors.email && !newErrors.password && !newErrors.confirmPassword) {
+      console.log(`Credentials (${fieldToChange}) updated!`);
+      const state: NavigationState = {
+        from: "changecredentials",
+        successMessage: `${
+          fieldToChange.charAt(0).toUpperCase() + fieldToChange.slice(1)
+        } changed`,
+      };
+
+      if (fieldToChange === Credentials.PASSWORD) {
+        navigate("/myaccount/", { state });
+      }
+    }
+  };
 
   const handlePasswordChange = createPasswordChangeHandler(
     setPassword,
@@ -50,6 +82,15 @@ const ChangeCredentialsPage: React.FC = () => {
     setConfirmPassword,
     setErrors
   );
+
+  const validateConfirmPasswordOnBlur = (): void => {
+    if (password !== confirmPassword) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: "Passwords do not match",
+      }));
+    }
+  };
 
   return (
     <div className="change-credentials-container">
@@ -68,9 +109,13 @@ const ChangeCredentialsPage: React.FC = () => {
                 <FormInput
                   label="New password"
                   type={Credentials.PASSWORD}
+                  placeholder={`Between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters`}
                   value={password}
                   onChange={handlePasswordChange}
                   error={errors.password}
+                  className={`input-field password-input ${
+                    errors.password ? "error" : ""
+                  }`}
                   showPasswordToggle={true}
                 />
 
@@ -78,9 +123,14 @@ const ChangeCredentialsPage: React.FC = () => {
                 <FormInput
                   label="Confirm password"
                   type={Credentials.PASSWORD}
+                  placeholder="Re-type your password"
                   value={confirmPassword}
                   onChange={handleConfirmPasswordChange}
+                  onBlur={validateConfirmPasswordOnBlur}
                   error={errors.confirmPassword}
+                  className={`input-field ${
+                    errors.confirmPassword ? "error" : ""
+                  }`}
                   showPasswordToggle={true}
                 />
               </>
