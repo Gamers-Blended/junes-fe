@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import { NavigationState } from "../types/navigationState";
-import { SavedInfoType } from "../utils/Enums.tsx";
+import { SavedInfoType, Credentials } from "../utils/Enums.tsx";
 import { useAppDispatch } from "../store/hooks";
 import { Item, setSelectedItem } from "../store/productSlice";
 import Footer from "../components/Footer";
@@ -166,7 +166,7 @@ const MyAccountPage: React.FC = () => {
     console.log("Directing user to change email");
     const state: NavigationState = {
       from: "myaccount",
-      fieldToChange: "email",
+      fieldToChange: Credentials.EMAIL,
     };
     navigate("/changecredentials/", { state });
   };
@@ -175,7 +175,7 @@ const MyAccountPage: React.FC = () => {
     console.log("Directing user to change password");
     const state: NavigationState = {
       from: "myaccount",
-      fieldToChange: "password",
+      fieldToChange: Credentials.PASSWORD,
     };
     navigate("/changecredentials/", { state });
   };

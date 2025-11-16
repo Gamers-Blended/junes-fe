@@ -2,6 +2,7 @@ import { useState, JSX } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavigationState } from "../types/navigationState";
 import { FormErrors } from "../types/formErrors";
+import { mockUserData } from "../mocks/data/userData.ts";
 import { Credentials } from "../utils/Enums.tsx";
 import {
   PASSWORD_MIN_LENGTH,
@@ -146,7 +147,7 @@ const ChangeCredentialsPage: React.FC = () => {
 
       <div className="form-parent-container">
         <div className="form">
-          <div className="form-title">
+          <div className="form-title text-align-left">
             <h1>{renderHeader()}</h1>
           </div>
 
@@ -184,7 +185,13 @@ const ChangeCredentialsPage: React.FC = () => {
               </>
             ) : (
               <>
-                Old Email: {email}
+                <div className="text-align-left">
+                  <p>
+                    <strong>Old email</strong>
+                    <br />
+                    {mockUserData.email}
+                  </p>
+                </div>
                 {/* New Email Input */}
                 <FormInput
                   label="New email"
