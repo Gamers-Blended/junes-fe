@@ -13,6 +13,17 @@ export enum StockStatus {
   PRE_ORDER = "Pre-order",
 }
 
+export enum OrderStatus {
+  PAYMENT_PENDING = "Payment Pending",
+  AWAITING_FULFILLMENT = "Awaiting Fulfillment",
+  AWAITING_SHIPMENT = "Awaiting Shipment",
+  SHIPPED = "Shipped",
+  COMPLETED = "Completed",
+  CANCELLED = "Cancelled",
+  ON_HOLD = "On Hold",
+  REFUNDED = "Refunded",
+}
+
 export enum Credentials {
   USERNAME = "username",
   EMAIL = "email",

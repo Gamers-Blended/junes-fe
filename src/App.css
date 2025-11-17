@@ -5,6 +5,7 @@
 @import "./styles/ProductDetailsImages.css";
 @import "./styles/MyAccountPage.css";
 @import "./styles/SavedInfoPage.css";
+@import "./styles/OrderDetailsPage.css";
 @import "./styles/SavedInfoActionWindow.css";
 @import "./styles/AccountInfoChangedMessageBox.css";
 
@@ -1265,4 +1266,8 @@ input[type="number"] {
 
 .padding-bottom {
   padding-bottom: 0.5rem;
+}
+
+.text-align-left {
+  text-align: left;
 }
