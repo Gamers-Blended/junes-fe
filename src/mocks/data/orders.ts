@@ -31,6 +31,7 @@ export const mockOrderList: Order[] = [
         quantity: 2,
       },
     ],
+    shippingCost: 10.10,
     shippedDate: "25-09-2025 10:00:00",
     shippingAddress: {
       id: "A1",
@@ -74,6 +75,8 @@ export const mockOrderList: Order[] = [
         quantity: 2,
       },
     ],
+    shippingCost: 10.10,
+
     shippedDate: "25-09-2025 10:00:00",
     shippingAddress: {
       id: "A1",
@@ -117,6 +120,7 @@ export const mockOrderList: Order[] = [
         quantity: 2,
       },
     ],
+    shippingCost: 10.00,
     shippingAddress: {
       id: "A1",
       type: SavedInfoType.ADDRESS,

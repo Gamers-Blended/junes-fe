@@ -1,0 +1,56 @@
+.order-items-table {
+  border: 1px solid #ddd;
+  margin-bottom: 30px;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  background-color: #00d4aa;
+  color: black;
+  padding: 10px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  padding: 15px;
+  font-size: 14px;
+}
+
+.col-product {
+  display: flex;
+  align-items: flex-start;
+}
+
+.col-qty,
+.col-price,
+.col-total {
+  text-align: right;
+  padding-right: 10px;
+  font-weight: bold;
+}
+
+.table-footer {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  padding: 15px;
+  border-top: 2px solid #333;
+  font-weight: bold;
+  font-size: 14px;
+  align-items: center;
+}
+
+.total-label {
+  grid-column: 3;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.total-amount {
+  grid-column: 4;
+  text-align: right;
+  padding-right: 10px;
+}

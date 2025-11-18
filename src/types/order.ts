@@ -7,6 +7,7 @@ export interface Order {
   status: string;
   totalAmount: number;
   items: Item[];
+  shippingCost?: number;
   shippedDate?: string;
   shippingAddress?: Address;
   shippingWeight?: number;

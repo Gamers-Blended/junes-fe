@@ -8,6 +8,7 @@
 @import "./styles/OrderDetailsPage.css";
 @import "./styles/SavedInfoActionWindow.css";
 @import "./styles/AccountInfoChangedMessageBox.css";
+@import "./styles/OrderTable.css";
 
 html,
 body {

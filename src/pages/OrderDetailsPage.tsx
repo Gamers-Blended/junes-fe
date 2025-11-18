@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import OrderTable from "../components/OrderTable";
 import { mockOrderList } from "../mocks/data/orders";
 import Footer from "../components/Footer";
 
@@ -40,6 +41,8 @@ const OrderDetailsPage: React.FC = () => {
           </button>
         </div>
       </div>
+
+      <OrderTable orderData={mockOrderList[0]} mode="details" />
 
       <Footer />
     </div>
