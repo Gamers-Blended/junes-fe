@@ -41,3 +41,41 @@
   display: flex;
   justify-content: flex-end;
 }
+
+/* SHIPPING */
+.order-footer-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 30px;
+  font-size: 14px;
+}
+
+.shipping-address-section,
+.shipping-info-section {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.shipping-address-section h3,
+.shipping-info-section h3 {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.shipping-info {
+  display: flex;
+}
+
+.shipping-info-labels {
+  display: flex;
+  flex-direction: column;
+}
+
+.shipping-info-values {
+  display: flex;
+  flex-direction: column;
+  margin-left: 1rem;
+}
