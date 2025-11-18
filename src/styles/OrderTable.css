@@ -23,6 +23,7 @@
 .col-product {
   display: flex;
   align-items: flex-start;
+  border: none;
 }
 
 .col-qty,

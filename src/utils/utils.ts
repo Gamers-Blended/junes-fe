@@ -128,9 +128,10 @@ export const convertDate = (dateArray: number[]) => {
 };
 
 // Append URL prefix to both arrays and single strings
-export const appendUrlPrefix = (
-  input: string | string[]
-): string | string[] => {
+export function appendUrlPrefix(input: string): string;
+export function appendUrlPrefix(input: string[]): string[];
+export function appendUrlPrefix(
+  input: string | string[]) {
   if (Array.isArray(input)) {
     return input.map((item) => (item ? `${URL_PREFIX}${item}` : ""));
   }
