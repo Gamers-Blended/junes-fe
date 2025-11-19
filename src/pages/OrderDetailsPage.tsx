@@ -1,18 +1,10 @@
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import OrderTable from "../components/OrderTable";
 import { mockOrderList } from "../mocks/data/orders";
 import Footer from "../components/Footer";
 
 const OrderDetailsPage: React.FC = () => {
   const { orderId } = useParams();
-  const navigate = useNavigate();
-
-  const handlePrintInvoice = (orderId: string) => {
-    const url = `/invoice/${orderId}`;
-    console.log(`Navigating to invoice page for ${orderId}`);
-    navigate(url);
-  };
 
   return (
     <div className="order-details-page-container">
@@ -33,12 +25,14 @@ const OrderDetailsPage: React.FC = () => {
         </div>
 
         <div className="print-invoice-container">
-          <button
+          <Link
+            to={`/invoice/${mockOrderList[0].id}`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="action-link"
-            onClick={() => handlePrintInvoice(mockOrderList[0].id)}
           >
             Print invoice
-          </button>
+          </Link>
         </div>
       </div>
 
