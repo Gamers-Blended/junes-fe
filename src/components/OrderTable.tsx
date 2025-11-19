@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Order } from "../types/order";
 import {
   appendUrlPrefix,
@@ -7,6 +8,8 @@ import {
   formatEditionName,
   formatPrice,
 } from "../utils/utils";
+import { useAppDispatch } from "../store/hooks";
+import { Item, setSelectedItem } from "../store/productSlice";
 
 interface OrderTableProps {
   orderData: Order;
@@ -14,6 +17,16 @@ interface OrderTableProps {
 }
 
 const OrderTable: React.FC<OrderTableProps> = ({ orderData }) => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const handleNavigateToProduct = (item: Item) => {
+    const url = `/games/${item.slug}`;
+    dispatch(setSelectedItem(item));
+    console.log(`Navigating to product details for ${item.name}`);
+    navigate(url);
+  };
+
   return (
     <div className="order-items-table">
       <div className="table-header">
@@ -32,10 +45,16 @@ const OrderTable: React.FC<OrderTableProps> = ({ orderData }) => {
                 src={appendUrlPrefix(item.productImageUrl)}
                 alt={item.name}
                 className="transaction-item-image"
+                onClick={() => handleNavigateToProduct(item)}
               />
             </div>
             <div className="transaction-item-details">
-              <h3 className="item-name">{item.name}</h3>
+              <h3
+                className="item-name"
+                onClick={() => handleNavigateToProduct(item)}
+              >
+                {item.name}
+              </h3>
               <p className="item-details">
                 {formatFullPlatformName(item.platform)}
               </p>
