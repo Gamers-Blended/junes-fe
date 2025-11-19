@@ -58,3 +58,8 @@ export enum PaymentFormField {
   EXPIRATION_MONTH = "expirationMonth",
   EXPIRATION_YEAR = "expirationYear",
 }
+
+export enum OrderTableMode {
+  DETAILS = "details",
+  INVOICE = "invoice",
+}

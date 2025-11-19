@@ -1,5 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import OrderTable from "../components/OrderTable";
+import { OrderTableMode } from "../utils/Enums";
 import { mockOrderList } from "../mocks/data/orders";
 import Footer from "../components/Footer";
 
@@ -36,7 +37,7 @@ const OrderDetailsPage: React.FC = () => {
         </div>
       </div>
 
-      <OrderTable orderData={mockOrderList[0]} mode="details" />
+      <OrderTable orderData={mockOrderList[0]} mode={OrderTableMode.DETAILS} />
 
       {/* Shipping Details */}
       <div className="order-info-container">

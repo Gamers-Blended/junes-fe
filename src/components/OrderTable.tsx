@@ -10,13 +10,14 @@ import {
 } from "../utils/utils";
 import { useAppDispatch } from "../store/hooks";
 import { Item, setSelectedItem } from "../store/productSlice";
+import { OrderTableMode } from "../utils/Enums";
 
 interface OrderTableProps {
   orderData: Order;
   mode: string;
 }
 
-const OrderTable: React.FC<OrderTableProps> = ({ orderData }) => {
+const OrderTable: React.FC<OrderTableProps> = ({ orderData, mode }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -28,8 +29,16 @@ const OrderTable: React.FC<OrderTableProps> = ({ orderData }) => {
   };
 
   return (
-    <div className="order-items-table">
-      <div className="table-header">
+    <div
+      className={`order-items-table ${
+        mode === OrderTableMode.INVOICE ? "order-items-table-invoice" : ""
+      }`}
+    >
+      <div
+        className={`table-header ${
+          mode === OrderTableMode.INVOICE ? "table-header-invoice" : ""
+        }`}
+      >
         <div className="col-product">Product Name</div>
         <div className="col-qty">Qty.</div>
         <div className="col-price">Price/Unit</div>
@@ -40,14 +49,17 @@ const OrderTable: React.FC<OrderTableProps> = ({ orderData }) => {
       {orderData.items.map((item) => (
         <div key={item.id} className="table-row">
           <div className="col-product transaction-item">
-            <div className="transaction-item-image-wrapper">
-              <img
-                src={appendUrlPrefix(item.productImageUrl)}
-                alt={item.name}
-                className="transaction-item-image"
-                onClick={() => handleNavigateToProduct(item)}
-              />
-            </div>
+            {mode === OrderTableMode.INVOICE ? null : (
+              <div className="transaction-item-image-wrapper">
+                <img
+                  src={appendUrlPrefix(item.productImageUrl)}
+                  alt={item.name}
+                  className="transaction-item-image"
+                  onClick={() => handleNavigateToProduct(item)}
+                />
+              </div>
+            )}
+
             <div className="transaction-item-details">
               <h3
                 className="item-name"

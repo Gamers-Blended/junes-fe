@@ -3,6 +3,10 @@
   margin-bottom: 30px;
 }
 
+.order-items-table-invoice {
+  border: none;
+}
+
 .table-header {
   display: grid;
   grid-template-columns: 3fr 1fr 1fr 1fr;
@@ -11,6 +15,12 @@
   padding: 10px;
   font-weight: bold;
   font-size: 14px;
+}
+
+.table-header-invoice {
+  background-color: #ffffff;
+  border-top: #333 2px solid;
+  border-bottom: #333 2px solid;
 }
 
 .table-row {

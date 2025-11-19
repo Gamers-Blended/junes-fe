@@ -1,4 +1,6 @@
 import { useParams } from "react-router-dom";
+import OrderTable from "../components/OrderTable";
+import { OrderTableMode } from "../utils/Enums";
 import { mockOrderList } from "../mocks/data/orders";
 
 const InvoicePage: React.FC = () => {
@@ -34,6 +36,8 @@ const InvoicePage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <OrderTable orderData={mockOrderList[0]} mode={OrderTableMode.INVOICE} />
     </div>
   );
 };
