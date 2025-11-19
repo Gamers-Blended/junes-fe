@@ -1,0 +1,20 @@
+.invoice-page-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px;
+  font-family: Arial, sans-serif;
+}
+
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #000;
+}
+
+.invoice-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0;
+}

@@ -20,7 +20,7 @@
   margin: 0;
 }
 
-/* TOP SECTION */
+/* HEADER */
 .order-details-row {
   display: flex;
   justify-content: space-between;
@@ -42,8 +42,8 @@
   justify-content: flex-end;
 }
 
-/* SHIPPING */
-.order-footer-info {
+/* FOOTER */
+.order-info-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
@@ -51,30 +51,30 @@
   font-size: 14px;
 }
 
-.shipping-address-section,
-.shipping-info-section {
+.order-info-left-column,
+.order-info-right-column {
   display: flex;
   flex-direction: column;
   text-align: left;
 }
 
-.shipping-address-section h3,
-.shipping-info-section h3 {
+.order-info-left-column h3,
+.order-info-right-column h3 {
   font-size: 14px;
   font-weight: bold;
   margin: 0;
 }
 
-.shipping-info {
+.order-info-sub-section {
   display: flex;
 }
 
-.shipping-info-labels {
+.order-info-sub-section-labels {
   display: flex;
   flex-direction: column;
 }
 
-.shipping-info-values {
+.order-info-sub-section-values {
   display: flex;
   flex-direction: column;
   margin-left: 1rem;
