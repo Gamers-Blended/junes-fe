@@ -1,0 +1,33 @@
+/* SUBHEADER */
+.sub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.sub-header-subtotal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: auto;
+  margin-right: 1rem;
+}
+
+.subtotal-label {
+  font-size: 18px;
+  font-weight: bold;
+  color: #999;
+}
+
+.subtotal-amount {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.checkout-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 6px;
+}
