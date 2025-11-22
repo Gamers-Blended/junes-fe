@@ -11,6 +11,7 @@
 @import "./styles/SavedInfoActionWindow.css";
 @import "./styles/AccountInfoChangedMessageBox.css";
 @import "./styles/OrderTable.css";
+@import "./styles/ProductImageAndDescription.css";
 
 html,
 body {

@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router-dom";
+import { mockCartItemList, emptyCartList } from "../mocks/data/cart";
+import ProductImageAndDescription from "../components/ProductImageAndDescription";
 
 import checkoutIcon from "../assets/checkoutIcon.png";
 
 const CartPage = () => {
-  const isEmptyCart = true; // Toggle
+  // const isEmptyCart = true; // Toggle
+  const isEmptyCart = false; // Toggle
+  const cartItemList = isEmptyCart ? emptyCartList : mockCartItemList;
   const navigate = useNavigate();
 
   const handleCheckout = (): void => {
@@ -14,7 +18,7 @@ const CartPage = () => {
   const handleContinueShopping = (): void => {
     console.log("Continuing shopping");
     navigate("/");
-  }
+  };
 
   return (
     <div className="cart-page-container">
@@ -28,10 +32,7 @@ const CartPage = () => {
           <span className="subtotal-amount">$299.97</span>
         </div>
         {isEmptyCart ? null : (
-          <button
-            className="form-button cart-button"
-            onClick={handleCheckout}
-          >
+          <button className="form-button cart-button" onClick={handleCheckout}>
             <img src={checkoutIcon} alt="Checkout" className="checkout-icon" />
             Checkout
           </button>
@@ -41,15 +42,16 @@ const CartPage = () => {
       {isEmptyCart ? (
         <div className="empty-cart-message-box">
           Your cart is empty
-          <button
-            className="form-button"
-            onClick={handleContinueShopping}
-          >
+          <button className="form-button" onClick={handleContinueShopping}>
             Continue Shopping
           </button>
         </div>
       ) : (
-        <div className="cart-items-list"></div>
+        <div className="cart-items-list">
+          {cartItemList.map((cartItem) => (
+            <ProductImageAndDescription item={cartItem.item} mode="cart" />
+          ))}
+        </div>
       )}
     </div>
   );
