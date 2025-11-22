@@ -1,7 +1,15 @@
+import { useNavigate } from "react-router-dom";
+
 import checkoutIcon from "../assets/checkoutIcon.png";
 
 const CartPage = () => {
-  const isEmptyCart = true; // Toggle
+  const isEmptyCart = false; // Toggle
+  const navigate = useNavigate();
+
+  const handleCheckout = (): void => {
+    console.log("Navigating to checkout page");
+    navigate("/checkout");
+  };
 
   return (
     <div className="cart-page-container">
@@ -15,7 +23,7 @@ const CartPage = () => {
           <span className="subtotal-amount">$299.97</span>
         </div>
         {isEmptyCart ? null : (
-          <button className="form-button checkout-button">
+          <button className="form-button checkout-button" onClick={handleCheckout}>
             <img src={checkoutIcon} alt="Checkout" className="checkout-icon" />
             Checkout
           </button>
