@@ -43,3 +43,12 @@
   gap: 10px;
   border: 1px solid #000000;
 }
+
+/* CART ITEM */
+.cart-item-container {
+  display: flex;
+  border: 1px solid #000000;
+  margin-bottom: 1rem;
+  gap: 1rem;
+  padding: 1rem;
+}

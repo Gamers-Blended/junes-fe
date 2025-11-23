@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { mockCartItemList, emptyCartList } from "../mocks/data/cart";
 import ProductImageAndDescription from "../components/ProductImageAndDescription";
+import QuantitySelector from "../components/QuantitySelector";
 
 import checkoutIcon from "../assets/checkoutIcon.png";
 
@@ -49,7 +50,10 @@ const CartPage = () => {
       ) : (
         <div className="cart-items-list">
           {cartItemList.map((cartItem) => (
-            <ProductImageAndDescription item={cartItem.item} mode="cart" />
+            <div key={cartItem.item.id} className="cart-item-container">
+              <ProductImageAndDescription item={cartItem.item} mode="cart" />
+              <QuantitySelector className="cart-item" />
+            </div>
           ))}
         </div>
       )}

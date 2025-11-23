@@ -4,10 +4,11 @@ import { useAuth } from "../components/AuthContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import { NavigationState } from "../types/navigationState";
 import { mockOrderList } from "../mocks/data/orders.ts";
-import { formatDateWithMonthName, replaceSpacesWithDash } from "../utils/utils.ts";
+import {
+  formatDateWithMonthName,
+  replaceSpacesWithDash,
+} from "../utils/utils.ts";
 import { SavedInfoType, Credentials } from "../utils/Enums.tsx";
-import { useAppDispatch } from "../store/hooks";
-import { Item, setSelectedItem } from "../store/productSlice";
 import ProductImageAndDescription from "../components/ProductImageAndDescription";
 import Footer from "../components/Footer";
 
@@ -34,7 +35,6 @@ const MyAccountPage: React.FC = () => {
   });
 
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
 
   // Dummy transaction data for dev
   const dummyTransactions = mockOrderList;
@@ -227,13 +227,6 @@ const MyAccountPage: React.FC = () => {
     handlePageJump();
   };
 
-  // const handleNavigateToProduct = (item: Item) => {
-  //   const url = `/games/${item.slug}`;
-  //   dispatch(setSelectedItem(item));
-  //   console.log(`Navigating to product details for ${item.name}`);
-  //   navigate(url);
-  // };
-
   const handleViewOrderDetails = (orderId: string) => {
     const url = `/order/${orderId}`;
     console.log(`Navigating to order details for ${orderId}`);
@@ -372,9 +365,7 @@ const MyAccountPage: React.FC = () => {
                 <div className="transaction-header-right">
                   <div className="transaction-info-group">
                     <span className="transaction-label">ORDER #</span>
-                    <span className="transaction-value">
-                      {transaction.id}
-                    </span>
+                    <span className="transaction-value">{transaction.id}</span>
                   </div>
                 </div>
               </div>
@@ -397,7 +388,10 @@ const MyAccountPage: React.FC = () => {
                 </div>
 
                 {transaction.items.map((item) => (
-                  <ProductImageAndDescription item={item} mode="transactionHistory" />
+                  <ProductImageAndDescription
+                    item={item}
+                    mode="transactionHistory"
+                  />
                 ))}
               </div>
             </div>
