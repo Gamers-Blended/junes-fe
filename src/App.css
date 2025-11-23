@@ -12,6 +12,7 @@
 @import "./styles/AccountInfoChangedMessageBox.css";
 @import "./styles/OrderTable.css";
 @import "./styles/ProductImageAndDescription.css";
+@import "./styles/QuantitySelector.css";
 
 html,
 body {
