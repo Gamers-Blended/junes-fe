@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import OrderTable from "../components/OrderTable";
 import { OrderTableMode } from "../utils/Enums";
+import { formatDateTimeWithHyphens } from "../utils/utils.ts";
 import { mockOrderList } from "../mocks/data/orders";
 import Footer from "../components/Footer";
 
@@ -17,11 +18,11 @@ const OrderDetailsPage: React.FC = () => {
         <div className="order-details-dates">
           <div>
             <strong>Order date: </strong>
-            {mockOrderList[0].orderDate}
+            {formatDateTimeWithHyphens(mockOrderList[0].orderDate)}
           </div>
           <div>
             <strong>Shipped date: </strong>
-            {mockOrderList[0].shippedDate ? mockOrderList[0].shippedDate : "-"}
+            {mockOrderList[0].shippedDate ? formatDateTimeWithHyphens(mockOrderList[0].shippedDate) : "-"}
           </div>
         </div>
 
@@ -61,7 +62,7 @@ const OrderDetailsPage: React.FC = () => {
             <div className="order-info-sub-section-values">
               <div>{mockOrderList[0].shippingWeight}</div>
               <div>{mockOrderList[0].trackingNumber}</div>
-              <div>{mockOrderList[0].shippedDate}</div>
+              <div>{mockOrderList[0].shippedDate ? formatDateTimeWithHyphens(mockOrderList[0].shippedDate): ""}</div>
             </div>
           </div>
         </div>

@@ -4,7 +4,7 @@ import { OrderStatus, SavedInfoType } from "../../utils/Enums";
 export const mockOrderList: Order[] = [
   {
     id: "J123456789",
-    orderDate: "22-09-2025 15:41:00",
+    orderDate: "2025-09-22T15:41:00",
     status: OrderStatus.COMPLETED,
     totalAmount: 150.75,
     items: [
@@ -32,7 +32,7 @@ export const mockOrderList: Order[] = [
       },
     ],
     shippingCost: 10.10,
-    shippedDate: "25-09-2025 10:00:00",
+    shippedDate: "2025-09-25T10:00:00",
     shippingAddress: {
       id: "A1",
       type: SavedInfoType.ADDRESS,
@@ -48,7 +48,7 @@ export const mockOrderList: Order[] = [
   },
   {
     id: "J123456790",
-    orderDate: "22-09-2025 15:41:00",
+    orderDate: "2025-09-22T15:41:00",
     status: OrderStatus.COMPLETED,
     totalAmount: 150.75,
     items: [
@@ -76,8 +76,7 @@ export const mockOrderList: Order[] = [
       },
     ],
     shippingCost: 10.10,
-
-    shippedDate: "25-09-2025 10:00:00",
+    shippedDate: "2025-09-25T10:00:00",
     shippingAddress: {
       id: "A1",
       type: SavedInfoType.ADDRESS,
@@ -93,7 +92,7 @@ export const mockOrderList: Order[] = [
   },
   {
     id: "J123456791",
-    orderDate: "22-09-2025 15:41:00",
+    orderDate: "2025-09-22T15:41:00",
     status: OrderStatus.CANCELLED,
     totalAmount: 150.75,
     items: [

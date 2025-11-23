@@ -107,12 +107,40 @@ export const formatNumberArrays = (numbers: string[]) => {
 export const formatCardNumber = (cardNumber: string) => {
   const cleanValue = cardNumber.replace(/\D/g, "");
   const limitedValue = cleanValue.slice(0, CARD_NUMBER_WITHOUT_SPACES_LENGTH);
-  
+
   // Format as groups of 4 without trailing space
-  return limitedValue.replace(/(\d{4})(?=\d)/g, '$1 ');
+  return limitedValue.replace(/(\d{4})(?=\d)/g, "$1 ");
 };
 
-// Convert [yyy,mm,dd] date array to DD Month YYYY format
+// Formats a date string or Date object to "dd month yyyy" format
+export function formatDateWithMonthName(dateString: string | Date): string {
+  if (!dateString) return "Not Available";
+
+  const d = typeof dateString === "string" ? new Date(dateString) : dateString;
+
+  const day = d.getDate().toString().padStart(2, "0");
+  const month = d.toLocaleDateString("en-US", { month: "long" });
+  const year = d.getFullYear();
+
+  return `${day} ${month} ${year}`;
+}
+
+// Formats a date string or Date object to "dd-MM-yyyy hh:mm:ss" format
+export function formatDateTimeWithHyphens(dateString: string | Date): string {
+  const d = typeof dateString === "string" ? new Date(dateString) : dateString;
+
+  const day = d.getDate().toString().padStart(2, "0");
+  const month = (d.getMonth() + 1).toString().padStart(2, "0");
+  const year = d.getFullYear();
+
+  let hours = d.getHours();
+  const minutes = d.getMinutes().toString().padStart(2, "0");
+  const seconds = d.getSeconds().toString().padStart(2, "0");
+
+  return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+}
+
+// Convert [yyy,mm,dd] date array to dd Month yyyy format
 export const convertDate = (dateArray: number[]) => {
   if (!dateArray || dateArray.length === 0) return "Not Available";
 
@@ -130,13 +158,12 @@ export const convertDate = (dateArray: number[]) => {
 // Append URL prefix to both arrays and single strings
 export function appendUrlPrefix(input: string): string;
 export function appendUrlPrefix(input: string[]): string[];
-export function appendUrlPrefix(
-  input: string | string[]) {
+export function appendUrlPrefix(input: string | string[]) {
   if (Array.isArray(input)) {
     return input.map((item) => (item ? `${URL_PREFIX}${item}` : ""));
   }
   return input ? `${URL_PREFIX}${input}` : "";
-};
+}
 
 // Derive product status from releaseDate and stock
 export const getStockStatus = (
@@ -178,10 +205,15 @@ export const getCountryCode = (countryValue: string): string => {
 
   const countries = getData();
   // Check if already code
-  const byCode = countries.find(c => c.code === countryValue);
+  const byCode = countries.find((c) => c.code === countryValue);
   if (byCode) return countryValue;
 
   // Else find by name
-  const byName = countries.find(c => c.name === countryValue);
+  const byName = countries.find((c) => c.name === countryValue);
   return byName ? byName.code : countryValue;
-}
+};
+
+// Replace all white spaces with dash
+export const replaceSpacesWithDash = (input: string): string => {
+  return input.replace(/\s+/g, "-");
+};

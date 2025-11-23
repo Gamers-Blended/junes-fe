@@ -173,8 +173,18 @@
   letter-spacing: 0.5px;
 }
 
-.status-paid {
-  background-color: #4caf50;
+.status-payment-pending {
+  background-color: #ff9800;
+  color: white;
+}
+
+.status-awaiting-fulfillment {
+  background-color: #ffaa00;
+  color: white;
+}
+
+.status-awaiting-shipment {
+  background-color: #d5fa07;
   color: white;
 }
 
@@ -183,13 +193,23 @@
   color: white;
 }
 
-.status-pending {
-  background-color: #ff9800;
+.status-completed {
+  background-color: #4caf50;
   color: white;
 }
 
 .status-cancelled {
   background-color: #f44336;
+  color: white;
+}
+
+.status-on-hold {
+  background-color: #f44336;
+  color: white;
+}
+
+.status-refunded {
+  background-color: #2bff00;
   color: white;
 }
 
