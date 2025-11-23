@@ -14,6 +14,7 @@ import {
   ProductVariantDTO,
   ProductDetailsResponse,
 } from "../types/products.ts";
+import QuantitySelector from "./QuantitySelector.tsx";
 
 interface QuickWindowProps {
   item: {
@@ -85,13 +86,6 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
           ),
         ]
       : availableEditions;
-
-  const handleQuantityChange = (change: number) => {
-    const newQuantity = quantity + change;
-    if (newQuantity >= 1) {
-      setQuantity(newQuantity);
-    }
-  };
 
   const fetchProductDetails = async () => {
     try {
@@ -315,34 +309,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
                   <div className="option-group">
                     {/* Quantity and price */}
                     <div className="option-row">
-                      <div className="quantity-container">
-                        <label className="option-label">Quantity</label>
-                        <div className="quantity-selector">
-                          <button
-                            className="quantity-btn"
-                            onClick={() => handleQuantityChange(-1)}
-                            disabled={quantity <= 1}
-                          >
-                            -
-                          </button>
-                          <input
-                            className="quantity-input"
-                            type="number"
-                            value={quantity}
-                            onChange={(e) =>
-                              setQuantity(
-                                Math.max(1, parseInt(e.target.value) || 1)
-                              )
-                            }
-                          />
-                          <button
-                            className="quantity-btn"
-                            onClick={() => handleQuantityChange(1)}
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
+                      <QuantitySelector />
                       <div className="product-price">
                         S${currentPrice.toFixed(2)}
                       </div>
