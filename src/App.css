@@ -1276,3 +1276,7 @@ input[type="number"] {
 .text-align-left {
   text-align: left;
 }
+
+.spacer {
+  padding-bottom: 1.5rem;
+}

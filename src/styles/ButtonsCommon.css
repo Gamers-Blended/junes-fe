@@ -19,6 +19,10 @@
   background-color: #00dcb0;
 }
 
+.extended-width {
+  width: 100%;
+}
+
 /* PRODUCT CARD */
 .product-card-buttons {
   position: absolute;
@@ -207,6 +211,8 @@
 .cart-button {
   display: flex;
   align-items: center;
+  text-align: center;
+  justify-content: center;
 }
 
 .close-btn.cart-item {

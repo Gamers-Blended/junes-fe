@@ -63,3 +63,34 @@
   top: 0.15rem;
   width: 10rem;
 }
+
+/* FOOTER */
+.cart-footer {
+  border-top: 1px solid #000000;
+  padding-top: 2rem;
+}
+
+.subtotal-section {
+  margin-bottom: 20px;
+}
+
+.subtotal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.subtotal-text {
+  font-size: 24px;
+}
+
+.subtotal-value {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.tax-note {
+  display: flex;
+  font-size: 14px;
+}
