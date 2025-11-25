@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { mockCartItemList, emptyCartList } from "../mocks/data/cart";
 import ProductImageAndDescription from "../components/ProductImageAndDescription";
@@ -8,7 +9,9 @@ import checkoutIcon from "../assets/checkoutIcon.png";
 const CartPage = () => {
   // const isEmptyCart = true; // Toggle
   const isEmptyCart = false; // Toggle
-  const cartItemList = isEmptyCart ? emptyCartList : mockCartItemList;
+  const [cartItems, setCartItems] = useState(
+    isEmptyCart ? emptyCartList : mockCartItemList
+  );
   const navigate = useNavigate();
 
   const handleCheckout = (): void => {
@@ -19,6 +22,16 @@ const CartPage = () => {
   const handleContinueShopping = (): void => {
     console.log("Continuing shopping");
     navigate("/");
+  };
+
+  const handleQuantityChange = (itemId: string, newQuantity: number) => {
+    setCartItems((prevItems) =>
+      prevItems.map((cartItem) =>
+        cartItem.item.id === itemId
+          ? { ...cartItem, item: { ...cartItem.item, quantity: newQuantity } }
+          : cartItem
+      )
+    );
   };
 
   return (
@@ -49,10 +62,23 @@ const CartPage = () => {
         </div>
       ) : (
         <div className="cart-items-list">
-          {cartItemList.map((cartItem) => (
+          {cartItems.map((cartItem) => (
             <div key={cartItem.item.id} className="cart-item-container">
               <ProductImageAndDescription item={cartItem.item} mode="cart" />
-              <QuantitySelector className="cart-item" />
+              <QuantitySelector
+                className="cart-item"
+                initialQuantity={cartItem.item.quantity}
+                onChange={(newQuantity) =>
+                  handleQuantityChange(cartItem.item.id, newQuantity)
+                }
+              />
+
+              <div className="cart-item-price">
+                $
+                {cartItem.item.price && cartItem.item.quantity
+                  ? (cartItem.item.price * cartItem.item.quantity).toFixed(2)
+                  : "0.00"}
+              </div>
             </div>
           ))}
         </div>
