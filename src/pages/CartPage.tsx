@@ -34,6 +34,12 @@ const CartPage = () => {
     );
   };
 
+  const handleRemoveItem = (itemId: string) => {
+    setCartItems((prevItems) =>
+      prevItems.filter((cartItem) => cartItem.item.id !== itemId)
+    );
+  };
+
   return (
     <div className="cart-page-container">
       <div className="common-header">
@@ -79,6 +85,13 @@ const CartPage = () => {
                   ? (cartItem.item.price * cartItem.item.quantity).toFixed(2)
                   : "0.00"}
               </div>
+
+              <button
+                className="close-btn cart-item"
+                onClick={() => handleRemoveItem(cartItem.item.id)}
+              >
+                ✕
+              </button>
             </div>
           ))}
         </div>

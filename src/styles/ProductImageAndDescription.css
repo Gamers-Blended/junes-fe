@@ -1,4 +1,5 @@
 .transaction-item.cart-item {
   border: none;
   width: 35rem;
+  padding-bottom: 0%;
 }

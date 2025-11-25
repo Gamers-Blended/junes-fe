@@ -1,3 +1,9 @@
+.quantity-container.cart-item {
+  width: 12rem;
+  height: 10rem;
+  justify-content: center;
+}
+
 .option-label.cart-item {
-  font-size: 14px;
+  font-size: 16px;
 }
