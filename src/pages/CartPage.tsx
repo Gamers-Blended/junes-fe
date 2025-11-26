@@ -71,7 +71,7 @@ const CartPage = () => {
             ${calculateSubtotal().toFixed(2)}
           </span>
         </div>
-        {isEmptyCart ? null : (
+        {cartItems.length === 0 ? null : (
           <button className="form-button cart-button" onClick={handleCheckout}>
             <img src={checkoutIcon} alt="Checkout" className="checkout-icon" />
             Checkout
@@ -130,7 +130,7 @@ const CartPage = () => {
           </div>
         </div>
 
-        {isEmptyCart ? null : (
+        {cartItems.length === 0 ? null : (
           <button
             className="form-button cart-button extended-width"
             onClick={handleCheckout}
