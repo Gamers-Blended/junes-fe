@@ -34,6 +34,8 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
     initialSelectedId
   );
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loadingMessage, setLoadingMessage] = useState<string>("");
 
   const isAddressMode = mode === SavedInfoType.ADDRESS;
   const label = isAddressMode
@@ -74,14 +76,30 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
   };
 
   const handleConfirm = () => {
-    setIsEditMode(false);
-    if (onConfirm) {
-      onConfirm();
-    }
+    setLoadingMessage(
+      `Setting your ${isAddressMode ? "address" : "payment"}...`
+    );
+    setIsLoading(true);
+    // Simulate loading
+    setTimeout(() => {
+      setIsEditMode(false);
+      setIsLoading(false);
+      if (onConfirm) {
+        onConfirm();
+      }
+    }, 2000); // 2 seconds delay
   };
 
   const handleChangeClick = () => {
-    setIsEditMode(true);
+    setLoadingMessage(
+      `Loading your ${isAddressMode ? "address" : "payment"} information...`
+    );
+    setIsLoading(true);
+    // Simulate loading
+    setTimeout(() => {
+      setIsEditMode(true);
+      setIsLoading(false);
+    }, 2000); // 2 seconds delay
   };
 
   const renderItemDetails = (item: Address | PaymentMethod) => {
@@ -97,6 +115,17 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
       );
     }
   };
+
+  // LOADING STATE: Display loading messages
+  if (isLoading) {
+    return (
+      <div className={`select-billing-address-container ${className}`}>
+        <div className="loading-container">
+          <p>{loadingMessage}</p>
+        </div>
+      </div>
+    );
+  }
 
   // DISPLAY MODE: Display only selected item
   if (!isEditMode && selectedItem) {
