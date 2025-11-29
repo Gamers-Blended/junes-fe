@@ -56,6 +56,8 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
     : "Use This Payment";
   const radioName = isAddressMode ? "address" : "payment";
   const selectedItem = items.find((item) => item.id === selectedItemId);
+  const MAX_NUMBER_OF_ITEMS = 5;
+  const canAddMoreItems = items.length < MAX_NUMBER_OF_ITEMS;
 
   const navigate = useNavigate();
 
@@ -203,12 +205,23 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
           </div>
         )}
       </div>
+
+      {!canAddMoreItems && (
+        <div className="checkout-error-message">
+          You have reached the maximum number of saved{" "}
+          {isAddressMode ? "addresses" : ""}
+        </div>
+      )}
       {/* Buttons when items exist */}
       {items.length > 0 && (
         <div className="btn-container">
           <button
-            className="common-button no-btn larger-width"
-            onClick={isAddressMode ? handleAddAddress : () => {}}
+            className={`common-button no-btn larger-width ${
+              !canAddMoreItems ? "disabled" : ""
+            }`}
+            onClick={
+              isAddressMode && canAddMoreItems ? handleAddAddress : () => {}
+            }
           >
             {addButtonText}
           </button>

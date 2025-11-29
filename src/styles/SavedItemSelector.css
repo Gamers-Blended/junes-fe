@@ -1,3 +1,7 @@
 .address-details {
   text-align: left;
 }
+
+.checkout-error-message {
+  color: #ef4444;
+}

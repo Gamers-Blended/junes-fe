@@ -23,6 +23,11 @@
   width: 100%;
 }
 
+.common-button.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 /* PRODUCT CARD */
 .product-card-buttons {
   position: absolute;
