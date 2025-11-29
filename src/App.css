@@ -8,11 +8,13 @@
 @import "./styles/OrderDetailsPage.css";
 @import "./styles/InvoicePage.css";
 @import "./styles/CartPage.css";
+@import "./styles/CheckoutPage.css";
 @import "./styles/SavedInfoActionWindow.css";
 @import "./styles/AccountInfoChangedMessageBox.css";
 @import "./styles/OrderTable.css";
 @import "./styles/ProductImageAndDescription.css";
 @import "./styles/QuantitySelector.css";
+@import "./styles/SavedItemSelector.css";
 
 html,
 body {

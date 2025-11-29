@@ -63,3 +63,7 @@ export enum OrderTableMode {
   DETAILS = "details",
   INVOICE = "invoice",
 }
+
+export enum SavedItemSelectorCaller {
+  CHECKOUT = "checkout",
+}
