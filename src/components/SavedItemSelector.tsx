@@ -20,6 +20,8 @@ interface SavedItemSelectorProps {
   className?: string;
 }
 
+type SavedItem = Address | PaymentMethod;
+
 const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
   mode,
   caller,
@@ -75,6 +77,19 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
     navigate("/modifyaddress/", { state });
   };
 
+  const handleEditAddress = (itemToEdit: SavedItem) => {
+    console.log(`Edit item: ${itemToEdit.type} with id: ${itemToEdit.id}`);
+    if (isAddressMode) {
+      const state: NavigationState = {
+        from: "checkout",
+        fieldToChange: SavedInfoType.ADDRESS,
+        action: SavedInfoAction.EDIT,
+        item: itemToEdit,
+      };
+      navigate("/modifyaddress/", { state });
+    }
+  };
+
   const handleConfirm = () => {
     setLoadingMessage(
       `Setting your ${isAddressMode ? "address" : "payment"}...`
@@ -110,7 +125,15 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
           {!isEditMode && <strong>Delivering to </strong>}
           <strong>{address.fullName}</strong> <br />
           {address.addressLine}, {address.country}, {address.zipCode},{" "}
-          {address.phoneNumber}
+          {address.phoneNumber} <br />
+          {isAddressMode && isEditMode && (
+            <button
+              className="action-link align-left"
+              onClick={() => handleEditAddress(item)}
+            >
+              Edit address
+            </button>
+          )}
         </div>
       );
     }
