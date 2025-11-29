@@ -18,6 +18,13 @@
   gap: 20px;
 }
 
+.component-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .checkout-page {
-  border: 1px solid #000000;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
 }

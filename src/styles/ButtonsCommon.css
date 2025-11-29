@@ -229,3 +229,8 @@
   justify-content: center;
   margin-left: 20rem;
 }
+
+/* CHECKOUT - ADD/USE PAYMENT METHOD BUTTON */
+.payment-method-width {
+  width: 250px;
+}

@@ -53,7 +53,7 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
     : "Add A Payment Method";
   const confirmButtonText = isAddressMode
     ? "Use This Address"
-    : "Use This Payment";
+    : "Use This Payment Method";
   const radioName = isAddressMode ? "address" : "payment";
   const selectedItem = items.find((item) => item.id === selectedItemId);
   const MAX_NUMBER_OF_ITEMS = 5;
@@ -79,6 +79,14 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
     navigate("/modifyaddress/", { state });
   };
 
+  const handleAddPaymentMethod = () => {
+    const state: NavigationState = {
+      from: "checkout",
+      fieldToChange: SavedInfoType.PAYMENT,
+    };
+    navigate("/savedinfo/", { state });
+  };
+
   const handleEditAddress = (itemToEdit: SavedItem) => {
     console.log(`Edit item: ${itemToEdit.type} with id: ${itemToEdit.id}`);
     if (isAddressMode) {
@@ -94,7 +102,7 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
 
   const handleConfirm = () => {
     setLoadingMessage(
-      `Setting your ${isAddressMode ? "address" : "payment"}...`
+      `Setting your ${isAddressMode ? "address" : "payment method"}...`
     );
     setIsLoading(true);
     // Simulate loading
@@ -121,6 +129,7 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
 
   const renderItemDetails = (item: Address | PaymentMethod) => {
     if (isAddressMode) {
+      // Address mode
       const address = item as Address;
       return (
         <div className="address-details">
@@ -135,6 +144,28 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
             >
               Edit address
             </button>
+          )}
+        </div>
+      );
+    } else {
+      // Payment mode
+      const payment = item as PaymentMethod;
+      return (
+        <div className="address-details">
+          {!isEditMode ? (
+            <div>
+              <strong>Paying with </strong>{" "}
+              <strong>
+                {payment.cardType} {payment.cardLastFour}
+              </strong>
+            </div>
+          ) : (
+            <div>
+              <strong>{payment.cardType}</strong> ending with{" "}
+              {payment.cardLastFour} <br />
+              {payment.cardHolderName}, {payment.expirationMonth}/
+              {payment.expirationYear}
+            </div>
           )}
         </div>
       );
@@ -198,7 +229,9 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
             <p>{emptyMessage}</p>
             <button
               className="action-link align-left"
-              onClick={isAddressMode ? handleAddAddress : () => {}}
+              onClick={
+                isAddressMode ? handleAddAddress : handleAddPaymentMethod
+              }
             >
               {addButtonText}
             </button>
@@ -209,25 +242,31 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
       {!canAddMoreItems && (
         <div className="checkout-error-message">
           You have reached the maximum number of saved{" "}
-          {isAddressMode ? "addresses" : ""}
+          {isAddressMode ? "addresses" : "payment methods"}
         </div>
       )}
       {/* Buttons when items exist */}
       {items.length > 0 && (
         <div className="btn-container">
           <button
-            className={`common-button no-btn larger-width ${
-              !canAddMoreItems ? "disabled" : ""
-            }`}
+            className={`common-button no-btn ${
+              isAddressMode ? "larger-width" : "payment-method-width"
+            } ${!canAddMoreItems ? "disabled" : ""}`}
             onClick={
-              isAddressMode && canAddMoreItems ? handleAddAddress : () => {}
+              isAddressMode && canAddMoreItems
+                ? handleAddAddress
+                : canAddMoreItems
+                ? handleAddPaymentMethod
+                : () => {}
             }
           >
             {addButtonText}
           </button>
           {showConfirmButton && (
             <button
-              className="common-button yes-button larger-width"
+              className={`common-button yes-button ${
+                isAddressMode ? "larger-width" : "payment-method-width"
+              }`}
               onClick={handleConfirm}
             >
               {confirmButtonText}
