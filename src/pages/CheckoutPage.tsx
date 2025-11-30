@@ -1,15 +1,22 @@
 import { useState } from "react";
 import { mockAddressList } from "../mocks/data/address";
 import { mockPaymentMethodList } from "../mocks/data/paymentMethod";
-import { SavedInfoType, SavedItemSelectorCaller } from "../utils/Enums";
+import { mockOrderList } from "../mocks/data/orders";
+import {
+  SavedInfoType,
+  SavedItemSelectorCaller,
+  OrderTableMode,
+} from "../utils/Enums";
 import SavedItemSelector from "../components/SavedItemSelector";
+import OrderTable from "../components/OrderTable";
 
 const CheckoutPage = () => {
-  const [selectedAddressId, setSelectedAddressId] = useState<
-    string | null
-  >(mockAddressList[0].id);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
+    mockAddressList[0].id
+  );
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
-    string | null>(mockPaymentMethodList[0].id);
+    string | null
+  >(mockPaymentMethodList[0].id);
 
   const handleAddressSelection = (addressId: string) => {
     setSelectedAddressId(addressId);
@@ -50,6 +57,13 @@ const CheckoutPage = () => {
               className="checkout-page"
             />
           </div>
+        </div>
+
+        <div className="right-column">
+          <OrderTable
+            orderData={mockOrderList[0]}
+            mode={OrderTableMode.INVOICE}
+          />
         </div>
       </div>
     </div>
