@@ -9,6 +9,7 @@
 @import "./styles/InvoicePage.css";
 @import "./styles/CartPage.css";
 @import "./styles/CheckoutPage.css";
+@import "./styles/OrderPlacedPage.css";
 @import "./styles/SavedInfoActionWindow.css";
 @import "./styles/AccountInfoChangedMessageBox.css";
 @import "./styles/OrderTable.css";
@@ -1277,6 +1278,10 @@ input[type="number"] {
 
 .text-align-left {
   text-align: left;
+}
+
+.text-align-center {
+  text-align: center;
 }
 
 .spacer {
