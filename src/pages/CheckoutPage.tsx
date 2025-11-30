@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { mockAddressList } from "../mocks/data/address";
 import { mockPaymentMethodList } from "../mocks/data/paymentMethod";
 import { mockOrderList } from "../mocks/data/orders";
@@ -17,6 +18,7 @@ const CheckoutPage = () => {
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
     string | null
   >(mockPaymentMethodList[0].id);
+  const navigate = useNavigate();
 
   const handleAddressSelection = (addressId: string) => {
     setSelectedAddressId(addressId);
@@ -26,6 +28,11 @@ const CheckoutPage = () => {
   const handlePaymentMethodSelection = (paymentMethodId: string) => {
     setSelectedPaymentMethodId(paymentMethodId);
     console.log("Selected payment method ID:", paymentMethodId);
+  };
+
+  const handlePlaceOrder = (): void => {
+    console.log("Placing order...");
+    navigate("/orderplaced");
   };
 
   return (
@@ -64,6 +71,15 @@ const CheckoutPage = () => {
             orderData={mockOrderList[0]}
             mode={OrderTableMode.INVOICE}
           />
+
+          <div className="button-container">
+            <button
+              className="form-button cart-button extended-width"
+              onClick={handlePlaceOrder}
+            >
+              Place Your Order
+            </button>
+          </div>
         </div>
       </div>
     </div>

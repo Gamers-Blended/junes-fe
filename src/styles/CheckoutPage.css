@@ -8,7 +8,6 @@
 .content-wrapper {
   display: flex;
   gap: 20px;
-  height: calc(100% - 60px);
 }
 
 .left-column {
@@ -16,6 +15,13 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.right-column {
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 1rem;
+  height: fit-content;
 }
 
 .component-box {

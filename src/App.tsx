@@ -16,6 +16,7 @@ import InvoicePage from "./pages/InvoicePage.tsx";
 import CartPage from "./pages/CartPage.tsx";
 import WishListPage from "./pages/WishListPage.tsx";
 import CheckoutPage from "./pages/CheckoutPage.tsx";
+import OrderPlacedPage from "./pages/OrderPlacedPage.tsx";
 import NavigationBar from "./components/NavigationBar.tsx";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./components/AuthContext";
@@ -63,6 +64,7 @@ function AppLayout() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/wishlist" element={<WishListPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/orderplaced" element={<OrderPlacedPage />} />
         </Routes>
       </Provider>
 
