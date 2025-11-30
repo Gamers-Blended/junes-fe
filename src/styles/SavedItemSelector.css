@@ -1,7 +1,60 @@
-.address-details {
+.item-details {
+  font-size: 16px;
   text-align: left;
+}
+
+.item-more-details {
+  font-weight: normal;
 }
 
 .checkout-error-message {
   color: #ef4444;
+}
+
+.saved-item-selector-container {
+  padding: 32px 24px;
+}
+
+.saved-item-selector-container .label {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: block;
+}
+
+/* Address List */
+.saved-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.saved-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: white;
+}
+
+.saved-item:hover {
+  border-color: #00d4aa;
+}
+
+.saved-item.selected {
+  background-color: #c8f5e8;
+  border-color: #00d4aa;
+}
+
+.address-radio {
+  margin-right: 16px;
+  margin-top: 2px;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }

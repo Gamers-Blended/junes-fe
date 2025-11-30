@@ -18,6 +18,7 @@ interface SavedItemSelectorProps {
   onConfirm?: () => void;
   showConfirmButton?: boolean;
   className?: string;
+  enableDisplayMode?: boolean;
 }
 
 type SavedItem = Address | PaymentMethod;
@@ -31,11 +32,12 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
   onConfirm,
   showConfirmButton = true,
   className = "",
+  enableDisplayMode = true,
 }) => {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(
     initialSelectedId
   );
-  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [isEditMode, setIsEditMode] = useState<boolean>(!enableDisplayMode); // Start in edit mode
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string>("");
 
@@ -44,7 +46,7 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
     ? caller === SavedItemSelectorCaller.CHECKOUT
       ? "Address"
       : "Select a billing address"
-    : "Select a payment method";
+    : "Payment method";
   const emptyMessage = isAddressMode
     ? "No address found"
     : "No payment method found";
@@ -59,6 +61,7 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
   const MAX_NUMBER_OF_ITEMS = 5;
   const canAddMoreItems = items.length < MAX_NUMBER_OF_ITEMS;
 
+  // For adding & editing address + adding payment method
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -102,7 +105,13 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
 
   const handleConfirm = () => {
     setLoadingMessage(
-      `Setting your ${isAddressMode ? "address" : "payment method"}...`
+      `Setting your ${
+        caller === SavedItemSelectorCaller.SAVED_INFO
+          ? "billing address"
+          : isAddressMode
+          ? "address"
+          : "payment method"
+      }...`
     );
     setIsLoading(true);
     // Simulate loading
@@ -132,11 +141,15 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
       // Address mode
       const address = item as Address;
       return (
-        <div className="address-details">
-          {!isEditMode && <strong>Delivering to </strong>}
-          <strong>{address.fullName}</strong> <br />
-          {address.addressLine}, {address.country}, {address.zipCode},{" "}
-          {address.phoneNumber} <br />
+        <div className="item-details">
+          {enableDisplayMode && !isEditMode && <strong>Delivering to </strong>}
+          <strong>{address.fullName}</strong>
+          <div className="item-more-details">
+            {address.addressLine}, {address.country}, {address.zipCode},{" "}
+            {address.phoneNumber}
+          </div>
+
+          {/* Edit button only available for address */}
           {isAddressMode && isEditMode && (
             <button
               className="action-link align-left"
@@ -151,8 +164,8 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
       // Payment mode
       const payment = item as PaymentMethod;
       return (
-        <div className="address-details">
-          {!isEditMode ? (
+        <div className="item-details">
+          {enableDisplayMode && !isEditMode ? (
             <div>
               <strong>Paying with </strong>{" "}
               <strong>
@@ -161,10 +174,12 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
             </div>
           ) : (
             <div>
-              <strong>{payment.cardType}</strong> ending with{" "}
-              {payment.cardLastFour} <br />
-              {payment.cardHolderName}, {payment.expirationMonth}/
-              {payment.expirationYear}
+              <strong>{payment.cardType}</strong> ending in{" "}
+              {payment.cardLastFour}
+              <div className="item-more-details">
+                {payment.cardHolderName}, {payment.expirationMonth}/
+                {payment.expirationYear}
+              </div>
             </div>
           )}
         </div>
@@ -175,7 +190,7 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
   // LOADING STATE: Display loading messages
   if (isLoading) {
     return (
-      <div className={`select-billing-address-container ${className}`}>
+      <div className={`saved-item-selector-container ${className}`}>
         <div className="loading-container">
           <p>{loadingMessage}</p>
         </div>
@@ -184,10 +199,10 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
   }
 
   // DISPLAY MODE: Display only selected item
-  if (!isEditMode && selectedItem) {
+  if (enableDisplayMode && !isEditMode && selectedItem) {
     return (
-      <div className={`select-billing-address-container ${className}`}>
-        <div className="billing-address-display">
+      <div className={`saved-item-selector-container ${className}`}>
+        <div className="saved-item-display">
           {renderItemDetails(selectedItem)}
           <button
             className="action-link align-left"
@@ -202,14 +217,14 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
 
   // EDIT MODE: Display full list
   return (
-    <div className={`select-billing-address-container ${className}`}>
+    <div className={`saved-item-selector-container ${className}`}>
       <label className="label bold padding-bottom">{label}</label>
-      <div className="billing-address-list">
+      <div className="saved-item-list">
         {items.length > 0 ? (
           items.map((item) => (
             <div
               key={item.id}
-              className={`billing-address-item ${
+              className={`saved-item ${
                 selectedItemId === item.id ? "selected" : ""
               }`}
               onClick={() => handleItemSelect(item.id)}
@@ -225,7 +240,7 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
             </div>
           ))
         ) : (
-          <div className="billing-address-display">
+          <div className="saved-item-display">
             <p>{emptyMessage}</p>
             <button
               className="action-link align-left"

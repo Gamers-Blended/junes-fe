@@ -66,4 +66,5 @@ export enum OrderTableMode {
 
 export enum SavedItemSelectorCaller {
   CHECKOUT = "checkout",
+  SAVED_INFO = "savedinfo"
 }

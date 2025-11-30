@@ -1,10 +1,13 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { NavigationState } from "../types/navigationState";
 import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
-import { SavedInfoType, SavedInfoAction } from "../utils/Enums.tsx";
+import {
+  SavedInfoType,
+  SavedInfoAction,
+  SavedItemSelectorCaller,
+} from "../utils/Enums.tsx";
 import AddressCardContent from "../components/AddressCardContent";
+import SavedItemSelector from "../components/SavedItemSelector";
 import { formatCardNumber } from "../utils/utils";
 import { PaymentFormField } from "../utils/Enums";
 import {
@@ -93,9 +96,6 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
       : currentYear
   );
 
-  // For adding address under edit payment mode
-  const navigate = useNavigate();
-
   // Validation states
   const [paymentValidationError, setPaymentValidationError] =
     useState<PaymentValidationErrors>({});
@@ -144,16 +144,6 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         props.onConfirm || (() => console.log("Confirm clicked"));
       onConfirm();
     }
-  };
-
-  // Handler for adding address
-  const handleAddAddress = () => {
-    const state: NavigationState = {
-      from: "savedinfofrompayment",
-      fieldToChange: SavedInfoType.ADDRESS,
-      action: SavedInfoAction.ADD,
-    };
-    navigate("/modifyaddress/", { state });
   };
 
   // Card number needs to be formatted before processing
@@ -486,7 +476,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
           <label className="label bold">Billing address</label>
           {billingAddress ? (
             // CASE I: Payment method has a linked billing address
-            <div className="billing-address-display">
+            <div className="saved-item-display">
               <p>{billingAddress.fullName}</p>
               <p>{billingAddress.addressLine}</p>
               {billingAddress.unitNumber && <p>{billingAddress.unitNumber}</p>}
@@ -503,7 +493,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
             </div>
           ) : (
             // CASE II: No linked billing address
-            <div className="billing-address-display">
+            <div className="saved-item-display">
               <button
                 className="action-link align-left"
                 onClick={() => setCurrentPage(2)}
@@ -525,64 +515,17 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     };
 
     return (
-      <div className="select-billing-address-container">
-        <label className="label bold padding-bottom">
-          Select a billing address
-        </label>
-        <div className="billing-address-list">
-          {mockAddressList.length > 0 ? (
-            mockAddressList.map((address) => (
-              <div
-                key={address.id}
-                className={`billing-address-item ${
-                  selectedBillingAddressId === address.id ? "selected" : ""
-                }`}
-                onClick={() => handleAddressSelect(address.id)}
-              >
-                <input
-                  type="radio"
-                  name="billingAddress"
-                  checked={selectedBillingAddressId === address.id}
-                  onChange={() => {}}
-                  className="address-radio"
-                />
-                <div className="address-details">
-                  <strong>{address.fullName}</strong>, {address.addressLine},{" "}
-                  {address.country}, {address.zipCode}, {address.phoneNumber}
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="billing-address-display">
-              <p>No address found</p>
-              <button
-                className="action-link align-left"
-                onClick={handleAddAddress}
-              >
-                Add an address
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Buttons for Page 2 */}
-        {mockAddressList.length > 0 && (
-          <div className="btn-container">
-            <button
-              className="common-button no-btn larger-width"
-              onClick={handleAddAddress}
-            >
-              Add An Address
-            </button>
-            <button
-              className="common-button yes-button larger-width"
-              onClick={handleAction}
-            >
-              Use This Address
-            </button>
-          </div>
-        )}
-      </div>
+      <SavedItemSelector
+        mode={SavedInfoType.ADDRESS}
+        caller={SavedItemSelectorCaller.SAVED_INFO}
+        items={mockAddressList}
+        initialSelectedId={selectedBillingAddressId}
+        onItemSelect={handleAddressSelect}
+        onConfirm={handleAction}
+        showConfirmButton={true}
+        className=""
+        enableDisplayMode={false}
+      />
     );
   };
 

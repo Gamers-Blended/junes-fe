@@ -5,14 +5,14 @@ import { SavedInfoType, SavedItemSelectorCaller } from "../utils/Enums";
 import SavedItemSelector from "../components/SavedItemSelector";
 
 const CheckoutPage = () => {
-  const [selectedBillingAddressId, setSelectedBillingAddressId] = useState<
+  const [selectedAddressId, setSelectedAddressId] = useState<
     string | null
   >(mockAddressList[0].id);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
     string | null>(mockPaymentMethodList[0].id);
 
   const handleAddressSelection = (addressId: string) => {
-    setSelectedBillingAddressId(addressId);
+    setSelectedAddressId(addressId);
     console.log("Selected address ID:", addressId);
   };
 
@@ -34,7 +34,7 @@ const CheckoutPage = () => {
               mode={SavedInfoType.ADDRESS}
               caller={SavedItemSelectorCaller.CHECKOUT}
               items={mockAddressList}
-              initialSelectedId={selectedBillingAddressId}
+              initialSelectedId={selectedAddressId}
               onItemSelect={handleAddressSelection}
               showConfirmButton={true}
               className="checkout-page"
