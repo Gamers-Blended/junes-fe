@@ -5,12 +5,9 @@ import { FormErrors } from "../types/formErrors";
 import { apiClient } from "../utils/api.ts";
 import { Credentials } from "../utils/Enums";
 import {
-  USERNAME_MIN_LENGTH,
-  USERNAME_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
   PASSWORD_MAX_LENGTH,
   validateEmail,
-  validateUsername,
   validateNewPasswordCreation,
   validateMatch,
   setMatchValidationError,
@@ -28,7 +25,6 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
 }) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [errors, setErrors] = useState<FormErrors>({
@@ -46,7 +42,6 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
     const newErrors: FormErrors = {
       email: validateEmail(email),
       password: validateNewPasswordCreation(password),
-      username: validateUsername(username),
       confirmPassword: validateMatch(
         password,
         confirmPassword,
@@ -60,7 +55,6 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
     if (
       !newErrors.email &&
       !newErrors.password &&
-      !newErrors.username &&
       !newErrors.confirmPassword
     ) {
       try {
@@ -115,12 +109,6 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
     Credentials.EMAIL,
   );
 
-  const handleUsernameChange = createInputChangeHandler(
-    setUsername,
-    setErrors,
-    Credentials.USERNAME,
-  );
-
   const handlePasswordChange = createInputChangeHandler(
     setPassword,
     setErrors,
@@ -164,17 +152,6 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
             onChange={handleEmailChange}
             error={errors.email}
             className={`input-field ${errors.email ? "error" : ""}`}
-          />
-
-          {/* Username Input */}
-          <FormInput
-            label="Username"
-            type="username"
-            placeholder={`Must be unique, between ${USERNAME_MIN_LENGTH} and ${USERNAME_MAX_LENGTH} characters`}
-            value={username}
-            onChange={handleUsernameChange}
-            error={errors.username}
-            className={`input-field ${errors.username ? "error" : ""}`}
           />
 
           {/* Password Input */}
