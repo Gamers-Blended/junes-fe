@@ -9,7 +9,7 @@ export const PASSWORD_MIN_LENGTH = 6;
 export const PASSWORD_MAX_LENGTH = 50;
 
 export const validateEmail = (email: string): string => {
-  if (!email.trim()) {
+  if (!email || email.trim().length === 0) {
     return "Email is required";
   }
 
@@ -38,7 +38,7 @@ export const validatePassword = (password: string): string => {
 
 // For user creation page
 export const validateNewPasswordCreation = (password: string): string => {
-  if (!password.trim()) {
+  if (!password || password.trim().length === 0) {
     return "Password is required";
   }
 
@@ -47,6 +47,26 @@ export const validateNewPasswordCreation = (password: string): string => {
     password.length > PASSWORD_MAX_LENGTH
   ) {
     return `Password must be between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters`;
+  }
+
+  if (/\s/.test(password)) {
+    return "Password cannot contain spaces";
+  }
+
+  if (!/[A-Z]/.test(password)) {
+    return "Password must contain at least 1 uppercase letter";
+  }
+
+  if (!/[a-z]/.test(password)) {
+    return "Password must contain at least 1 lowercase letter";
+  }
+
+  if (!/\d/.test(password)) {
+    return "Password must contain at least 1 digit";
+  }
+
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+    return "Password must contain at least 1 special character";
   }
 
   return "";
@@ -84,7 +104,7 @@ export const validateUsername = (username: string): string => {
 export const validateMatch = (
   firstWord: string,
   secondWord: string,
-  fieldName: string
+  fieldName: string,
 ): string => {
   if (firstWord !== secondWord) {
     return `${
@@ -100,7 +120,7 @@ export const setMatchValidationError = (
   firstWord: string,
   secondWord: string,
   setErrors: React.Dispatch<React.SetStateAction<FormErrors>>,
-  fieldName: string
+  fieldName: string,
 ): void => {
   if (firstWord !== secondWord) {
     if (fieldName === Credentials.CONFIRM_PASSWORD) {
