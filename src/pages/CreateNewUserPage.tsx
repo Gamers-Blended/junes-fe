@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { NavigationState } from "../types/navigationState";
 import { FormErrors } from "../types/formErrors";
+import { apiClient } from "../utils/api.ts";
 import { Credentials } from "../utils/Enums";
 import {
   USERNAME_MIN_LENGTH,
@@ -16,8 +17,15 @@ import {
 } from "../utils/inputValidationUtils";
 import { createInputChangeHandler } from "../utils/FormHandlers";
 import { FormInput } from "../components/FormInput.tsx";
+import axios from "axios";
 
-const CreateNewUserPage: React.FC = () => {
+interface CreateNewUserPageProps {
+  offlineMode?: boolean;
+}
+
+const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
+  offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
+}) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
@@ -28,8 +36,13 @@ const CreateNewUserPage: React.FC = () => {
     password: "",
     confirmPassword: "",
   });
+  const [creationError, setCreationError] = useState<string>("");
 
-  const handleCreate = (): void => {
+  const handleCreate = async (): Promise<void> => {
+    // Clear previous creation error
+    setCreationError("");
+
+    // Validate inputs
     const newErrors: FormErrors = {
       email: validateEmail(email),
       password: validateNewPasswordCreation(password),
@@ -37,7 +50,7 @@ const CreateNewUserPage: React.FC = () => {
       confirmPassword: validateMatch(
         password,
         confirmPassword,
-        Credentials.PASSWORD
+        Credentials.PASSWORD,
       ),
     };
 
@@ -50,34 +63,74 @@ const CreateNewUserPage: React.FC = () => {
       !newErrors.username &&
       !newErrors.confirmPassword
     ) {
-      console.log("User created");
-      const state: NavigationState = { from: "createUser", email };
-      navigate("/emailsent/", { state });
+      try {
+        // Skip API call in offline mode
+        if (offlineMode) {
+          console.log("Offline mode: Skipping user creation API call");
+        } else {
+          await createUser(email, password);
+        }
+
+        console.log("User created");
+        const state: NavigationState = { from: "createUser", email };
+        navigate("/emailsent/", { state });
+      } catch (error) {
+        console.error("Error during user creation:", error);
+        setCreationError(
+          "An error occurred while creating the account. Please try again.",
+        );
+      }
+    }
+  };
+
+  const createUser = async (email: string, password: string): Promise<void> => {
+    console.info("Calling create user API...");
+
+    const requestData = {
+      email: email,
+      password: password,
+    };
+    try {
+      const response = await apiClient.post(
+        "/junes/api/v1/auth/add-user",
+        requestData,
+      );
+
+      console.log("User creation response:", response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setCreationError(
+          error.response.data.message || "Failed to create user.",
+        );
+        console.error("Error creating user:", error.response.data);
+      }
+      throw error;
     }
   };
 
   const handleEmailChange = createInputChangeHandler(
     setEmail,
     setErrors,
-    Credentials.EMAIL
+    Credentials.EMAIL,
   );
 
   const handleUsernameChange = createInputChangeHandler(
     setUsername,
     setErrors,
-    Credentials.USERNAME
+    Credentials.USERNAME,
   );
 
   const handlePasswordChange = createInputChangeHandler(
     setPassword,
     setErrors,
-    Credentials.PASSWORD
+    Credentials.PASSWORD,
   );
 
   const handleConfirmPasswordChange = createInputChangeHandler(
     setConfirmPassword,
     setErrors,
-    Credentials.CONFIRM_PASSWORD
+    Credentials.CONFIRM_PASSWORD,
   );
 
   const validateConfirmPasswordOnBlur = (): void => {
@@ -85,7 +138,7 @@ const CreateNewUserPage: React.FC = () => {
       password,
       confirmPassword,
       setErrors,
-      Credentials.CONFIRM_PASSWORD
+      Credentials.CONFIRM_PASSWORD,
     );
   };
 
@@ -166,6 +219,10 @@ const CreateNewUserPage: React.FC = () => {
               </button>
             </div>
           </div>
+
+          {creationError && (
+            <div className="error-message">{creationError}</div>
+          )}
         </div>
       </div>
     </div>
