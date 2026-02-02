@@ -33,6 +33,7 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
     confirmPassword: "",
   });
   const [creationError, setCreationError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleCreate = async (): Promise<void> => {
     // Clear previous creation error
@@ -52,15 +53,15 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
     setErrors(newErrors);
 
     // If no errors, proceed sign in
-    if (
-      !newErrors.email &&
-      !newErrors.password &&
-      !newErrors.confirmPassword
-    ) {
+    if (!newErrors.email && !newErrors.password && !newErrors.confirmPassword) {
+      setIsLoading(true);
+
       try {
         // Skip API call in offline mode
         if (offlineMode) {
           console.log("Offline mode: Skipping user creation API call");
+          // Simulate successful creation
+          await new Promise((resolve) => setTimeout(resolve, 500));
         } else {
           await createUser(email, password);
         }
@@ -73,7 +74,10 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
         setCreationError(
           "An error occurred while creating the account. Please try again.",
         );
+        setIsLoading(false);
       }
+
+      // No need to set isLoading to false here as we navigate away
     }
   };
 
@@ -140,6 +144,7 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
       <div className="form">
         <div className="form-title">
           <h1>NEW CUSTOMER</h1>
+          {offlineMode && <div>Offline Mode</div>}
         </div>
 
         <div className="form-container">
@@ -183,14 +188,19 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
 
           {/* Create Button & Links */}
           <div className="actions-container">
-            <button onClick={handleCreate} className="form-button">
-              Create
+            <button
+              onClick={handleCreate}
+              className={`form-button ${isLoading ? "loading" : ""}`}
+              disabled={isLoading}
+            >
+              {isLoading ? "Creating..." : "Create"}
             </button>
 
             <div className="links-container">
               <button
                 onClick={handleLoginAsExistingCustomer}
                 className="link-button"
+                disabled={isLoading}
               >
                 Login as existing customer
               </button>

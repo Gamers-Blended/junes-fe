@@ -167,6 +167,30 @@
   margin-right: 0;
 }
 
+/* Loading state */
+.form-button.loading {
+  background-color: #6b7280;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-button.loading::after {
+  content: "↻";
+  position: absolute;
+  right: 1rem;
+  animation: rotate 1s linear infinite;
+  font-size: 1.2rem;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* FORMS - HYPERLINKS BUTTONS */
 .link-button {
   background: none;
