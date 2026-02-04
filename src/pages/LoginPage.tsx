@@ -4,16 +4,25 @@ import { Credentials } from "../utils/Enums";
 import { validateEmail, validatePassword } from "../utils/inputValidationUtils";
 import { createInputChangeHandler } from "../utils/FormHandlers";
 import { FormErrors } from "../types/formErrors";
+import { apiClient } from "../utils/api.ts";
 import { useAuth } from "../components/AuthContext";
 import Footer from "../components/Footer";
 import { FormInput } from "../components/FormInput.tsx";
+import axios from "axios";
 
-const LoginPage: React.FC = () => {
+interface LoginPageProps {
+  offlineMode?: boolean;
+}
+
+const LoginPage: React.FC<LoginPageProps> = ({
+  offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
+}) => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<FormErrors>({ email: "", password: "" });
+  const [loginError, setLoginError] = useState<string>("");
 
   // Redirect to home if user is already logged in
   useEffect(() => {
@@ -22,7 +31,10 @@ const LoginPage: React.FC = () => {
     }
   }, []);
 
-  const handleSignIn = (): void => {
+  const handleSignIn = async (): Promise<void> => {
+    // Clear previous login error
+    setLoginError("");
+
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
     const newErrors: FormErrors = {
@@ -34,22 +46,54 @@ const LoginPage: React.FC = () => {
 
     // If no errors, proceed sign in
     if (!newErrors.email && !newErrors.password) {
+      if (offlineMode) {
+        console.log("Offline mode: Skipping login API call");
+      } else {
+        await signIn(email, password);
+      }
+
       setIsLoggedIn(true);
       console.log("Signed in");
       navigate("/myaccount/");
     }
   };
 
+  const signIn = async (email: string, password: string): Promise<void> => {
+    console.log("Calling login API...");
+
+    const requestData = {
+      email: email,
+      password: password,
+    };
+    try {
+      const response = await apiClient.post(
+        "/junes/api/v1/auth/login",
+        requestData,
+      );
+
+      console.log("Login successful:", response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setLoginError(
+          error.response.data.message || "Login failed. Please try again.",
+        );
+        console.error("Login failed:", error.response.data);
+      }
+      throw error;
+    }
+  };
+
   const handleEmailChange = createInputChangeHandler(
     setEmail,
     setErrors,
-    Credentials.EMAIL
+    Credentials.EMAIL,
   );
 
   const handlePasswordChange = createInputChangeHandler(
     setPassword,
     setErrors,
-    Credentials.PASSWORD
+    Credentials.PASSWORD,
   );
 
   const handleCreateAccount = (): void => {
@@ -111,6 +155,8 @@ const LoginPage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {loginError && <div className="error-message">{loginError}</div>}
       </div>
 
       <Footer />
