@@ -23,6 +23,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
   const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<FormErrors>({ email: "", password: "" });
   const [loginError, setLoginError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // Redirect to home if user is already logged in
   useEffect(() => {
@@ -44,10 +45,14 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
     setErrors(newErrors);
 
-    // If no errors, proceed sign in
+    // If no errors, proceed login
     if (!newErrors.email && !newErrors.password) {
+      setIsLoading(true);
+
       if (offlineMode) {
         console.log("Offline mode: Skipping login API call");
+        // Simulate successful login
+        await new Promise((resolve) => setTimeout(resolve, 500));
       } else {
         await signIn(email, password);
       }
@@ -55,6 +60,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
       setIsLoggedIn(true);
       console.log("Signed in");
       navigate("/myaccount/");
+      // No need to set isLoading to false here as we navigate away
     }
   };
 
@@ -80,6 +86,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
         );
         console.error("Login failed:", error.response.data);
       }
+      setIsLoading(false);
       throw error;
     }
   };
@@ -141,15 +148,27 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
           {/* Sign In Button and Links */}
           <div className="actions-container">
-            <button onClick={handleSignIn} className="form-button">
-              Sign In
+            <button
+              onClick={handleSignIn}
+              className={`form-button ${isLoading ? "loading" : ""}`}
+              disabled={isLoading}
+            >
+              {isLoading ? "Signing In..." : "Sign In"}
             </button>
 
             <div className="links-container">
-              <button onClick={handleCreateAccount} className="link-button">
+              <button
+                onClick={handleCreateAccount}
+                className="link-button"
+                disabled={isLoading}
+              >
                 Create account
               </button>
-              <button onClick={handleForgotPassword} className="link-button">
+              <button
+                onClick={handleForgotPassword}
+                className="link-button"
+                disabled={isLoading}
+              >
                 Forgot your password?
               </button>
             </div>
