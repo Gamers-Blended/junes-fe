@@ -78,6 +78,13 @@ const LoginPage: React.FC<LoginPageProps> = ({
       );
 
       console.log("Login successful:", response.data);
+
+      // Store JWT
+      const { token, userID, email: userEmail } = response.data;
+      localStorage.setItem("jwtToken", token);
+      localStorage.setItem("userID", userID);
+      localStorage.setItem("userEmail", userEmail);
+
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
