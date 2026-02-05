@@ -56,27 +56,17 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
     if (!newErrors.email && !newErrors.password && !newErrors.confirmPassword) {
       setIsLoading(true);
 
-      try {
-        // Skip API call in offline mode
-        if (offlineMode) {
-          console.log("Offline mode: Skipping user creation API call");
-          // Simulate successful creation
-          await new Promise((resolve) => setTimeout(resolve, 500));
-        } else {
-          await createUser(email, password);
-        }
-
-        console.log("User created");
-        const state: NavigationState = { from: "createUser", email };
-        navigate("/emailsent/", { state });
-      } catch (error) {
-        console.error("Error during user creation:", error);
-        setCreationError(
-          "An error occurred while creating the account. Please try again.",
-        );
-        setIsLoading(false);
+      if (offlineMode) {
+        console.log("Offline mode: Skipping user creation API call");
+        // Simulate successful creation
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      } else {
+        await createUser(email, password);
       }
 
+      console.log("User created");
+      const state: NavigationState = { from: "createUser", email };
+      navigate("/emailsent/", { state });
       // No need to set isLoading to false here as we navigate away
     }
   };
@@ -103,6 +93,7 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
         );
         console.error("Error creating user:", error.response.data);
       }
+      setIsLoading(false);
       throw error;
     }
   };
