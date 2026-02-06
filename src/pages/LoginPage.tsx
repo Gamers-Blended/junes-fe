@@ -77,7 +77,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
         requestData,
       );
 
-      console.log("Login successful:", response.data);
+      console.log("Login successful");
 
       // Store JWT
       const { token, userID, email: userEmail } = response.data;
