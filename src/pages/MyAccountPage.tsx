@@ -9,13 +9,21 @@ import {
   replaceSpacesWithDash,
 } from "../utils/utils.ts";
 import { SavedInfoType, Credentials } from "../utils/Enums.tsx";
+import { apiClient } from "../utils/api.ts";
 import ProductImageAndDescription from "../components/ProductImageAndDescription";
 import Footer from "../components/Footer";
+import axios from "axios";
 
 import bookIcon from "../assets/bookIcon.png";
 import cardIcon from "../assets/cardIcon.png";
 
-const MyAccountPage: React.FC = () => {
+interface MyAccountPageProps {
+  offlineMode?: boolean;
+}
+
+const MyAccountPage: React.FC<MyAccountPageProps> = ({
+  offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
+}) => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const [username, setUsername] = useState<string>("test name");
   const [email, setEmail] = useState<string>("test@junes.com");
@@ -33,6 +41,7 @@ const MyAccountPage: React.FC = () => {
     totalPages: 1,
     currentPage: 0,
   });
+  const [logoutError, setLogoutError] = useState<string>("");
 
   const navigate = useNavigate();
 
@@ -80,9 +89,57 @@ const MyAccountPage: React.FC = () => {
 
   useAuthRedirect(isLoggedIn);
 
-  const handleLogOut = (): void => {
+  const handleLogOut = async (): Promise<void> => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping logout API call");
+      // Simulate successful login
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } else {
+      try {
+        await logOut();
+      } catch (error) {
+        console.error("Error during logout:", error);
+        return;
+      }
+    }
+
     setIsLoggedIn(false);
     navigate("/login");
+  };
+
+  const logOut = async (): Promise<void> => {
+    console.log("Calling logout API...");
+
+    try {
+      const token = localStorage.getItem("jwtToken");
+      if (!token) {
+        throw new Error("No JWT token found");
+      }
+
+      const response = await apiClient.post(
+        "/junes/api/v1/auth/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      console.log("Logout successful:", response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setLogoutError(
+          error.response.data.message || "Logout failed. Please try again.",
+        );
+        console.error("Logout failed:", error.response.data);
+
+        throw new Error(error.response.data.message || "Logout failed");
+      }
+      throw error;
+    }
   };
 
   const handleChangeEmail = (): void => {
@@ -123,7 +180,7 @@ const MyAccountPage: React.FC = () => {
 
   const getCurrentSortValue = (): string => {
     const currentOption = sortOptions.find(
-      (option) => option.sortBy === sortBy && option.orderBy === orderBy
+      (option) => option.sortBy === sortBy && option.orderBy === orderBy,
     );
     return currentOption ? currentOption.value : sortOptions[0].value;
   };
@@ -145,7 +202,7 @@ const MyAccountPage: React.FC = () => {
   };
 
   const handleTransactionsPerPageChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
+    event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setTransactionsPerPage(Number(event.target.value));
   };
@@ -158,7 +215,7 @@ const MyAccountPage: React.FC = () => {
     const start = currentPage * transactionsPerPage + 1;
     const end = Math.min(
       start + dummyTransactions.length - 1,
-      pageInfo.totalElements
+      pageInfo.totalElements,
     );
     return { start, end };
   };
@@ -180,7 +237,7 @@ const MyAccountPage: React.FC = () => {
   };
 
   const handlePageInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const inputValue = event.target.value;
 
@@ -216,7 +273,7 @@ const MyAccountPage: React.FC = () => {
   };
 
   const handlePageInputKeyDown = (
-    event: React.KeyboardEvent<HTMLInputElement>
+    event: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     if (event.key === "Enter") {
       handlePageJump();
@@ -261,6 +318,7 @@ const MyAccountPage: React.FC = () => {
                 Log Out
               </button>
             </div>
+            {logoutError && <div className="error-message">{logoutError}</div>}
 
             <div className="my-account-actions-button-row">
               <button className="form-button" onClick={handleChangeEmail}>
