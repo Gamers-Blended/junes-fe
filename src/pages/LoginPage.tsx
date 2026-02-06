@@ -54,7 +54,12 @@ const LoginPage: React.FC<LoginPageProps> = ({
         // Simulate successful login
         await new Promise((resolve) => setTimeout(resolve, 500));
       } else {
-        await signIn(email, password);
+        try {
+          await signIn(email, password);
+        } catch (error) {
+          console.error("Error during sign-in:", error);
+          return;
+        }
       }
 
       setIsLoggedIn(true);
