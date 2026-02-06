@@ -90,9 +90,12 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   useAuthRedirect(isLoggedIn);
 
   const handleLogOut = async (): Promise<void> => {
+    // Clear previous logout error
+    setLogoutError("");
+
     if (offlineMode) {
       console.log("Offline mode: Skipping logout API call");
-      // Simulate successful login
+      // Simulate successful logout
       await new Promise((resolve) => setTimeout(resolve, 500));
     } else {
       try {
