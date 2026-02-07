@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { NavigationState } from "../types/navigationState";
 import { FormErrors } from "../types/formErrors";
-import { apiClient } from "../utils/api.ts";
+import { apiClient, getApiErrorMessage } from "../utils/api.ts";
 import { Credentials } from "../utils/Enums";
 import {
   PASSWORD_MIN_LENGTH,
@@ -14,7 +14,6 @@ import {
 } from "../utils/inputValidationUtils";
 import { createInputChangeHandler } from "../utils/FormHandlers";
 import { FormInput } from "../components/FormInput.tsx";
-import axios from "axios";
 
 interface CreateNewUserPageProps {
   offlineMode?: boolean;
@@ -23,7 +22,6 @@ interface CreateNewUserPageProps {
 const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
   offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
 }) => {
-  const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -34,6 +32,8 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
   });
   const [creationError, setCreationError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   const handleCreate = async (): Promise<void> => {
     // Clear previous creation error
@@ -61,7 +61,18 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
         // Simulate successful creation
         await new Promise((resolve) => setTimeout(resolve, 500));
       } else {
-        await createUser(email, password);
+        try {
+          await createUser(email, password);
+        } catch (error) {
+          setCreationError(
+            getApiErrorMessage(
+              error,
+              "Failed to create user. Please try again.",
+            ),
+          );
+          setIsLoading(false);
+          return;
+        }
       }
 
       console.log("User created");
@@ -78,24 +89,14 @@ const CreateNewUserPage: React.FC<CreateNewUserPageProps> = ({
       email: email,
       password: password,
     };
-    try {
-      const response = await apiClient.post(
-        "/junes/api/v1/auth/add-user",
-        requestData,
-      );
 
-      console.log("User creation response:", response.data);
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        setCreationError(
-          error.response.data.message || "Failed to create user.",
-        );
-        console.error("Error creating user:", error.response.data);
-      }
-      setIsLoading(false);
-      throw error;
-    }
+    const response = await apiClient.post(
+      "/junes/api/v1/auth/add-user",
+      requestData,
+    );
+
+    console.log("User creation response:", response.data);
+    return response.data;
   };
 
   const handleEmailChange = createInputChangeHandler(
