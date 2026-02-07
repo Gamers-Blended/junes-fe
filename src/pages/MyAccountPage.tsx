@@ -42,6 +42,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
     currentPage: 0,
   });
   const [logoutError, setLogoutError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -92,6 +93,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   const handleLogOut = async (): Promise<void> => {
     // Clear previous logout error
     setLogoutError("");
+    setIsLoading(true);
 
     if (offlineMode) {
       console.log("Offline mode: Skipping logout API call");
@@ -102,12 +104,15 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
         await logOut();
       } catch (error) {
         console.error("Error during logout:", error);
+        setIsLoading(false);
         return;
       }
     }
 
     setIsLoggedIn(false);
+    console.log("Signed out");
     navigate("/login");
+    // No need to set isLoading to false here as we navigate away
   };
 
   const logOut = async (): Promise<void> => {
@@ -317,18 +322,18 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
           <div className="my-account-actions">
             <div className="my-account-actions-button-row">
-              <button className="form-button" onClick={handleLogOut}>
-                Log Out
+              <button className={`form-button ${isLoading ? "loading" : ""}`} onClick={handleLogOut} disabled={isLoading}>
+                {isLoading ? "Logging Out..." : "Log Out"}
               </button>
             </div>
             {logoutError && <div className="error-message">{logoutError}</div>}
 
             <div className="my-account-actions-button-row">
-              <button className="form-button" onClick={handleChangeEmail}>
+              <button className="form-button" onClick={handleChangeEmail} disabled={isLoading}>
                 Change Email
               </button>
 
-              <button className="form-button" onClick={handleChangePassword}>
+              <button className="form-button" onClick={handleChangePassword} disabled={isLoading}>
                 Change Password
               </button>
             </div>
