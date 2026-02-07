@@ -32,3 +32,23 @@ apiClient.interceptors.request.use(
     return Promise.reject(error);
   },
 );
+
+export const getApiErrorMessage = (
+  error: any,
+  defaultErrorMessage: string,
+): string => {
+  if (axios.isAxiosError(error)) {
+    if (error.response) {
+      console.log("API error:", error.response.data);
+      return error.response.data.message || defaultErrorMessage;
+    } else if (error.request) {
+      console.log("Network error:", error.request);
+      return "Network error. Please check your connection.";
+    } else {
+      console.log("Request setup error:", error.message);
+      return error.message || defaultErrorMessage;
+    }
+  }
+  console.log("Unexpected error:", error);
+  return "An unexpected error occurred. Please try again.";
+};

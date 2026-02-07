@@ -4,11 +4,10 @@ import { Credentials } from "../utils/Enums";
 import { validateEmail, validatePassword } from "../utils/inputValidationUtils";
 import { createInputChangeHandler } from "../utils/FormHandlers";
 import { FormErrors } from "../types/formErrors";
-import { apiClient } from "../utils/api.ts";
+import { apiClient, getApiErrorMessage } from "../utils/api.ts";
 import { useAuth } from "../components/AuthContext";
 import Footer from "../components/Footer";
 import { FormInput } from "../components/FormInput.tsx";
-import axios from "axios";
 
 interface LoginPageProps {
   offlineMode?: boolean;
@@ -57,7 +56,10 @@ const LoginPage: React.FC<LoginPageProps> = ({
         try {
           await signIn(email, password);
         } catch (error) {
-          console.error("Error during sign-in:", error);
+          setLoginError(
+            getApiErrorMessage(error, "Login failed. Please try again."),
+          );
+          setIsLoading(false);
           return;
         }
       }
@@ -76,31 +78,20 @@ const LoginPage: React.FC<LoginPageProps> = ({
       email: email,
       password: password,
     };
-    try {
-      const response = await apiClient.post(
-        "/junes/api/v1/auth/login",
-        requestData,
-      );
+    const response = await apiClient.post(
+      "/junes/api/v1/auth/login",
+      requestData,
+    );
 
-      console.log("Login successful");
+    console.log("Login successful");
 
-      // Store JWT
-      const { token, userID, email: userEmail } = response.data;
-      localStorage.setItem("jwtToken", token);
-      localStorage.setItem("userID", userID);
-      localStorage.setItem("userEmail", userEmail);
+    // Store JWT
+    const { token, userID, email: userEmail } = response.data;
+    localStorage.setItem("jwtToken", token);
+    localStorage.setItem("userID", userID);
+    localStorage.setItem("userEmail", userEmail);
 
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        setLoginError(
-          error.response.data.message || "Login failed. Please try again.",
-        );
-        console.error("Login failed:", error.response.data);
-      }
-      setIsLoading(false);
-      throw error;
-    }
+    return response.data;
   };
 
   const handleEmailChange = createInputChangeHandler(

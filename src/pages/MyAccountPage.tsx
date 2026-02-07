@@ -9,10 +9,9 @@ import {
   replaceSpacesWithDash,
 } from "../utils/utils.ts";
 import { SavedInfoType, Credentials } from "../utils/Enums.tsx";
-import { apiClient } from "../utils/api.ts";
+import { apiClient, getApiErrorMessage } from "../utils/api.ts";
 import ProductImageAndDescription from "../components/ProductImageAndDescription";
 import Footer from "../components/Footer";
-import axios from "axios";
 
 import bookIcon from "../assets/bookIcon.png";
 import cardIcon from "../assets/cardIcon.png";
@@ -103,7 +102,9 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
       try {
         await logOut();
       } catch (error) {
-        console.error("Error during logout:", error);
+        setLogoutError(
+          getApiErrorMessage(error, "Logout failed. Please try again."),
+        );
         setIsLoading(false);
         return;
       }
@@ -118,36 +119,24 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   const logOut = async (): Promise<void> => {
     console.log("Calling logout API...");
 
-    try {
-      const token = localStorage.getItem("jwtToken");
-      if (!token) {
-        throw new Error("No JWT token found");
-      }
-
-      const response = await apiClient.post(
-        "/junes/api/v1/auth/logout",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      console.log("Logout successful:", response.data);
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        setLogoutError(
-          error.response.data.message || "Logout failed. Please try again.",
-        );
-        console.error("Logout failed:", error.response.data);
-
-        throw new Error(error.response.data.message || "Logout failed");
-      }
-      throw error;
+    const token = localStorage.getItem("jwtToken");
+    if (!token) {
+      throw new Error("No JWT token found");
     }
+
+    const response = await apiClient.post(
+      "/junes/api/v1/auth/logout",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    console.log("Logout successful:", response.data);
+    return response.data;
   };
 
   const handleChangeEmail = (): void => {
@@ -322,22 +311,35 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
           <div className="my-account-actions">
             <div className="my-account-actions-button-row">
-              <button className={`form-button ${isLoading ? "loading" : ""}`} onClick={handleLogOut} disabled={isLoading}>
+              <button
+                className={`form-button ${isLoading ? "loading" : ""}`}
+                onClick={handleLogOut}
+                disabled={isLoading}
+              >
                 {isLoading ? "Logging Out..." : "Log Out"}
               </button>
             </div>
-            {logoutError && <div className="error-message">{logoutError}</div>}
 
             <div className="my-account-actions-button-row">
-              <button className="form-button" onClick={handleChangeEmail} disabled={isLoading}>
+              <button
+                className="form-button"
+                onClick={handleChangeEmail}
+                disabled={isLoading}
+              >
                 Change Email
               </button>
 
-              <button className="form-button" onClick={handleChangePassword} disabled={isLoading}>
+              <button
+                className="form-button"
+                onClick={handleChangePassword}
+                disabled={isLoading}
+              >
                 Change Password
               </button>
             </div>
           </div>
+
+          {logoutError && <div className="error-message">{logoutError}</div>}
         </div>
 
         <div className="my-account-right">
