@@ -359,6 +359,8 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
     event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setTransactionsPerPage(Number(event.target.value));
+    setCurrentPage(0); // Reset to first page
+    setPageInputValue("1"); // Reset input to first page
   };
 
   const getStatusClass = (status: string): string => {
