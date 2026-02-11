@@ -3,13 +3,13 @@ import { OrderStatus, SavedInfoType } from "../../utils/Enums";
 
 export const mockOrderList: Order[] = [
   {
-    id: "J123456789",
+    orderNumber: "J123456789",
     orderDate: "2025-09-22T15:41:00",
     status: OrderStatus.COMPLETED,
     totalAmount: 150.75,
-    items: [
+    transactionItemDTOList: [
       {
-        id: "65f8a12b3e5d827b94c8f2a1",
+        productId: "65f8a12b3e5d827b94c8f2a1",
         name: "Atelier Marie Remake: The Alchemist of Salburg",
         slug: "atelier-marie-remake-the-alchemist-of-salburg",
         platform: "nsw",
@@ -20,7 +20,7 @@ export const mockOrderList: Order[] = [
         quantity: 1,
       },
       {
-        id: "681a55f2cb20535492b5e68e",
+        productId: "681a55f2cb20535492b5e68e",
         name: "Ninja Gaiden: Master Collection",
         slug: "ninja-gaiden-master-collection",
         platform: "nsw",
@@ -47,13 +47,13 @@ export const mockOrderList: Order[] = [
     trackingNumber: "TRACK123456",
   },
   {
-    id: "J123456790",
+    orderNumber: "J123456790",
     orderDate: "2025-09-22T15:41:00",
     status: OrderStatus.COMPLETED,
     totalAmount: 150.75,
-    items: [
+    transactionItemDTOList: [
       {
-        id: "65f8a12b3e5d827b94c8f2a1",
+        productId: "65f8a12b3e5d827b94c8f2a1",
         name: "Atelier Marie Remake: The Alchemist of Salburg",
         slug: "atelier-marie-remake-the-alchemist-of-salburg",
         platform: "nsw",
@@ -64,7 +64,7 @@ export const mockOrderList: Order[] = [
         quantity: 1,
       },
       {
-        id: "681a55f2cb20535492b5e68e",
+        productId: "681a55f2cb20535492b5e68e",
         name: "Ninja Gaiden: Master Collection",
         slug: "ninja-gaiden-master-collection",
         platform: "nsw",
@@ -91,13 +91,13 @@ export const mockOrderList: Order[] = [
     trackingNumber: "TRACK123456",
   },
   {
-    id: "J123456791",
+    orderNumber: "J123456791",
     orderDate: "2025-09-22T15:41:00",
     status: OrderStatus.CANCELLED,
     totalAmount: 150.75,
-    items: [
+    transactionItemDTOList: [
       {
-        id: "65f8a12b3e5d827b94c8f2a1",
+        productId: "65f8a12b3e5d827b94c8f2a1",
         name: "Atelier Marie Remake: The Alchemist of Salburg",
         slug: "atelier-marie-remake-the-alchemist-of-salburg",
         platform: "nsw",
@@ -108,7 +108,7 @@ export const mockOrderList: Order[] = [
         quantity: 1,
       },
       {
-        id: "681a55f2cb20535492b5e68e",
+        productId: "681a55f2cb20535492b5e68e",
         name: "Ninja Gaiden: Master Collection",
         slug: "ninja-gaiden-master-collection",
         platform: "nsw",

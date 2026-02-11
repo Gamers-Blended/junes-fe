@@ -19,7 +19,7 @@ apiClient.interceptors.response.use(
   },
 );
 
-// Request interceptor to add JWT token in headers
+// Request interceptor to auto add JWT token in headers
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("jwtToken");

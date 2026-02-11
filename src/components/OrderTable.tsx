@@ -46,8 +46,8 @@ const OrderTable: React.FC<OrderTableProps> = ({ orderData, mode }) => {
       </div>
 
       {/* Items */}
-      {orderData.items.map((item) => (
-        <div key={item.id} className="table-row">
+      {orderData.transactionItemDTOList.map((item) => (
+        <div key={item.productId} className="table-row">
           <div className="col-product transaction-item">
             {mode === OrderTableMode.INVOICE ? null : (
               <div className="transaction-item-image-wrapper">

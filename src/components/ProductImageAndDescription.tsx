@@ -28,7 +28,7 @@ const ProductImageAndDescription: React.FC<ProductImageAndDescriptionProps> = ({
   };
   return (
     <div
-      key={item.id}
+      key={item.productId}
       className={`transaction-item ${mode === "cart" ? "cart-item" : ""}`}
     >
       <div className="transaction-item-image-wrapper">

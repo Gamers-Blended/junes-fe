@@ -2,7 +2,7 @@ import { CartItem } from "../../types/cartItem";
 import { Item } from "../../store/productSlice";
 
 const mockItem1: Item = {
-  id: "65f8a12b3e5d827b94c8f2a2",
+  productId: "65f8a12b3e5d827b94c8f2a2",
   name: "Baten Kaitos I & II HD Remaster",
   price: 49.99,
   slug: "baten-kaitos-i-and-ii-hd-remaster",
@@ -14,7 +14,7 @@ const mockItem1: Item = {
 };
 
 const mockItem2: Item = {
-  id: "681a55f2cb20535492b5e68c",
+  productId: "681a55f2cb20535492b5e68c",
   name: "Final Fantasy Pixel Remaster",
   price: 79.99,
   slug: "final-fantasy-pixel-remaster",

@@ -2,11 +2,11 @@ import { Address } from "./address";
 import { Item } from "../store/productSlice";
 
 export interface Order {
-  id: string;
+  orderNumber: string;
   orderDate: string;
   status: string;
   totalAmount: number;
-  items: Item[];
+  transactionItemDTOList: Item[];
   shippingCost?: number;
   shippedDate?: string;
   shippingAddress?: Address;

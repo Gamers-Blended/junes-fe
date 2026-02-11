@@ -27,7 +27,7 @@ const CartPage = () => {
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
     setCartItems((prevItems) =>
       prevItems.map((cartItem) =>
-        cartItem.item.id === itemId
+        cartItem.item.productId === itemId
           ? { ...cartItem, item: { ...cartItem.item, quantity: newQuantity } }
           : cartItem
       )
@@ -36,7 +36,7 @@ const CartPage = () => {
 
   const handleRemoveItem = (itemId: string) => {
     setCartItems((prevItems) =>
-      prevItems.filter((cartItem) => cartItem.item.id !== itemId)
+      prevItems.filter((cartItem) => cartItem.item.productId !== itemId)
     );
   };
 
@@ -89,13 +89,13 @@ const CartPage = () => {
       ) : (
         <div className="cart-items-list">
           {cartItems.map((cartItem) => (
-            <div key={cartItem.item.id} className="cart-item-container">
+            <div key={cartItem.item.productId} className="cart-item-container">
               <ProductImageAndDescription item={cartItem.item} mode="cart" />
               <QuantitySelector
                 className="cart-item"
                 initialQuantity={cartItem.item.quantity}
                 onChange={(newQuantity) =>
-                  handleQuantityChange(cartItem.item.id, newQuantity)
+                  handleQuantityChange(cartItem.item.productId, newQuantity)
                 }
               />
 
@@ -108,7 +108,7 @@ const CartPage = () => {
 
               <button
                 className="close-btn cart-item"
-                onClick={() => handleRemoveItem(cartItem.item.id)}
+                onClick={() => handleRemoveItem(cartItem.item.productId)}
               >
                 ✕
               </button>

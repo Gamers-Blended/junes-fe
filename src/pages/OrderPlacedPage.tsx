@@ -3,7 +3,7 @@ import { mockOrderList } from "../mocks/data/orders";
 import { useNavigate } from "react-router-dom";
 
 const OrderPlacedPage = () => {
-  const orderId = mockOrderList[0].id;
+  const orderId = mockOrderList[0].orderNumber;
   const navigate = useNavigate();
 
   const handleViewOrderDetails = (orderId: string) => {

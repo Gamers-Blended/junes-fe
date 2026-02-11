@@ -6,12 +6,13 @@ import { mockOrderList } from "../mocks/data/orders";
 import Footer from "../components/Footer";
 
 const OrderDetailsPage: React.FC = () => {
+  const token = localStorage.getItem("jwt");
   const { orderId } = useParams();
 
   return (
     <div className="order-details-page-container">
       <div className="order-header">
-        <h1>ORDER #{mockOrderList[0].id}</h1>
+        <h1>ORDER #{mockOrderList[0].orderNumber}</h1>
       </div>
 
       <div className="order-details-row">
@@ -22,13 +23,15 @@ const OrderDetailsPage: React.FC = () => {
           </div>
           <div>
             <strong>Shipped date: </strong>
-            {mockOrderList[0].shippedDate ? formatDateTimeWithHyphens(mockOrderList[0].shippedDate) : "-"}
+            {mockOrderList[0].shippedDate
+              ? formatDateTimeWithHyphens(mockOrderList[0].shippedDate)
+              : "-"}
           </div>
         </div>
 
         <div className="print-invoice-container">
           <Link
-            to={`/invoice/${mockOrderList[0].id}`}
+            to={`/invoice/${mockOrderList[0].orderNumber}`}
             target="_blank"
             rel="noopener noreferrer"
             className="action-link"
@@ -62,7 +65,11 @@ const OrderDetailsPage: React.FC = () => {
             <div className="order-info-sub-section-values">
               <div>{mockOrderList[0].shippingWeight}</div>
               <div>{mockOrderList[0].trackingNumber}</div>
-              <div>{mockOrderList[0].shippedDate ? formatDateTimeWithHyphens(mockOrderList[0].shippedDate): ""}</div>
+              <div>
+                {mockOrderList[0].shippedDate
+                  ? formatDateTimeWithHyphens(mockOrderList[0].shippedDate)
+                  : ""}
+              </div>
             </div>
           </div>
         </div>

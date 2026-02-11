@@ -1,9 +1,15 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import { NavigationState } from "../types/navigationState";
+import { Order } from "../types/order.ts";
+import {
+  TransactionHistoryParams,
+  TransactionHistoryResponse,
+} from "../types/transaction";
 import { mockOrderList } from "../mocks/data/orders.ts";
+import { mockTransactionHistory } from "../mocks/data/transactions.ts";
 import {
   formatDateWithMonthName,
   replaceSpacesWithDash,
@@ -26,27 +32,33 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const [username, setUsername] = useState<string>("test name");
   const [email, setEmail] = useState<string>("test@junes.com");
+
+  const [transactionHistory, setTransactionHistory] = useState<Order[]>([]);
   const [sortBy, setSortBy] = useState("created_on");
   const [orderBy, setOrderBy] = useState("desc");
   const [transactionsPerPage, setTransactionsPerPage] = useState(10); // Must correspond with 1st option
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0); // Zero-based index
   const [pageInputValue, setPageInputValue] = useState("1");
   const [pageInfo, setPageInfo] = useState<{
     totalElements: number;
     totalPages: number;
     currentPage: number;
   }>({
-    totalElements: 3,
+    totalElements: 0,
     totalPages: 1,
     currentPage: 0,
   });
   const [logoutError, setLogoutError] = useState<string>("");
+  const [transactionHistoryError, setTransactionHistoryError] =
+    useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingTransactions, setIsLoadingTransactions] =
+    useState<boolean>(false);
 
   const navigate = useNavigate();
 
   // Dummy transaction data for dev
-  const dummyTransactions = mockOrderList;
+  const dummyTransactions = transactionHistory;
 
   const sortOptions = [
     {
@@ -88,6 +100,40 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   ];
 
   useAuthRedirect(isLoggedIn);
+
+  const fetchTransactionHistory = async () => {
+    setIsLoadingTransactions(true);
+    setTransactionHistoryError("");
+
+    try {
+      const response = await getTransactionHistory({
+        page: currentPage,
+        size: transactionsPerPage,
+        sort: `${sortBy},${orderBy}`,
+      });
+
+      setTransactionHistory(response.content);
+      setPageInfo({
+        totalElements: response.totalElements,
+        totalPages: response.totalPages,
+        currentPage: response.number,
+      });
+    } catch (error) {
+      setTransactionHistoryError(
+        getApiErrorMessage(
+          error,
+          "Failed to fetch transaction history. Please try again.",
+        ),
+      );
+      console.error("Error fetching transaction history:", error);
+    } finally {
+      setIsLoadingTransactions(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTransactionHistory();
+  }, [currentPage, transactionsPerPage, sortBy, orderBy]);
 
   const handleLogOut = async (): Promise<void> => {
     // Clear previous logout error
@@ -196,6 +242,120 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
     setSortBy(selectedOption.sortBy);
     setOrderBy(selectedOption.orderBy);
+  };
+
+  const getTransactionHistory = async (
+    params?: TransactionHistoryParams,
+  ): Promise<TransactionHistoryResponse> => {
+    setIsLoadingTransactions(true);
+
+    if (offlineMode) {
+      console.log("Offline mode: Skipping get Transaction History API call");
+      // Simulate successful retrieval
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      return getMockTransactionHistory(params);
+    }
+
+    // Build query parameters
+    const queryParams = new URLSearchParams();
+    if (params?.page) {
+      queryParams.append("page", params.page.toString());
+    }
+    if (params?.sort) {
+      queryParams.append("sort", params.sort);
+    }
+    if (params?.size) {
+      queryParams.append("size", params.size.toString());
+    }
+
+    const token = localStorage.getItem("jwtToken");
+    if (!token) {
+      throw new Error("No JWT token found");
+    }
+
+    try {
+      const response = await apiClient.get<TransactionHistoryResponse>(
+        `/junes/api/v1/transaction/history${queryParams.toString() ? `?${queryParams.toString()}` : ""}`,
+      );
+
+      setIsLoadingTransactions(false);
+      return response.data;
+    } catch (error) {
+      setTransactionHistoryError(
+        getApiErrorMessage(
+          error,
+          "Failed to fetch transaction history. Please try again.",
+        ),
+      );
+      setIsLoadingTransactions(false);
+      console.error("Failed to fetch transaction history:", error);
+      throw error;
+    }
+  };
+
+  const getMockTransactionHistory = (
+    params?: TransactionHistoryParams,
+  ): TransactionHistoryResponse => {
+    let transactions = [...mockOrderList];
+
+    // Apply sorting if provided
+    if (params?.sort) {
+      transactions = sortMockData(transactions, params.sort);
+    }
+
+    // Apply pagination if provided
+    if (params?.page !== undefined && params?.size !== undefined) {
+      const startIndex = params.page * params.size;
+      const endIndex = startIndex + params.size;
+      transactions = transactions.slice(startIndex, endIndex);
+    }
+
+    return mockTransactionHistory;
+  };
+
+  const sortMockData = (transactions: Order[], sortValue: string): Order[] => {
+    const sortConfig = parseSortValue(sortValue);
+    if (!sortConfig) return transactions;
+
+    const { sortBy, orderBy } = sortConfig;
+
+    return [...transactions].sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (sortBy) {
+        case "created_on":
+          aValue = new Date(a.orderDate).getTime();
+          bValue = new Date(b.orderDate).getTime();
+          break;
+        case "total_amount":
+          aValue = a.totalAmount;
+          bValue = b.totalAmount;
+          break;
+        case "status":
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        default:
+          return 0;
+      }
+
+      if (orderBy === "asc") {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+  };
+
+  const parseSortValue = (
+    sortValue: string,
+  ): { sortBy: string; orderBy: string } | null => {
+    const sortOption = sortOptions.find((option) => option.value === sortValue);
+
+    return sortOption
+      ? { sortBy: sortOption.sortBy, orderBy: sortOption.orderBy }
+      : null;
   };
 
   const handleTransactionsPerPageChange = (
@@ -404,103 +564,127 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
         {/* Transactions Table */}
         <div className="transactions-table">
-          {dummyTransactions.map((transaction) => (
-            <div key={transaction.id} className="transaction-card">
-              {/* Transactions Table - Header */}
-              <div className="transaction-header">
-                <div className="transaction-header-left">
-                  <div className="transaction-info-group">
-                    <span className="transaction-label">ORDER DATE</span>
-                    <span className="transaction-value">
-                      {formatDateWithMonthName(transaction.orderDate)}
-                    </span>
+          {transactionHistoryError ? (
+            <div className="error-message">{transactionHistoryError}</div>
+          ) : isLoadingTransactions ? (
+            <div className="loading-message">
+              <p>Loading transactions...</p>
+            </div>
+          ) : dummyTransactions.length === 0 ? (
+            <div className="no-transactions-message">
+              <p>No transactions found</p>
+            </div>
+          ) : (
+            <>
+              {dummyTransactions.map((transaction) => (
+                <div key={transaction.orderNumber} className="transaction-card">
+                  {/* Transactions Table - Header */}
+                  <div className="transaction-header">
+                    <div className="transaction-header-left">
+                      <div className="transaction-info-group">
+                        <span className="transaction-label">ORDER DATE</span>
+                        <span className="transaction-value">
+                          {formatDateWithMonthName(transaction.orderDate)}
+                        </span>
+                      </div>
+
+                      <div className="transaction-info-group">
+                        <span className="transaction-label">TOTAL</span>
+                        <span className="transaction-value">
+                          ${transaction.totalAmount.toFixed(2)}
+                        </span>
+                      </div>
+
+                      <div className="transaction-info-group status-group">
+                        <span className={getStatusClass(transaction.status)}>
+                          {transaction.status}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="transaction-header-right">
+                      <div className="transaction-info-group">
+                        <span className="transaction-label">ORDER #</span>
+                        <span className="transaction-value">
+                          {transaction.orderNumber}
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="transaction-info-group">
-                    <span className="transaction-label">TOTAL</span>
-                    <span className="transaction-value">
-                      ${transaction.totalAmount.toFixed(2)}
-                    </span>
-                  </div>
+                  {/* Transactions Table - Items */}
+                  <div className="transaction-items">
+                    <div className="item-actions">
+                      <button
+                        className="action-link"
+                        onClick={() =>
+                          handleViewOrderDetails(transaction.orderNumber)
+                        }
+                      >
+                        View order details
+                      </button>
+                      <button
+                        className="action-link"
+                        onClick={() =>
+                          handlePrintInvoice(transaction.orderNumber)
+                        }
+                      >
+                        Print invoice
+                      </button>
+                    </div>
 
-                  <div className="transaction-info-group status-group">
-                    <span className={getStatusClass(transaction.status)}>
-                      {transaction.status}
-                    </span>
+                    {transaction.transactionItemDTOList.map((item) => (
+                      <ProductImageAndDescription
+                        item={item}
+                        mode="transactionHistory"
+                      />
+                    ))}
                   </div>
                 </div>
+              ))}
 
-                <div className="transaction-header-right">
-                  <div className="transaction-info-group">
-                    <span className="transaction-label">ORDER #</span>
-                    <span className="transaction-value">{transaction.id}</span>
+              {/* Transaction Count Info with Pagination */}
+
+              <div className="products-info">
+                <div className="products-count">
+                  Showing {getItemRange().start} - {getItemRange().end} of{" "}
+                  {pageInfo.totalElements} Transactions
+                </div>
+
+                <div className="pagination-controls">
+                  {currentPage > 0 && (
+                    <button
+                      className="pagination-btn"
+                      onClick={handlePreviousPage}
+                    >
+                      ⮜ Previous
+                    </button>
+                  )}
+
+                  <div className="page-info">
+                    Page{" "}
+                    <input
+                      type="number"
+                      min={1}
+                      max={pageInfo.totalPages}
+                      value={pageInputValue}
+                      onChange={handlePageInputChange}
+                      onKeyDown={handlePageInputKeyDown}
+                      onBlur={handlePageInputBlur}
+                      className="common-input-box"
+                    />{" "}
+                    / {pageInfo.totalPages}
                   </div>
+
+                  {currentPage < pageInfo.totalPages - 1 && (
+                    <button className="pagination-btn" onClick={handleNextPage}>
+                      Next ➤
+                    </button>
+                  )}
                 </div>
               </div>
-
-              {/* Transactions Table - Items */}
-              <div className="transaction-items">
-                <div className="item-actions">
-                  <button
-                    className="action-link"
-                    onClick={() => handleViewOrderDetails(transaction.id)}
-                  >
-                    View order details
-                  </button>
-                  <button
-                    className="action-link"
-                    onClick={() => handlePrintInvoice(transaction.id)}
-                  >
-                    Print invoice
-                  </button>
-                </div>
-
-                {transaction.items.map((item) => (
-                  <ProductImageAndDescription
-                    item={item}
-                    mode="transactionHistory"
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Transaction Count Info with Pagination */}
-        <div className="products-info">
-          <div className="products-count">
-            Showing {getItemRange().start} - {getItemRange().end} of{" "}
-            {pageInfo.totalElements} Transactions
-          </div>
-
-          <div className="pagination-controls">
-            {currentPage > 0 && (
-              <button className="pagination-btn" onClick={handlePreviousPage}>
-                ⮜ Previous
-              </button>
-            )}
-
-            <div className="page-info">
-              Page{" "}
-              <input
-                type="number"
-                min={1}
-                max={pageInfo.totalPages}
-                value={pageInputValue}
-                onChange={handlePageInputChange}
-                onKeyDown={handlePageInputKeyDown}
-                onBlur={handlePageInputBlur}
-                className="common-input-box"
-              />{" "}
-              / {pageInfo.totalPages}
-            </div>
-
-            {currentPage < pageInfo.totalPages - 1 && (
-              <button className="pagination-btn" onClick={handleNextPage}>
-                Next ➤
-              </button>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </div>
 

@@ -31,7 +31,7 @@ const InvoicePage: React.FC = () => {
               <div>Order Date:</div>
             </div>
             <div className="order-info-sub-section-values">
-              <div>{mockOrderList[0].id}</div>
+              <div>{mockOrderList[0].orderNumber}</div>
               <div>
                 {mockOrderList[0].orderDate
                   ? formatDateTimeWithHyphens(mockOrderList[0].orderDate)
