@@ -57,32 +57,29 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
   const navigate = useNavigate();
 
-  // Dummy transaction data for dev
-  const dummyTransactions = transactionHistory;
-
   const sortOptions = [
     {
       value: "order-date-asc",
       label: "Order Date ↗",
-      sortBy: "created_on",
+      sortBy: "orderDate",
       orderBy: "asc",
     },
     {
       value: "order-date-desc",
       label: "Order Date ↘",
-      sortBy: "created_on",
+      sortBy: "orderDate",
       orderBy: "desc",
     },
     {
       value: "total-amount-asc",
       label: "Total Amount ↗",
-      sortBy: "total_amount",
+      sortBy: "totalAmount",
       orderBy: "asc",
     },
     {
       value: "total-amount-desc",
       label: "Total Amount ↘",
-      sortBy: "total_amount",
+      sortBy: "totalAmount",
       orderBy: "desc",
     },
     {
@@ -324,11 +321,11 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
       let bValue: any;
 
       switch (sortBy) {
-        case "created_on":
+        case "orderDate":
           aValue = new Date(a.orderDate).getTime();
           bValue = new Date(b.orderDate).getTime();
           break;
-        case "total_amount":
+        case "totalAmount":
           aValue = a.totalAmount;
           bValue = b.totalAmount;
           break;
@@ -371,7 +368,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   const getItemRange = () => {
     const start = currentPage * transactionsPerPage + 1;
     const end = Math.min(
-      start + dummyTransactions.length - 1,
+      start + transactionHistory.length - 1,
       pageInfo.totalElements,
     );
     return { start, end };
@@ -570,13 +567,13 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
             <div className="loading-message">
               <p>Loading transactions...</p>
             </div>
-          ) : dummyTransactions.length === 0 ? (
+          ) : transactionHistory.length === 0 ? (
             <div className="no-transactions-message">
               <p>No transactions found</p>
             </div>
           ) : (
             <>
-              {dummyTransactions.map((transaction) => (
+              {transactionHistory.map((transaction) => (
                 <div key={transaction.orderNumber} className="transaction-card">
                   {/* Transactions Table - Header */}
                   <div className="transaction-header">
@@ -644,7 +641,6 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
               ))}
 
               {/* Transaction Count Info with Pagination */}
-
               <div className="products-info">
                 <div className="products-count">
                   Showing {getItemRange().start} - {getItemRange().end} of{" "}
