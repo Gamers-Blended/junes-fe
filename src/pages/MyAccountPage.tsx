@@ -15,7 +15,16 @@ import {
   replaceSpacesWithDash,
 } from "../utils/utils.ts";
 import { SavedInfoType, Credentials } from "../utils/Enums.tsx";
-import { REQUEST_MAPPING, apiClient, getApiErrorMessage } from "../utils/api.ts";
+import {
+  REQUEST_MAPPING,
+  apiClient,
+  getApiErrorMessage,
+} from "../utils/api.ts";
+import {
+  clearTransactionCache,
+  getCachedTransactionHistory,
+  setCachedTransactionHistory,
+} from "../utils/transactionCacheUtils.ts";
 import ProductImageAndDescription from "../components/ProductImageAndDescription";
 import Footer from "../components/Footer";
 
@@ -98,6 +107,11 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
   useAuthRedirect(isLoggedIn);
 
+  // Helper function to generate cache key from query parameters
+  const getCacheKey = (params: TransactionHistoryParams): string => {
+    return `page_${params.page}_size_${params.size}_sort_${params.sort}`;
+  };
+
   const fetchTransactionHistory = async () => {
     setIsLoadingTransactions(true);
     setTransactionHistoryError("");
@@ -153,6 +167,10 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
       }
     }
 
+    // Clear transaction cache upon logout
+    clearTransactionCache();
+
+    // Update auth context and redirect to login page
     setIsLoggedIn(false);
     console.log("Signed out");
     navigate("/login");
@@ -255,6 +273,19 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
       return getMockTransactionHistory(params);
     }
 
+    // Generate cache key from parameters
+    const cacheKey = getCacheKey(params!);
+
+    // Check if data exists in cache
+    const cachedData = getCachedTransactionHistory(cacheKey);
+    if (cachedData) {
+      console.log("Using cached transaction history for key:", cacheKey);
+      setIsLoadingTransactions(false);
+      return cachedData.data;
+    }
+
+    console.log("Fetching transaction history from API with params:", params);
+
     // Build query parameters
     const queryParams = new URLSearchParams();
     if (params?.page) {
@@ -267,15 +298,14 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
       queryParams.append("size", params.size.toString());
     }
 
-    const token = localStorage.getItem("jwtToken");
-    if (!token) {
-      throw new Error("No JWT token found");
-    }
-
     try {
       const response = await apiClient.get<TransactionHistoryResponse>(
         `${REQUEST_MAPPING}/transaction/history${queryParams.toString() ? `?${queryParams.toString()}` : ""}`,
       );
+
+      // Store response in cache
+      setCachedTransactionHistory(cacheKey, response.data);
+      console.log("Transaction history cached with key:", cacheKey);
 
       setIsLoadingTransactions(false);
       return response.data;
