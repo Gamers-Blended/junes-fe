@@ -8,6 +8,7 @@ import {
   TransactionHistoryParams,
   TransactionHistoryResponse,
 } from "../types/transaction";
+import { mockUserData } from "../mocks/data/userData.ts";
 import { mockOrderList } from "../mocks/data/orders.ts";
 import { mockTransactionHistory } from "../mocks/data/transactions.ts";
 import {
@@ -40,7 +41,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 }) => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const [username, setUsername] = useState<string>("test name");
-  const [email, setEmail] = useState<string>("test@junes.com");
+  const [email, setEmail] = useState<string>("");
 
   const [transactionHistory, setTransactionHistory] = useState<Order[]>([]);
   const [sortBy, setSortBy] = useState("created_on");
@@ -112,6 +113,41 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
     return `page_${params.page}_size_${params.size}_sort_${params.sort}`;
   };
 
+  // Functions to fetch user details and transaction history
+  const fetchUserDetails = async () => {
+    try {
+      const response = await getUserDetails();
+
+      setEmail(response.email);
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
+  const getUserDetails = async (): Promise<{ email: string }> => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping get User Details API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return { email: mockUserData.email };
+    }
+
+    console.log("Fetching user details from API...");
+
+    const response = await apiClient.get<{ email: string }>(
+      `${REQUEST_MAPPING}/user/details`,
+    );
+
+    console.log("User details fetched:", response.data);
+    return response.data;
+  };
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
+
+  // Functions to fetch transaction history
   const fetchTransactionHistory = async () => {
     setIsLoadingTransactions(true);
     setTransactionHistoryError("");
@@ -145,6 +181,69 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   useEffect(() => {
     fetchTransactionHistory();
   }, [currentPage, pageSize, sortBy, orderBy]);
+
+  const getTransactionHistory = async (
+    params?: TransactionHistoryParams,
+  ): Promise<TransactionHistoryResponse> => {
+    setIsLoadingTransactions(true);
+
+    if (offlineMode) {
+      console.log("Offline mode: Skipping get Transaction History API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      setIsLoadingTransactions(false);
+      return getMockTransactionHistory(params);
+    }
+
+    // Generate cache key from parameters
+    const cacheKey = getCacheKey(params!);
+
+    // Check if data exists in cache
+    const cachedData = getCachedTransactionHistory(cacheKey);
+    if (cachedData) {
+      console.log("Using cached transaction history for key:", cacheKey);
+      setIsLoadingTransactions(false);
+      return cachedData.data;
+    }
+
+    console.log("Fetching transaction history from API with params:", params);
+
+    // Build query parameters
+    const queryParams = new URLSearchParams();
+    if (params?.page) {
+      queryParams.append("page", params.page.toString());
+    }
+    if (params?.sort) {
+      queryParams.append("sort", params.sort);
+    }
+    if (params?.size) {
+      queryParams.append("size", params.size.toString());
+    }
+
+    try {
+      const response = await apiClient.get<TransactionHistoryResponse>(
+        `${REQUEST_MAPPING}/transaction/history${queryParams.toString() ? `?${queryParams.toString()}` : ""}`,
+      );
+
+      // Store response in cache
+      setCachedTransactionHistory(cacheKey, response.data);
+      console.log("Transaction history cached with key:", cacheKey);
+
+      setIsLoadingTransactions(false);
+      return response.data;
+    } catch (error) {
+      setTransactionHistoryError(
+        getApiErrorMessage(
+          error,
+          "Failed to fetch transaction history. Please try again.",
+        ),
+      );
+      setIsLoadingTransactions(false);
+      console.error("Failed to fetch transaction history:", error);
+      throw error;
+    }
+  };
 
   const handleLogOut = async (): Promise<void> => {
     // Clear previous logout error
@@ -259,69 +358,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
     setOrderBy(selectedOption.orderBy);
   };
 
-  const getTransactionHistory = async (
-    params?: TransactionHistoryParams,
-  ): Promise<TransactionHistoryResponse> => {
-    setIsLoadingTransactions(true);
-
-    if (offlineMode) {
-      console.log("Offline mode: Skipping get Transaction History API call");
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      setIsLoadingTransactions(false);
-      return getMockTransactionHistory(params);
-    }
-
-    // Generate cache key from parameters
-    const cacheKey = getCacheKey(params!);
-
-    // Check if data exists in cache
-    const cachedData = getCachedTransactionHistory(cacheKey);
-    if (cachedData) {
-      console.log("Using cached transaction history for key:", cacheKey);
-      setIsLoadingTransactions(false);
-      return cachedData.data;
-    }
-
-    console.log("Fetching transaction history from API with params:", params);
-
-    // Build query parameters
-    const queryParams = new URLSearchParams();
-    if (params?.page) {
-      queryParams.append("page", params.page.toString());
-    }
-    if (params?.sort) {
-      queryParams.append("sort", params.sort);
-    }
-    if (params?.size) {
-      queryParams.append("size", params.size.toString());
-    }
-
-    try {
-      const response = await apiClient.get<TransactionHistoryResponse>(
-        `${REQUEST_MAPPING}/transaction/history${queryParams.toString() ? `?${queryParams.toString()}` : ""}`,
-      );
-
-      // Store response in cache
-      setCachedTransactionHistory(cacheKey, response.data);
-      console.log("Transaction history cached with key:", cacheKey);
-
-      setIsLoadingTransactions(false);
-      return response.data;
-    } catch (error) {
-      setTransactionHistoryError(
-        getApiErrorMessage(
-          error,
-          "Failed to fetch transaction history. Please try again.",
-        ),
-      );
-      setIsLoadingTransactions(false);
-      console.error("Failed to fetch transaction history:", error);
-      throw error;
-    }
-  };
-
+  // Functions to simulate mock data in offline mode
   const getMockTransactionHistory = (
     params?: TransactionHistoryParams,
   ): TransactionHistoryResponse => {
