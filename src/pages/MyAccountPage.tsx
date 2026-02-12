@@ -15,7 +15,7 @@ import {
   replaceSpacesWithDash,
 } from "../utils/utils.ts";
 import { SavedInfoType, Credentials } from "../utils/Enums.tsx";
-import { apiClient, getApiErrorMessage } from "../utils/api.ts";
+import { REQUEST_MAPPING, apiClient, getApiErrorMessage } from "../utils/api.ts";
 import ProductImageAndDescription from "../components/ProductImageAndDescription";
 import Footer from "../components/Footer";
 
@@ -36,7 +36,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   const [transactionHistory, setTransactionHistory] = useState<Order[]>([]);
   const [sortBy, setSortBy] = useState("created_on");
   const [orderBy, setOrderBy] = useState("desc");
-  const [transactionsPerPage, setTransactionsPerPage] = useState(10); // Must correspond with 1st option
+  const [pageSize, setPageSize] = useState(10); // Must correspond with 1st option
   const [currentPage, setCurrentPage] = useState(0); // Zero-based index
   const [pageInputValue, setPageInputValue] = useState("1");
   const [pageInfo, setPageInfo] = useState<{
@@ -105,7 +105,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
     try {
       const response = await getTransactionHistory({
         page: currentPage,
-        size: transactionsPerPage,
+        size: pageSize,
         sort: `${sortBy},${orderBy}`,
       });
 
@@ -130,7 +130,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
   useEffect(() => {
     fetchTransactionHistory();
-  }, [currentPage, transactionsPerPage, sortBy, orderBy]);
+  }, [currentPage, pageSize, sortBy, orderBy]);
 
   const handleLogOut = async (): Promise<void> => {
     // Clear previous logout error
@@ -168,7 +168,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
     }
 
     const response = await apiClient.post(
-      "/junes/api/v1/auth/logout",
+      `${REQUEST_MAPPING}/auth/logout`,
       {},
       {
         headers: {
@@ -248,7 +248,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
     if (offlineMode) {
       console.log("Offline mode: Skipping get Transaction History API call");
-      // Simulate successful retrieval
+      // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       setIsLoadingTransactions(false);
@@ -274,7 +274,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
     try {
       const response = await apiClient.get<TransactionHistoryResponse>(
-        `/junes/api/v1/transaction/history${queryParams.toString() ? `?${queryParams.toString()}` : ""}`,
+        `${REQUEST_MAPPING}/transaction/history${queryParams.toString() ? `?${queryParams.toString()}` : ""}`,
       );
 
       setIsLoadingTransactions(false);
@@ -357,10 +357,10 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
       : null;
   };
 
-  const handleTransactionsPerPageChange = (
+  const handlePageSizeChange = (
     event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
-    setTransactionsPerPage(Number(event.target.value));
+    setPageSize(Number(event.target.value));
     setCurrentPage(0); // Reset to first page
     setPageInputValue("1"); // Reset input to first page
   };
@@ -370,7 +370,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   };
 
   const getItemRange = () => {
-    const start = currentPage * transactionsPerPage + 1;
+    const start = currentPage * pageSize + 1;
     const end = Math.min(
       start + transactionHistory.length - 1,
       pageInfo.totalElements,
@@ -552,8 +552,8 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
             <label className="filter-label">Transactions Per Page</label>
             <select
               className="filter-select"
-              value={transactionsPerPage}
-              onChange={handleTransactionsPerPageChange}
+              value={pageSize}
+              onChange={handlePageSizeChange}
             >
               <option value="10">10</option>
               <option value="20">20</option>
