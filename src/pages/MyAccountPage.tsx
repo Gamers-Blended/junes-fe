@@ -250,6 +250,8 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
       console.log("Offline mode: Skipping get Transaction History API call");
       // Simulate successful retrieval
       await new Promise((resolve) => setTimeout(resolve, 500));
+
+      setIsLoadingTransactions(false);
       return getMockTransactionHistory(params);
     }
 
