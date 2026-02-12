@@ -1,5 +1,4 @@
-export const mockUserData: { username: string; password: string; email: string } = {
-  username: "test name",
+export const mockUserData: { password: string; email: string } = {
   password: "111111",
   email: "test@email.com"
 };

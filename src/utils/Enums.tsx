@@ -25,7 +25,6 @@ export enum OrderStatus {
 }
 
 export enum Credentials {
-  USERNAME = "username",
   EMAIL = "email",
   PASSWORD = "password",
   CONFIRM_EMAIL = "confirmEmail",

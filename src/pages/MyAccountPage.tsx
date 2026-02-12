@@ -40,7 +40,6 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
 }) => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
-  const [username, setUsername] = useState<string>("test name");
   const [email, setEmail] = useState<string>("");
 
   const [transactionHistory, setTransactionHistory] = useState<Order[]>([]);
@@ -531,8 +530,6 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
           <div className="my-account-details">
             <p>
-              <strong>Username:</strong> {username}
-              <br />
               <strong>Email:</strong> {email}
             </p>
           </div>
