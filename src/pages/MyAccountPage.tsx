@@ -25,7 +25,7 @@ import {
   clearTransactionCache,
   getCachedTransactionHistory,
   setCachedTransactionHistory,
-} from "../utils/transactionCacheUtils.ts";
+} from "../utils/cacheUtils.ts";
 import ProductImageAndDescription from "../components/ProductImageAndDescription";
 import Footer from "../components/Footer";
 
