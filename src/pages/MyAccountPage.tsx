@@ -177,10 +177,6 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
     }
   };
 
-  useEffect(() => {
-    fetchTransactionHistory();
-  }, [currentPage, pageSize, sortBy, orderBy]);
-
   const getTransactionHistory = async (
     params?: TransactionHistoryParams,
   ): Promise<TransactionHistoryResponse> => {
@@ -220,7 +216,6 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
       queryParams.append("size", params.size.toString());
     }
 
-    try {
       const response = await apiClient.get<TransactionHistoryResponse>(
         `${REQUEST_MAPPING}/transaction/history${queryParams.toString() ? `?${queryParams.toString()}` : ""}`,
       );
@@ -231,18 +226,11 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
       setIsLoadingTransactions(false);
       return response.data;
-    } catch (error) {
-      setTransactionHistoryError(
-        getApiErrorMessage(
-          error,
-          "Failed to fetch transaction history. Please try again.",
-        ),
-      );
-      setIsLoadingTransactions(false);
-      console.error("Failed to fetch transaction history:", error);
-      throw error;
-    }
   };
+
+  useEffect(() => {
+    fetchTransactionHistory();
+  }, [currentPage, pageSize, sortBy, orderBy]);
 
   const handleLogOut = async (): Promise<void> => {
     // Clear previous logout error
