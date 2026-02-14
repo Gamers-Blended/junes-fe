@@ -16,13 +16,13 @@ import {
   validateAllPaymentFields,
   PaymentValidationErrors,
 } from "../utils/paymentValidation";
+import { mockAddressList } from "../mocks/data/address.ts";
 
 import visaIcon from "../assets/acceptedCardsIcons/visaIcon.png";
 import masterCardIcon from "../assets/acceptedCardsIcons/masterCardIcon.png";
 import americanExpressIcon from "../assets/acceptedCardsIcons/americanExpressIcon.png";
 import jcbIcon from "../assets/acceptedCardsIcons/jcbIcon.png";
 import unionPayIcon from "../assets/acceptedCardsIcons/unionPayIcon.png";
-import { mockAddressList } from "../mocks/data/address.ts";
 
 // Discriminated union type guard
 type SavedInfoActionWindowProps =

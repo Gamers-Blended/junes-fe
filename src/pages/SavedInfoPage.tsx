@@ -1,6 +1,5 @@
 import React, { useState, JSX } from "react";
-import { useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { NavigationState } from "../types/navigationState";
 import { SavedInfoType, SavedInfoAction } from "../utils/Enums.tsx";
 import { Address } from "../types/address";
@@ -49,6 +48,8 @@ const SavedInfoPage: React.FC = () => {
     action: "added" | "removed" | "updated" | "default_updated";
   } | null>(null);
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const breadcrumbItems = [
     {
       label: "My Account",
@@ -58,7 +59,7 @@ const SavedInfoPage: React.FC = () => {
 
   // Dummy data
   const [savedItems, setSavedItems] = useState<SavedItem[]>(
-    isAddressMode ? mockAddressList : mockPaymentMethodList
+    isAddressMode ? mockAddressList : mockPaymentMethodList,
   );
 
   useAuthRedirect(isLoggedIn);
@@ -93,8 +94,10 @@ const SavedInfoPage: React.FC = () => {
   // Handlers
   // For address, go to new page
   const handleAddItem = () => {
+    setErrorMessage("");
+
     console.log(
-      `Add new ${isAddressMode ? SavedInfoType.ADDRESS : SavedInfoType.PAYMENT}`
+      `Add new ${isAddressMode ? SavedInfoType.ADDRESS : SavedInfoType.PAYMENT}`,
     );
     if (isAddressMode) {
       const state: NavigationState = {
@@ -116,6 +119,8 @@ const SavedInfoPage: React.FC = () => {
 
   // For address, go to new page
   const handleEdit = (itemToEdit: SavedItem) => {
+    setErrorMessage("");
+
     console.log(`Edit item: ${itemToEdit.type} with id: ${itemToEdit.id}`);
     if (isAddressMode) {
       const state: NavigationState = {
@@ -137,15 +142,21 @@ const SavedInfoPage: React.FC = () => {
   };
 
   const handleRemove = (id: string) => {
+    setErrorMessage("");
+
     console.log(`Remove item with id: ${id}`);
     const item = savedItems.find((item) => item.id === id);
-    if (item) {
+    if (item && item.isDefault == false) {
       setActionWindowState({
         isOpen: true,
         type: item.type,
         mode: SavedInfoAction.DELETE,
         item: item,
       });
+    } else {
+      setErrorMessage(
+        "Cannot remove default item. Please set another item as default before removing.",
+      );
     }
   };
 
@@ -267,6 +278,9 @@ const SavedInfoPage: React.FC = () => {
           />
         )}
 
+        {/* Error Message */}
+        {errorMessage && <div className="error-message">{errorMessage}</div>}
+
         <div className="items-grid">
           {/* Add Item Box - always displayed first */}
 
@@ -289,7 +303,7 @@ const SavedInfoPage: React.FC = () => {
           {savedItems.map((item) =>
             item.type === SavedInfoType.ADDRESS
               ? renderAddressCard(item as Address)
-              : renderPaymentMethodCard(item as PaymentMethod)
+              : renderPaymentMethodCard(item as PaymentMethod),
           )}
         </div>
       </div>

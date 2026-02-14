@@ -128,9 +128,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
       return { email: mockUserData.email };
     }
-
-    console.log("Fetching user details from API...");
-
+    
     const cacheKey = "userDetails";
 
     // Check if data exists in cache
