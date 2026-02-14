@@ -1,12 +1,17 @@
-import React, { useState, JSX } from "react";
+import React, { useState, useEffect, JSX } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavigationState } from "../types/navigationState";
 import { SavedInfoType, SavedInfoAction } from "../utils/Enums.tsx";
 import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
-import { mockPaymentMethodList } from "../mocks/data/paymentMethod.ts";
 import { mockAddressList } from "../mocks/data/address.ts";
+import { mockPaymentMethodList } from "../mocks/data/paymentMethod.ts";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
+import {
+  REQUEST_MAPPING,
+  apiClient,
+  getApiErrorMessage,
+} from "../utils/api.ts";
 import { useAuth } from "../components/AuthContext";
 import AddressCardContent from "../components/AddressCardContent";
 import PaymentMethodCardContent from "../components/PaymentMethodCardContent.tsx";
@@ -17,8 +22,17 @@ import Breadcrumb from "../components/Breadcrumb.tsx";
 import Footer from "../components/Footer";
 
 type SavedItem = Address | PaymentMethod;
+type AddressDTO = Omit<Address, "id" | "type"> & {
+  addressID: string;
+};
 
-const SavedInfoPage: React.FC = () => {
+interface SavedInfoPageProps {
+  offlineMode?: boolean;
+}
+
+const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
+  offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
+}) => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
 
   const location = useLocation();
@@ -47,8 +61,7 @@ const SavedInfoPage: React.FC = () => {
     type: SavedInfoType.ADDRESS | SavedInfoType.PAYMENT;
     action: "added" | "removed" | "updated" | "default_updated";
   } | null>(null);
-
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const breadcrumbItems = [
     {
@@ -57,10 +70,7 @@ const SavedInfoPage: React.FC = () => {
     },
   ];
 
-  // Dummy data
-  const [savedItems, setSavedItems] = useState<SavedItem[]>(
-    isAddressMode ? mockAddressList : mockPaymentMethodList,
-  );
+  const [savedItems, setSavedItems] = useState<SavedItem[]>([]);
 
   useAuthRedirect(isLoggedIn);
 
@@ -90,6 +100,63 @@ const SavedInfoPage: React.FC = () => {
     // e.g. Address removed
     return `${type.charAt(0).toUpperCase() + type.slice(1)} ${action}`;
   };
+
+  // Functions to fetch saved items
+  const fetchSavedItems = async () => {
+    setErrorMessage("");
+
+    try {
+      const response = await getSavedItems();
+
+      if (isAddressMode) {
+        const addressList = response as Address[];
+        console.log("Number of fetched addresses:", addressList.length);
+      }
+
+      setSavedItems(response);
+    } catch (error) {
+      setErrorMessage(
+        getApiErrorMessage(
+          error,
+          `Failed to fetch saved ${isAddressMode ? `Address(es)` : `Payment Method(s)`}. Please try again.`,
+        ),
+      );
+      console.error("Error fetching saved items:", error);
+    }
+  };
+
+  const getSavedItems = async (): Promise<SavedItem[]> => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping get Saved Items API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return isAddressMode ? mockAddressList : mockPaymentMethodList;
+    }
+
+    console.log("Fetching saved items from API:");
+
+    if (isAddressMode) {
+      // API returns AddressDTO[], transform to Address[]
+      const response = await apiClient.get<AddressDTO[]>(
+        `${REQUEST_MAPPING}/saved-items/addresses/user`,
+      );
+
+      const addressList: Address[] = response.data.map((item) => ({
+        ...item,
+        id: item.addressID,
+        type: SavedInfoType.ADDRESS,
+      }));
+
+      return addressList;
+    } else {
+      return isAddressMode ? mockAddressList : mockPaymentMethodList;
+    }
+  };
+
+  useEffect(() => {
+    fetchSavedItems();
+  }, []);
 
   // Handlers
   // For address, go to new page

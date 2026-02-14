@@ -128,7 +128,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
       return { email: mockUserData.email };
     }
-    
+
     const cacheKey = "userDetails";
 
     // Check if data exists in cache
@@ -196,7 +196,6 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   const getTransactionHistory = async (
     params?: TransactionHistoryParams,
   ): Promise<TransactionHistoryResponse> => {
-    setIsLoadingTransactions(true);
 
     if (offlineMode) {
       console.log("Offline mode: Skipping get Transaction History API call");
