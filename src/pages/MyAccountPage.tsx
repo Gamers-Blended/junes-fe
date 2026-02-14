@@ -22,9 +22,11 @@ import {
   getApiErrorMessage,
 } from "../utils/api.ts";
 import {
-  clearTransactionCache,
+  getCachedUserDetails,
+  setCachedUserDetails,
   getCachedTransactionHistory,
   setCachedTransactionHistory,
+  clearAllCaches,
 } from "../utils/cacheUtils.ts";
 import ProductImageAndDescription from "../components/ProductImageAndDescription";
 import Footer from "../components/Footer";
@@ -107,11 +109,6 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
   useAuthRedirect(isLoggedIn);
 
-  // Helper function to generate cache key from query parameters
-  const getCacheKey = (params: TransactionHistoryParams): string => {
-    return `page_${params.page}_size_${params.size}_sort_${params.sort}`;
-  };
-
   // Functions to fetch user details and transaction history
   const fetchUserDetails = async () => {
     try {
@@ -134,11 +131,25 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
     console.log("Fetching user details from API...");
 
+    const cacheKey = "userDetails";
+
+    // Check if data exists in cache
+    const cachedData = getCachedUserDetails(cacheKey);
+    if (cachedData) {
+      console.log("Using cached user details for key:", cacheKey);
+      return cachedData.data;
+    }
+
+    console.log("Fetching user details from API");
+
     const response = await apiClient.get<{ email: string }>(
       `${REQUEST_MAPPING}/user/details`,
     );
 
-    console.log("User details fetched:", response.data);
+    // Store response in cache
+    setCachedUserDetails(cacheKey, response.data);
+    console.log("User details cached with key:", cacheKey);
+
     return response.data;
   };
 
@@ -147,6 +158,13 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   }, []);
 
   // Functions to fetch transaction history
+  // Helper function to generate cache key from query parameters
+  const getTransactionHistoryCacheKey = (
+    params: TransactionHistoryParams,
+  ): string => {
+    return `page_${params.page}_size_${params.size}_sort_${params.sort}`;
+  };
+
   const fetchTransactionHistory = async () => {
     setIsLoadingTransactions(true);
     setTransactionHistoryError("");
@@ -192,7 +210,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
     }
 
     // Generate cache key from parameters
-    const cacheKey = getCacheKey(params!);
+    const cacheKey = getTransactionHistoryCacheKey(params!);
 
     // Check if data exists in cache
     const cachedData = getCachedTransactionHistory(cacheKey);
@@ -216,16 +234,16 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
       queryParams.append("size", params.size.toString());
     }
 
-      const response = await apiClient.get<TransactionHistoryResponse>(
-        `${REQUEST_MAPPING}/transaction/history${queryParams.toString() ? `?${queryParams.toString()}` : ""}`,
-      );
+    const response = await apiClient.get<TransactionHistoryResponse>(
+      `${REQUEST_MAPPING}/transaction/history${queryParams.toString() ? `?${queryParams.toString()}` : ""}`,
+    );
 
-      // Store response in cache
-      setCachedTransactionHistory(cacheKey, response.data);
-      console.log("Transaction history cached with key:", cacheKey);
+    // Store response in cache
+    setCachedTransactionHistory(cacheKey, response.data);
+    console.log("Transaction history cached with key:", cacheKey);
 
-      setIsLoadingTransactions(false);
-      return response.data;
+    setIsLoadingTransactions(false);
+    return response.data;
   };
 
   useEffect(() => {
@@ -253,8 +271,8 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
       }
     }
 
-    // Clear transaction cache upon logout
-    clearTransactionCache();
+    // Clear caches upon logout
+    clearAllCaches();
 
     // Update auth context and redirect to login page
     setIsLoggedIn(false);
