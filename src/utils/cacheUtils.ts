@@ -1,4 +1,5 @@
 import { TransactionHistoryResponse } from "../types/transaction";
+import { Address } from "../types/address";
 
 // Cache structure
 interface CacheEntry<T> {
@@ -14,6 +15,7 @@ interface Cache {
 const CACHE_KEYS = {
   TRANSACTION_HISTORY: "transactionHistoryCache",
   USER_DETAILS: "userDetailsCache",
+  SAVED_ADDRESSES: "savedAddressesCache",
 } as const;
 
 type CacheKeyType = (typeof CACHE_KEYS)[keyof typeof CACHE_KEYS];
@@ -157,6 +159,36 @@ export const setCachedUserDetails = (
   data: { email: string },
 ): void => {
   setCachedItem<{ email: string }>(CACHE_KEYS.USER_DETAILS, itemKey, data);
+};
+
+// ========== Saved Address specific functions ==========
+
+/**
+ * Clear saved addresses cache from sessionStorage
+ * Calls this function when:
+ * - User updates their saved addresses
+ */
+export const clearSavedAddressesCache = (): void => {
+  clearCache(CACHE_KEYS.SAVED_ADDRESSES);
+};
+
+/**
+ * Get a specific cached saved addresses by key
+ */
+export const getCachedSavedAddresses = (
+  itemKey: string,
+): CacheEntry<Address[]> | null => {
+  return getCachedItem<Address[]>(CACHE_KEYS.SAVED_ADDRESSES, itemKey);
+};
+
+/**
+ * Set a specific cached saved addresses by key
+ */
+export const setCachedSavedAddresses = (
+  itemKey: string,
+  data: Address[],
+): void => {
+  setCachedItem<Address[]>(CACHE_KEYS.SAVED_ADDRESSES, itemKey, data);
 };
 
 export { CACHE_KEYS };

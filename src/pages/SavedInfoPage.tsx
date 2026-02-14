@@ -2,6 +2,11 @@ import React, { useState, useEffect, JSX } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavigationState } from "../types/navigationState";
 import { SavedInfoType, SavedInfoAction } from "../utils/Enums.tsx";
+import {
+  clearSavedAddressesCache,
+  getCachedSavedAddresses,
+  setCachedSavedAddresses,
+} from "../utils/cacheUtils.ts";
 import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
 import { mockAddressList } from "../mocks/data/address.ts";
@@ -134,6 +139,15 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
       return isAddressMode ? mockAddressList : mockPaymentMethodList;
     }
 
+    const cacheKey = "savedAddresses";
+
+    // Check if data exists in cache
+    const cachedData = getCachedSavedAddresses(cacheKey);
+    if (cachedData) {
+      console.log("Using cached saved addresses for key:", cacheKey);
+      return cachedData.data;
+    }
+
     console.log("Fetching saved items from API:");
 
     if (isAddressMode) {
@@ -147,6 +161,10 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
         id: item.addressID,
         type: SavedInfoType.ADDRESS,
       }));
+
+      // Store response in cache
+      setCachedSavedAddresses(cacheKey, addressList);
+      console.log("Saved addresses cached with key:", cacheKey);
 
       return addressList;
     } else {
@@ -242,6 +260,7 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
       action: "removed",
     });
     console.log(`Deleted item with id: ${idToDelete}`);
+    clearSavedAddressesCache();
     setActionWindowState({
       isOpen: false,
       type: itemType,
