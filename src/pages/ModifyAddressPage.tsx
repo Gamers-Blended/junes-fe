@@ -208,46 +208,46 @@ const ModifyAddressPage: React.FC<ModifyAddressPageProps> = ({
     setActionError("");
 
     try {
-    // Mark all fields as touched first
-    setTouched(
-      new Set([
-        AddressFormField.COUNTRY,
-        AddressFormField.FULL_NAME,
-        AddressFormField.PHONE_NUMBER,
-        AddressFormField.ZIP_CODE,
-        AddressFormField.ADDRESS_LINE,
+      // Mark all fields as touched first
+      setTouched(
+        new Set([
+          AddressFormField.COUNTRY,
+          AddressFormField.FULL_NAME,
+          AddressFormField.PHONE_NUMBER,
+          AddressFormField.ZIP_CODE,
+          AddressFormField.ADDRESS_LINE,
         ]),
-    );
+      );
 
-    const { errors, isValid } = validateAllAddressFields({
-      country,
-      fullName,
-      phoneNumber,
-      zipCode,
-      addressLine,
-    });
-
-    setValidationError(errors);
-
-    if (!isValid) {
-      console.log("Validation failed");
-      return;
-    }
-
-      clearSavedAddressesCache();
-
-    if (action === SavedInfoAction.ADD) {
-      console.log("Adding new address:", {
-          addressID,
+      const { errors, isValid } = validateAllAddressFields({
         country,
         fullName,
         phoneNumber,
         zipCode,
         addressLine,
-        unitNumber,
-        isDefault,
       });
-    } else if (action === SavedInfoAction.EDIT) {
+
+      setValidationError(errors);
+
+      if (!isValid) {
+        console.log("Validation failed");
+        return;
+      }
+
+      clearSavedAddressesCache();
+
+      if (action === SavedInfoAction.ADD) {
+        console.log("Adding new address:", {
+          addressID,
+          country,
+          fullName,
+          phoneNumber,
+          zipCode,
+          addressLine,
+          unitNumber,
+          isDefault,
+        });
+      } else if (action === SavedInfoAction.EDIT) {
         await editAddress();
       }
     } catch (error) {
@@ -404,13 +404,17 @@ const ModifyAddressPage: React.FC<ModifyAddressPageProps> = ({
           <div className="checkbox-item">
             <input
               type="checkbox"
-              id="in-stock"
+              id="defaultAddress"
+              className={`checkbox-item ${action === SavedInfoAction.EDIT ? "cursor-disabled" : ""}`}
               checked={isDefault}
               onChange={(e) => setIsDefault(e.target.checked)}
+              disabled={action === SavedInfoAction.EDIT}
             />
             <label
-              className="filter-label"
-              onClick={() => setIsDefault(!isDefault)}
+              className={`filter-label ${action === SavedInfoAction.EDIT ? "cursor-disabled" : ""}`}
+              onClick={() =>
+                action !== SavedInfoAction.EDIT && setIsDefault(!isDefault)
+              }
             >
               Make this my default address
             </label>
