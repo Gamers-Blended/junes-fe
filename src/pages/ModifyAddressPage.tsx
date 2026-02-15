@@ -1,7 +1,13 @@
 import React, { useState, JSX } from "react";
 import { useLocation } from "react-router-dom";
 import { getCountryCode } from "../utils/utils";
+import { clearSavedAddressesCache } from "../utils/cacheUtils.ts";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
+import {
+  REQUEST_MAPPING,
+  apiClient,
+  getApiErrorMessage,
+} from "../utils/api.ts";
 import { useAuth } from "../components/AuthContext";
 import CountrySelector from "../components/CountrySelector";
 import Breadcrumb from "../components/Breadcrumb";
@@ -17,22 +23,31 @@ import {
   SavedInfoAction,
 } from "../utils/Enums";
 
-const ModifyAddressPage: React.FC = () => {
+interface ModifyAddressPageProps {
+  offlineMode?: boolean;
+}
+
+const ModifyAddressPage: React.FC<ModifyAddressPageProps> = ({
+  offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
+}) => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
+
   const location = useLocation();
   const { action, item, from } = location.state || {};
 
   // Initialise states with existing values if editing
+  const [addressID, setAddressID] = useState<string>(item?.id || "");
+
   const [country, setCountry] = useState<string>(
-    getCountryCode(item?.country || "")
+    getCountryCode(item?.country || ""),
   );
   const [fullName, setFullName] = useState<string>(item?.fullName || "");
   const [phoneNumber, setPhoneNumber] = useState<string>(
-    item?.phoneNumber || ""
+    item?.phoneNumber || "",
   );
   const [zipCode, setZipCode] = useState<string>(item?.zipCode || "");
   const [addressLine, setAddressLine] = useState<string>(
-    item?.addressLine || ""
+    item?.addressLine || "",
   );
   const [unitNumber, setUnitNumber] = useState<string>(item?.unitNumber || "");
   const [isDefault, setIsDefault] = useState<boolean>(item?.isDefault || false);
@@ -42,7 +57,46 @@ const ModifyAddressPage: React.FC = () => {
     useState<AddressValidationErrors>({});
   const [touched, setTouched] = useState<Set<string>>(new Set());
 
+  const [actionError, setActionError] = useState<string>("");
+  const [isLoading, setLoading] = useState<boolean>(false);
+
   useAuthRedirect(isLoggedIn);
+
+  const editAddress = async () => {
+    if (offlineMode) {
+      console.log("Offline mode: Simulating address update with data:", {
+        country,
+        fullName,
+        phoneNumber,
+        zipCode,
+        addressLine,
+        unitNumber,
+        isDefault,
+      });
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return;
+    }
+
+    console.log("Making API to edit address...");
+
+    const response = await apiClient.put(
+      `${REQUEST_MAPPING}/saved-items/address/${item.id}`,
+      {
+        addressID,
+        fullName,
+        addressLine,
+        unitNumber,
+        country,
+        zipCode,
+        phoneNumber,
+        isDefault,
+      },
+    );
+
+    console.log("Address updated successfully:", response.data);
+  };
 
   const handleBlur = (fieldName: string) => {
     setTouched((prev) => new Set(prev).add(fieldName));
@@ -68,7 +122,7 @@ const ModifyAddressPage: React.FC = () => {
 
     const error = validateAddressField(
       fieldName as keyof AddressValidationErrors,
-      value
+      value,
     );
     setValidationError((prevErrors) => ({
       ...prevErrors,
@@ -103,7 +157,7 @@ const ModifyAddressPage: React.FC = () => {
     if (touched.has(fieldName)) {
       const error = validateAddressField(
         fieldName as keyof AddressValidationErrors,
-        value
+        value,
       );
       setValidationError((prevErrors) => ({
         ...prevErrors,
@@ -130,6 +184,12 @@ const ModifyAddressPage: React.FC = () => {
     }
   };
 
+  const getButtonText = () => {
+    if (isLoading) return "Loading...";
+
+    return action === SavedInfoAction.ADD ? "Add Address" : "Update Address";
+  };
+
   const getBreadcrumbInfo = () => {
     const isPaymentContext = from === "savedinfofrompayment";
 
@@ -143,7 +203,11 @@ const ModifyAddressPage: React.FC = () => {
     };
   };
 
-  const handleAction = () => {
+  const handleAction = async () => {
+    setLoading(true);
+    setActionError("");
+
+    try {
     // Mark all fields as touched first
     setTouched(
       new Set([
@@ -152,7 +216,7 @@ const ModifyAddressPage: React.FC = () => {
         AddressFormField.PHONE_NUMBER,
         AddressFormField.ZIP_CODE,
         AddressFormField.ADDRESS_LINE,
-      ])
+        ]),
     );
 
     const { errors, isValid } = validateAllAddressFields({
@@ -170,8 +234,11 @@ const ModifyAddressPage: React.FC = () => {
       return;
     }
 
+      clearSavedAddressesCache();
+
     if (action === SavedInfoAction.ADD) {
       console.log("Adding new address:", {
+          addressID,
         country,
         fullName,
         phoneNumber,
@@ -181,15 +248,21 @@ const ModifyAddressPage: React.FC = () => {
         isDefault,
       });
     } else if (action === SavedInfoAction.EDIT) {
-      console.log("Updating address:", {
-        country,
-        fullName,
-        phoneNumber,
-        zipCode,
-        addressLine,
-        unitNumber,
-        isDefault,
-      });
+        await editAddress();
+      }
+    } catch (error) {
+      setActionError(
+        getApiErrorMessage(
+          error,
+          `Failed to ${action === SavedInfoAction.EDIT ? "update" : "add"} address. Please try again.`,
+        ),
+      );
+      console.error(
+        `Error ${action === SavedInfoAction.EDIT ? "updating" : "adding"} address:`,
+        error,
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -210,6 +283,9 @@ const ModifyAddressPage: React.FC = () => {
         />
       </div>
       <div className="common-header">{renderHeader()}</div>
+
+      {/* Error Message */}
+      {actionError && <div className="error-message">{actionError}</div>}
 
       <div className="form-container">
         {/* Country/Region */}
@@ -342,10 +418,11 @@ const ModifyAddressPage: React.FC = () => {
         </div>
 
         <button
-          className="common-button modify-address-button"
+          className={`common-button modify-address-button ${isLoading ? "loading" : ""}`}
           onClick={handleAction}
+          disabled={isLoading}
         >
-          {action === SavedInfoAction.ADD ? "Add Address" : "Update Address"}
+          {getButtonText()}
         </button>
 
         <Footer />
