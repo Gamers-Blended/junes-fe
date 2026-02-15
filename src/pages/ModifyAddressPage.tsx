@@ -64,6 +64,41 @@ const ModifyAddressPage: React.FC<ModifyAddressPageProps> = ({
 
   useAuthRedirect(isLoggedIn);
 
+  const addAddress = async () => {
+    if (offlineMode) {
+      console.log("Offline mode: Simulating address addition with data:", {
+        country,
+        fullName,
+        phoneNumber,
+        zipCode,
+        addressLine,
+        unitNumber,
+        isDefault,
+      });
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return;
+    }
+
+    console.log("Making API to add address...");
+
+    const response = await apiClient.post(
+      `${REQUEST_MAPPING}/saved-items/address`,
+      {
+        fullName,
+        addressLine,
+        unitNumber,
+        country,
+        zipCode,
+        phoneNumber,
+        isDefault,
+      },
+    );
+
+    console.log("Address added successfully:", response.data);
+  };
+
   const editAddress = async () => {
     if (offlineMode) {
       console.log("Offline mode: Simulating address update with data:", {
@@ -248,16 +283,9 @@ const ModifyAddressPage: React.FC<ModifyAddressPageProps> = ({
       clearSavedAddressesCache();
 
       if (action === SavedInfoAction.ADD) {
-        console.log("Adding new address:", {
-          addressID,
-          country,
-          fullName,
-          phoneNumber,
-          zipCode,
-          addressLine,
-          unitNumber,
-          isDefault,
-        });
+        await addAddress();
+
+        navigateToSavedInfo();
       } else if (action === SavedInfoAction.EDIT) {
         await editAddress();
 
