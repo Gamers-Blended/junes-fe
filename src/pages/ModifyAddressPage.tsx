@@ -1,8 +1,9 @@
 import React, { useState, JSX } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getCountryCode } from "../utils/utils";
 import { clearSavedAddressesCache } from "../utils/cacheUtils.ts";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
+import { NavigationState } from "../types/navigationState";
 import {
   REQUEST_MAPPING,
   apiClient,
@@ -32,6 +33,7 @@ const ModifyAddressPage: React.FC<ModifyAddressPageProps> = ({
 }) => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
 
+  const navigate = useNavigate();
   const location = useLocation();
   const { action, item, from } = location.state || {};
 
@@ -203,6 +205,15 @@ const ModifyAddressPage: React.FC<ModifyAddressPageProps> = ({
     };
   };
 
+  const navigateToSavedInfo = () => {
+    console.log("Directing user to my addresses");
+    const state: NavigationState = {
+      from: "editaddress",
+      fieldToChange: SavedInfoType.ADDRESS,
+    };
+    navigate("/savedinfo/", { state });
+  };
+
   const handleAction = async () => {
     setLoading(true);
     setActionError("");
@@ -249,6 +260,8 @@ const ModifyAddressPage: React.FC<ModifyAddressPageProps> = ({
         });
       } else if (action === SavedInfoAction.EDIT) {
         await editAddress();
+
+        navigateToSavedInfo();
       }
     } catch (error) {
       setActionError(
