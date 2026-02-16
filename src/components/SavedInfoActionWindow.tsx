@@ -32,6 +32,8 @@ type SavedInfoActionWindowProps =
       savedItemData: Address;
       onClose?: () => void;
       onConfirm?: () => void;
+      errorMessage?: string;
+      isModalLoading?: boolean;
     }
   | {
       type: SavedInfoType.PAYMENT;
@@ -39,6 +41,8 @@ type SavedInfoActionWindowProps =
       savedItemData?: undefined;
       onAdd?: () => void;
       onClose?: () => void;
+      errorMessage?: string;
+      isModalLoading?: boolean;
     }
   | {
       type: SavedInfoType.PAYMENT;
@@ -47,6 +51,8 @@ type SavedInfoActionWindowProps =
       onEdit?: () => void;
       onClose?: () => void;
       onConfirm?: () => void;
+      errorMessage?: string;
+      isModalLoading?: boolean;
     }
   | {
       type: SavedInfoType.PAYMENT;
@@ -54,6 +60,8 @@ type SavedInfoActionWindowProps =
       savedItemData: PaymentMethod;
       onClose?: () => void;
       onConfirm?: () => void;
+      errorMessage?: string;
+      isModalLoading?: boolean;
     };
 
 const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
@@ -61,6 +69,8 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     type,
     mode,
     savedItemData,
+    errorMessage,
+    isModalLoading = false,
     onClose = () => console.log("Close clicked"),
   } = props;
 
@@ -70,7 +80,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   >(
     type === SavedInfoType.PAYMENT && savedItemData
       ? savedItemData.billingAddressId
-      : null
+      : null,
   );
 
   // Form state for payment methods
@@ -78,7 +88,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   const [cardHolderName, setCardHolderName] = useState(
     type === SavedInfoType.PAYMENT && savedItemData
       ? savedItemData.cardHolderName
-      : ""
+      : "",
   );
 
   // Get current date for default expiration
@@ -88,12 +98,12 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   const [expirationMonth, setExpirationMonth] = useState(
     type === SavedInfoType.PAYMENT && savedItemData
       ? savedItemData.expirationMonth
-      : currentMonth
+      : currentMonth,
   );
   const [expirationYear, setExpirationYear] = useState(
     type === SavedInfoType.PAYMENT && savedItemData
       ? savedItemData.expirationYear
-      : currentYear
+      : currentYear,
   );
 
   // Validation states
@@ -121,7 +131,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
           PaymentFormField.CARD_HOLDER_NAME,
           PaymentFormField.EXPIRATION_MONTH,
           PaymentFormField.EXPIRATION_YEAR,
-        ])
+        ]),
       );
 
       if (!isPaymentValid) {
@@ -161,7 +171,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
           cardHolderName,
           expirationMonth,
           expirationYear,
-        }
+        },
       );
       setPaymentValidationError((prevErrors) => ({
         ...prevErrors,
@@ -202,7 +212,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
             fieldName === PaymentFormField.EXPIRATION_YEAR
               ? value
               : expirationYear,
-        }
+        },
       );
       setPaymentValidationError((prevErrors) => ({
         ...prevErrors,
@@ -238,7 +248,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         cardHolderName,
         expirationMonth,
         expirationYear,
-      }
+      },
     );
     setPaymentValidationError((prevErrors) => ({
       ...prevErrors,
@@ -287,7 +297,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   };
 
   const months = Array.from({ length: 12 }, (_, i) =>
-    String(i + 1).padStart(2, "0")
+    String(i + 1).padStart(2, "0"),
   );
 
   const years = Array.from({ length: 10 }, (_, i) => String(2025 + i));
@@ -329,7 +339,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
             onChange={(e) =>
               handlePaymentFieldChange(
                 PaymentFormField.CARD_HOLDER_NAME,
-                e.target.value
+                e.target.value,
               )
             }
             onBlur={() => handlePaymentBlur(PaymentFormField.CARD_HOLDER_NAME)}
@@ -356,7 +366,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
                 onChange={(e) =>
                   handlePaymentFieldChange(
                     PaymentFormField.EXPIRATION_MONTH,
-                    e.target.value
+                    e.target.value,
                   )
                 }
                 onBlur={() =>
@@ -380,7 +390,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
                 onChange={(e) =>
                   handlePaymentFieldChange(
                     PaymentFormField.EXPIRATION_YEAR,
-                    e.target.value
+                    e.target.value,
                   )
                 }
                 onBlur={() =>
@@ -461,7 +471,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
     const payment = savedItemData as PaymentMethod;
     const billingAddress = mockAddressList.find(
-      (addr) => addr.id === payment.billingAddressId
+      (addr) => addr.id === payment.billingAddressId,
     );
 
     return (
@@ -559,10 +569,17 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         {/* Header */}
         <div className="saved-info-header">
           <h2 className="saved-info-title">{getTitle()}</h2>
-          <button className="close-btn" onClick={onClose}>
+          <button
+            className="close-btn"
+            onClick={onClose}
+            disabled={isModalLoading}
+          >
             X
           </button>
         </div>
+
+        {/* Error Message */}
+        {errorMessage && <div className="error-message">{errorMessage}</div>}
 
         {/* Delete Address */}
         {type === SavedInfoType.ADDRESS && savedItemData && (
@@ -603,13 +620,21 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
           currentPage === 2
         ) && (
           <div className="btn-container">
-            <button className="common-button no-btn" onClick={onClose}>
+            <button
+              className={`common-button no-button ${isModalLoading ? "loading" : ""}`}
+              onClick={onClose}
+              disabled={isModalLoading}
+            >
               {type === SavedInfoType.ADDRESS && mode === SavedInfoAction.DELETE
                 ? "No"
                 : "Cancel"}
             </button>
-            <button className="common-button yes-button" onClick={handleAction}>
-              {getButtonText()}
+            <button
+              className={`common-button yes-button ${isModalLoading ? "loading" : ""}`}
+              onClick={handleAction}
+              disabled={isModalLoading}
+            >
+              {isModalLoading ? "Loading..." : getButtonText()}
             </button>
           </div>
         )}

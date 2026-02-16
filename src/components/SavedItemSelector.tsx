@@ -264,7 +264,7 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
       {items.length > 0 && (
         <div className="btn-container">
           <button
-            className={`common-button no-btn ${
+            className={`common-button no-button ${
               isAddressMode ? "larger-width" : "payment-method-width"
             } ${!canAddMoreItems ? "disabled" : ""}`}
             onClick={

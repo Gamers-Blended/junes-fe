@@ -67,6 +67,8 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
     action: "added" | "removed" | "updated" | "default_updated";
   } | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [modalErrorMessage, setModalErrorMessage] = useState<string>("");
+  const [isModalLoading, setIsModalLoading] = useState<boolean>(false);
 
   const breadcrumbItems = [
     {
@@ -264,28 +266,44 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
   const handleConfirmDelete = async () => {
     if (!actionWindowState.item) return;
 
+    setModalErrorMessage("");
+    setIsModalLoading(true);
+
     const idToDelete = actionWindowState.item.id;
     const itemType = actionWindowState.type;
 
-    await deleteAddress(idToDelete);
-    clearSavedAddressesCache();
-    await fetchSavedItems();
+    try {
+      await deleteAddress(idToDelete);
+      clearSavedAddressesCache();
+      await fetchSavedItems();
 
-    setSuccessMessage({
-      type:
-        itemType === SavedInfoType.ADDRESS
-          ? SavedInfoType.ADDRESS
-          : SavedInfoType.PAYMENT,
-      action: "removed",
-    });
-    console.log(`Deleted item with id: ${idToDelete}`);
+      setSuccessMessage({
+        type:
+          itemType === SavedInfoType.ADDRESS
+            ? SavedInfoType.ADDRESS
+            : SavedInfoType.PAYMENT,
+        action: "removed",
+      });
+      console.log(`Deleted item with id: ${idToDelete}`);
 
-    setActionWindowState({
-      isOpen: false,
-      type: itemType,
-      mode: SavedInfoAction.DELETE,
-      item: null,
-    });
+      setActionWindowState({
+        isOpen: false,
+        type: itemType,
+        mode: SavedInfoAction.DELETE,
+        item: null,
+      });
+    } catch (error) {
+      setModalErrorMessage(
+        getApiErrorMessage(
+          error,
+          `Failed to delete ${itemType}. Please try again.`,
+        ),
+      );
+      console.error("Error deleting item:", error);
+      return;
+    } finally {
+      setIsModalLoading(false);
+    }
   };
 
   // Payment Handlers to be passed to modal
@@ -324,6 +342,8 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
       mode: null,
       item: null,
     });
+
+    setModalErrorMessage("");
   };
 
   const handleCloseSuccessMessage = () => {
@@ -462,6 +482,8 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
             savedItemData={actionWindowState.item as Address}
             onConfirm={handleConfirmDelete}
             onClose={handleCloseActionWindow}
+            errorMessage={modalErrorMessage}
+            isModalLoading={isModalLoading}
           />
         )}
     </div>
