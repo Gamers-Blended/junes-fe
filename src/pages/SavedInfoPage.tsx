@@ -148,7 +148,7 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
       return cachedData.data;
     }
 
-    console.log("Fetching saved items from API:");
+    console.log("Fetching saved items from API...");
 
     if (isAddressMode) {
       // API returns AddressDTO[], transform to Address[]
@@ -175,6 +175,22 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
   useEffect(() => {
     fetchSavedItems();
   }, []);
+
+  const deleteAddress = async (id: string) => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping delete address API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return;
+    }
+
+    console.log("Calling API to delete address with id:", id);
+
+    await apiClient.delete(`${REQUEST_MAPPING}/saved-items/address/${id}`);
+
+    console.log("Address deleted");
+  };
 
   // Handlers
   // For address, go to new page
@@ -245,13 +261,16 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
     }
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (!actionWindowState.item) return;
 
     const idToDelete = actionWindowState.item.id;
     const itemType = actionWindowState.type;
 
-    setSavedItems((prev) => prev.filter((item) => item.id !== idToDelete));
+    await deleteAddress(idToDelete);
+    clearSavedAddressesCache();
+    await fetchSavedItems();
+
     setSuccessMessage({
       type:
         itemType === SavedInfoType.ADDRESS
@@ -260,7 +279,7 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
       action: "removed",
     });
     console.log(`Deleted item with id: ${idToDelete}`);
-    clearSavedAddressesCache();
+
     setActionWindowState({
       isOpen: false,
       type: itemType,
