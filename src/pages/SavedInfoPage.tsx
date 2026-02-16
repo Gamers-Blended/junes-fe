@@ -108,7 +108,7 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
     return `${type.charAt(0).toUpperCase() + type.slice(1)} ${action}`;
   };
 
-  // Functions to fetch saved items
+  // Functions that make API calls
   const fetchSavedItems = async () => {
     setErrorMessage("");
 
@@ -194,6 +194,30 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
     console.log("Address deleted");
   };
 
+  const setDefaultAddress = async (id: string) => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping set default address API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return;
+    }
+
+    console.log("Calling API to set default address with id:", id);
+
+    await apiClient.post(`${REQUEST_MAPPING}/saved-items/set-default`, {
+      mode: "address",
+      savedItemID: id,
+    });
+
+    console.log("Default address set");
+  };
+
+  const clearCacheAndRefetch = async () => {
+    clearSavedAddressesCache();
+    await fetchSavedItems();
+  };
+
   // Handlers
   // For address, go to new page
   const handleAddItem = () => {
@@ -244,6 +268,7 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
     }
   };
 
+  // Validation check when clicking delete before opening confirmation modal
   const handleRemove = (id: string) => {
     setErrorMessage("");
 
@@ -263,6 +288,7 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
     }
   };
 
+  // Handle actual delete action after confirming in modal
   const handleConfirmDelete = async () => {
     if (!actionWindowState.item) return;
 
@@ -274,8 +300,7 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
 
     try {
       await deleteAddress(idToDelete);
-      clearSavedAddressesCache();
-      await fetchSavedItems();
+      clearCacheAndRefetch();
 
       setSuccessMessage({
         type:
@@ -350,12 +375,29 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
     setSuccessMessage(null);
   };
 
-  const handleSetDefault = (id: string, type: string) => {
+  const handleSetDefault = async (id: string, type: string) => {
+    setErrorMessage("");
+
     console.log(`Set default for item with id: ${id}`);
-    setSuccessMessage({
-      type: type === "address" ? SavedInfoType.ADDRESS : SavedInfoType.PAYMENT,
-      action: "default_updated",
-    });
+
+    try {
+      await setDefaultAddress(id);
+      clearCacheAndRefetch();
+
+      setSuccessMessage({
+        type:
+          type === "address" ? SavedInfoType.ADDRESS : SavedInfoType.PAYMENT,
+        action: "default_updated",
+      });
+    } catch (error) {
+      setErrorMessage(
+        getApiErrorMessage(
+          error,
+          `Failed to set default ${type}. Please try again.`,
+        ),
+      );
+      console.error("Error setting default:", error);
+    }
   };
 
   const renderAddressCard = (address: Address) => (
