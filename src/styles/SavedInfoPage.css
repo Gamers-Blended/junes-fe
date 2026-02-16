@@ -62,9 +62,7 @@
 }
 
 .default-badge {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
+  width: 80px;
   background-color: #37d370;
   color: white;
   font-size: 0.75rem;
