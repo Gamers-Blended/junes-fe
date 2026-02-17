@@ -1,5 +1,6 @@
 import { TransactionHistoryResponse } from "../types/transaction";
 import { Address } from "../types/address";
+import { PaymentMethod } from "../types/paymentMethod";
 
 // Cache structure
 interface CacheEntry<T> {
@@ -16,6 +17,7 @@ const CACHE_KEYS = {
   TRANSACTION_HISTORY: "transactionHistoryCache",
   USER_DETAILS: "userDetailsCache",
   SAVED_ADDRESSES: "savedAddressesCache",
+  SAVED_PAYMENT_METHODS: "savedPaymentMethodsCache",
 } as const;
 
 type CacheKeyType = (typeof CACHE_KEYS)[keyof typeof CACHE_KEYS];
@@ -189,6 +191,43 @@ export const setCachedSavedAddresses = (
   data: Address[],
 ): void => {
   setCachedItem<Address[]>(CACHE_KEYS.SAVED_ADDRESSES, itemKey, data);
+};
+
+// ========== Saved Payment Method specific functions ==========
+
+/**
+ * Clear saved payment methods cache from sessionStorage
+ * Calls this function when:
+ * - User updates their saved payment methods
+ */
+export const clearSavedPaymentMethodsCache = (): void => {
+  clearCache(CACHE_KEYS.SAVED_PAYMENT_METHODS);
+};
+
+/**
+ * Get a specific cached saved payment methods by key
+ */
+export const getCachedSavedPaymentMethods = (
+  itemKey: string,
+): CacheEntry<PaymentMethod[]> | null => {
+  return getCachedItem<PaymentMethod[]>(
+    CACHE_KEYS.SAVED_PAYMENT_METHODS,
+    itemKey,
+  );
+};
+
+/**
+ * Set a specific cached saved payment methods by key
+ */
+export const setCachedSavedPaymentMethods = (
+  itemKey: string,
+  data: PaymentMethod[],
+): void => {
+  setCachedItem<PaymentMethod[]>(
+    CACHE_KEYS.SAVED_PAYMENT_METHODS,
+    itemKey,
+    data,
+  );
 };
 
 export { CACHE_KEYS };

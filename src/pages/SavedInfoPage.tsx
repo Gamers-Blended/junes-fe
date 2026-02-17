@@ -6,6 +6,9 @@ import {
   clearSavedAddressesCache,
   getCachedSavedAddresses,
   setCachedSavedAddresses,
+  clearSavedPaymentMethodsCache,
+  getCachedSavedPaymentMethods,
+  setCachedSavedPaymentMethods,
 } from "../utils/cacheUtils.ts";
 import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
@@ -29,6 +32,10 @@ import Footer from "../components/Footer";
 type SavedItem = Address | PaymentMethod;
 type AddressDTO = Omit<Address, "id" | "type"> & {
   addressID: string;
+};
+
+type PaymentMethodDTO = Omit<PaymentMethod, "id" | "type"> & {
+  paymentMethodID: string;
 };
 
 interface SavedInfoPageProps {
@@ -118,6 +125,12 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
       if (isAddressMode) {
         const addressList = response as Address[];
         console.log("Number of fetched addresses:", addressList.length);
+      } else {
+        const paymentMethodList = response as PaymentMethod[];
+        console.log(
+          "Number of fetched payment methods:",
+          paymentMethodList.length,
+        );
       }
 
       setSavedItems(response);
@@ -141,18 +154,17 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
       return isAddressMode ? mockAddressList : mockPaymentMethodList;
     }
 
-    const cacheKey = "savedAddresses";
-
-    // Check if data exists in cache
-    const cachedData = getCachedSavedAddresses(cacheKey);
-    if (cachedData) {
-      console.log("Using cached saved addresses for key:", cacheKey);
-      return cachedData.data;
-    }
-
-    console.log("Fetching saved items from API...");
-
     if (isAddressMode) {
+      const cacheKey = "savedAddresses";
+
+      const cachedData = getCachedSavedAddresses(cacheKey);
+      if (cachedData) {
+        console.log("Using cached saved addresses for key:", cacheKey);
+        return cachedData.data;
+      }
+
+      console.log("Fetching saved items from API...");
+
       // API returns AddressDTO[], transform to Address[]
       const response = await apiClient.get<AddressDTO[]>(
         `${REQUEST_MAPPING}/saved-items/addresses/user`,
@@ -164,13 +176,36 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
         type: SavedInfoType.ADDRESS,
       }));
 
-      // Store response in cache
       setCachedSavedAddresses(cacheKey, addressList);
       console.log("Saved addresses cached with key:", cacheKey);
 
       return addressList;
     } else {
-      return isAddressMode ? mockAddressList : mockPaymentMethodList;
+      const cacheKey = "savedPaymentMethods";
+
+      const cachedData = getCachedSavedPaymentMethods(cacheKey);
+      if (cachedData) {
+        console.log("Using cached saved payment methods for key:", cacheKey);
+        return cachedData.data;
+      }
+
+      console.log("Fetching saved items from API...");
+
+      // API returns PaymentMethodDTO[], transform to PaymentMethod[]
+      const response = await apiClient.get<PaymentMethodDTO[]>(
+        `${REQUEST_MAPPING}/saved-items/payment-methods/user`,
+      );
+
+      const paymentMethodList: PaymentMethod[] = response.data.map((item) => ({
+        ...item,
+        id: item.paymentMethodID,
+        type: SavedInfoType.PAYMENT,
+      }));
+
+      setCachedSavedPaymentMethods(cacheKey, paymentMethodList);
+      console.log("Saved payment methods cached with key:", cacheKey);
+
+      return paymentMethodList;
     }
   };
 
