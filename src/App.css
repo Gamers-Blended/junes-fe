@@ -1074,6 +1074,10 @@ body.modal-open {
   border: 1px solid #ffcdd2;
   border-radius: 4px;
   padding: 20px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  text-align: center;
 }
 
 .retry-button {
