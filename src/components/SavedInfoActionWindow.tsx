@@ -16,6 +16,11 @@ import {
   validateAllPaymentFields,
   PaymentValidationErrors,
 } from "../utils/paymentValidation";
+import {
+  REQUEST_MAPPING,
+  apiClient,
+  getApiErrorMessage,
+} from "../utils/api.ts";
 import { mockAddressList } from "../mocks/data/address.ts";
 
 import visaIcon from "../assets/acceptedCardsIcons/visaIcon.png";
@@ -33,7 +38,9 @@ type SavedInfoActionWindowProps =
       onClose?: () => void;
       onConfirm?: () => void;
       errorMessage?: string;
+      setErrorMessage?: (message: string) => void;
       isModalLoading?: boolean;
+      setIsModalLoading?: (loading: boolean) => void;
     }
   | {
       type: SavedInfoType.PAYMENT;
@@ -42,7 +49,9 @@ type SavedInfoActionWindowProps =
       onAdd?: () => void;
       onClose?: () => void;
       errorMessage?: string;
+      setErrorMessage?: (message: string) => void;
       isModalLoading?: boolean;
+      setIsModalLoading?: (loading: boolean) => void;
     }
   | {
       type: SavedInfoType.PAYMENT;
@@ -52,7 +61,9 @@ type SavedInfoActionWindowProps =
       onClose?: () => void;
       onConfirm?: () => void;
       errorMessage?: string;
+      setErrorMessage?: (message: string) => void;
       isModalLoading?: boolean;
+      setIsModalLoading?: (loading: boolean) => void;
     }
   | {
       type: SavedInfoType.PAYMENT;
@@ -61,7 +72,9 @@ type SavedInfoActionWindowProps =
       onClose?: () => void;
       onConfirm?: () => void;
       errorMessage?: string;
+      setErrorMessage?: (message: string) => void;
       isModalLoading?: boolean;
+      setIsModalLoading?: (loading: boolean) => void;
     };
 
 const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
@@ -70,7 +83,9 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     mode,
     savedItemData,
     errorMessage,
+    setErrorMessage,
     isModalLoading = false,
+    setIsModalLoading,
     onClose = () => console.log("Close clicked"),
   } = props;
 
@@ -111,48 +126,84 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     useState<PaymentValidationErrors>({});
   const [paymentTouched, setPaymentTouched] = useState<Set<string>>(new Set());
 
+  // Functions for API calls
+  const addPaymentMethod = async () => {
+    console.log("Making API to add payment method...");
+
+    const response = await apiClient.post(
+      `${REQUEST_MAPPING}/saved-items/payment-method`,
+      {
+        cardType: "MASTERCARD",
+        cardLastFour: cardNumber.replace(/\s/g, "").slice(-4), // Remove spaces, then take the last 4 characters
+        cardHolderName,
+        expirationMonth,
+        expirationYear,
+        billingAddressId: selectedBillingAddressId,
+        isDefault: false,
+      },
+    );
+
+    console.log("Payment method added successfully:", response.data);
+  };
+
   // Handler for buttons
-  const handleAction = () => {
-    if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.ADD) {
-      // Add mode for payment
-      // Validate payment fields
-      const { errors: paymentErrors, isValid: isPaymentValid } =
-        validateAllPaymentFields({
-          cardNumber,
-          cardHolderName,
-          expirationMonth,
-          expirationYear,
-        });
+  const handleAction = async () => {
+    setIsModalLoading?.(true);
+    setErrorMessage?.("");
 
-      setPaymentValidationError(paymentErrors);
-      setPaymentTouched(
-        new Set([
-          PaymentFormField.CARD_NUMBER,
-          PaymentFormField.CARD_HOLDER_NAME,
-          PaymentFormField.EXPIRATION_MONTH,
-          PaymentFormField.EXPIRATION_YEAR,
-        ]),
-      );
+    try {
+      if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.ADD) {
+        // Add mode for payment
+        // Validate payment fields
+        const { errors: paymentErrors, isValid: isPaymentValid } =
+          validateAllPaymentFields({
+            cardNumber,
+            cardHolderName,
+            expirationMonth,
+            expirationYear,
+          });
 
-      if (!isPaymentValid) {
-        console.log("Validation failed");
-        return;
+        setPaymentValidationError(paymentErrors);
+        setPaymentTouched(
+          new Set([
+            PaymentFormField.CARD_NUMBER,
+            PaymentFormField.CARD_HOLDER_NAME,
+            PaymentFormField.EXPIRATION_MONTH,
+            PaymentFormField.EXPIRATION_YEAR,
+          ]),
+        );
+
+        if (!isPaymentValid) {
+          console.log("Validation failed");
+          return;
+        }
+
+        await addPaymentMethod();
+
+        props.onAdd?.();
+      } else if (
+        type === SavedInfoType.PAYMENT &&
+        mode === SavedInfoAction.EDIT
+      ) {
+        // Edit mode for payment
+        const onEdit = props.onEdit || (() => console.log("Edit confirmed"));
+        onEdit();
+      } else {
+        // Delete mode for address and payment
+        const onConfirm =
+          props.onConfirm || (() => console.log("Confirm clicked"));
+        onConfirm();
       }
-
-      const onAdd = props.onAdd || (() => console.log("Add clicked"));
-      onAdd();
-    } else if (
-      type === SavedInfoType.PAYMENT &&
-      mode === SavedInfoAction.EDIT
-    ) {
-      // Edit mode for payment
-      const onEdit = props.onEdit || (() => console.log("Edit confirmed"));
-      onEdit();
-    } else {
-      // Delete mode for address and payment
-      const onConfirm =
-        props.onConfirm || (() => console.log("Confirm clicked"));
-      onConfirm();
+    } catch (error) {
+      setErrorMessage?.(
+        getApiErrorMessage(
+          error,
+          "Failed to process your request. Please try again.",
+        ),
+      );
+      console.error("Error handling action:", error);
+    } finally {
+      setIsModalLoading?.(false);
     }
   };
 

@@ -248,8 +248,13 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
     console.log("Default address set");
   };
 
-  const clearCacheAndRefetch = async () => {
+  const clearAddressCacheAndRefetch = async () => {
     clearSavedAddressesCache();
+    await fetchSavedItems();
+  };
+
+  const clearPaymentMethodCacheAndRefetch = async () => {
+    clearSavedPaymentMethodsCache();
     await fetchSavedItems();
   };
 
@@ -335,7 +340,7 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
 
     try {
       await deleteAddress(idToDelete);
-      clearCacheAndRefetch();
+      clearAddressCacheAndRefetch();
 
       setSuccessMessage({
         type:
@@ -367,8 +372,11 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
   };
 
   // Payment Handlers to be passed to modal
-  const handleAddPaymentMethod = () => {
+  const handleAddPaymentMethod = async () => {
     console.log("add payment method");
+
+    await clearPaymentMethodCacheAndRefetch();
+
     setActionWindowState({
       isOpen: false,
       type: SavedInfoType.PAYMENT,
@@ -417,7 +425,7 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
 
     try {
       await setDefaultAddress(id);
-      clearCacheAndRefetch();
+      clearAddressCacheAndRefetch();
 
       setSuccessMessage({
         type:
@@ -522,6 +530,10 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
               mode={SavedInfoAction.ADD}
               onAdd={handleAddPaymentMethod}
               onClose={handleCloseActionWindow}
+              errorMessage={modalErrorMessage}
+              setErrorMessage={setModalErrorMessage}
+              isModalLoading={isModalLoading}
+              setIsModalLoading={setIsModalLoading}
             />
           )}
 
