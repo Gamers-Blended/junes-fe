@@ -67,3 +67,14 @@ export enum SavedItemSelectorCaller {
   CHECKOUT = "checkout",
   SAVED_INFO = "savedinfo"
 }
+
+export enum CardType {
+  VISA = "VISA",
+  MASTERCARD = "MASTERCARD",
+  AMEX = "AMEX",
+  DISCOVER = "DISCOVER",
+  JCB = "JCB",
+  DINERS_CLUB = "DINERS_CLUB",
+  UNIONPAY = "UNIONPAY",
+  UNKNOWN = "UNKNOWN",
+}
