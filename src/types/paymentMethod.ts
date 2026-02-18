@@ -1,9 +1,9 @@
-import { SavedInfoType } from "../utils/Enums.tsx";
+import { SavedInfoType, CardType } from "../utils/Enums.tsx";
 
 export interface PaymentMethod {
   id: string;
   type: SavedInfoType.PAYMENT;
-  cardType: string;
+  cardType: CardType;
   cardLastFour: string;
   cardHolderName: string;
   expirationMonth: string;
