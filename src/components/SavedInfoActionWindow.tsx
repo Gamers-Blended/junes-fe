@@ -108,6 +108,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
       ? savedItemData.cardHolderName
       : "",
   );
+  const [isDefault, setIsDefault] = useState(false);
 
   // Get current date for default expiration
   const currentDate = new Date();
@@ -142,7 +143,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         expirationMonth,
         expirationYear,
         billingAddressId: selectedBillingAddressId,
-        isDefault: false,
+        isDefault: isDefault,
       },
     );
 
@@ -470,6 +471,25 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
                   paymentValidationError.expirationYear}
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Set as Default */}
+        <div className="checkbox-group">
+          <div className="checkbox-item">
+            <input
+              type="checkbox"
+              id="defaultPaymentMethod"
+              className={"checkbox-item"}
+              checked={isDefault}
+              onChange={(e) => setIsDefault(e.target.checked)}
+            />
+            <label
+              className={"filter-label"}
+              onClick={() => setIsDefault(!isDefault)}
+            >
+              Make this my default payment method
+            </label>
           </div>
         </div>
       </>
