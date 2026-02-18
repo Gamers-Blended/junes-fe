@@ -253,6 +253,27 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
     await fetchSavedItems();
   };
 
+  const deletePaymentMethod = async () => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping delete payment method API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return;
+    }
+
+    console.log(
+      "Calling API to delete payment method with id:",
+      actionWindowState.item?.id,
+    );
+
+    await apiClient.delete(
+      `${REQUEST_MAPPING}/saved-items/payment-method/${actionWindowState.item?.id}`,
+    );
+
+    console.log("Payment method deleted");
+  };
+
   const clearPaymentMethodCacheAndRefetch = async () => {
     clearSavedPaymentMethodsCache();
     await fetchSavedItems();
@@ -339,8 +360,13 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
     const itemType = actionWindowState.type;
 
     try {
-      await deleteAddress(idToDelete);
-      clearAddressCacheAndRefetch();
+      if (isAddressMode) {
+        await deleteAddress(idToDelete);
+        clearAddressCacheAndRefetch();
+      } else {
+        await deletePaymentMethod();
+        clearPaymentMethodCacheAndRefetch();
+      }
 
       setSuccessMessage({
         type:
@@ -556,6 +582,8 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
                 savedItemData={actionWindowState.item as PaymentMethod}
                 onConfirm={handleConfirmDelete}
                 onClose={handleCloseActionWindow}
+                errorMessage={modalErrorMessage}
+                isModalLoading={isModalLoading}
               />
             )}
         </>
