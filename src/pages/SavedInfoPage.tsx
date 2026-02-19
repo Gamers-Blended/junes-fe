@@ -415,8 +415,11 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
     });
   };
 
-  const handleEditPaymentMethod = () => {
+  const handleEditPaymentMethod = async () => {
     console.log("edit payment method");
+
+    await clearPaymentMethodCacheAndRefetch();
+
     setActionWindowState({
       isOpen: false,
       type: SavedInfoType.PAYMENT,
@@ -560,6 +563,7 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
               setErrorMessage={setModalErrorMessage}
               isModalLoading={isModalLoading}
               setIsModalLoading={setIsModalLoading}
+              offlineMode={offlineMode}
             />
           )}
 
@@ -571,6 +575,11 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
                 savedItemData={actionWindowState.item as PaymentMethod}
                 onEdit={handleEditPaymentMethod}
                 onClose={handleCloseActionWindow}
+                errorMessage={modalErrorMessage}
+                setErrorMessage={setModalErrorMessage}
+                isModalLoading={isModalLoading}
+                setIsModalLoading={setIsModalLoading}
+                offlineMode={offlineMode}
               />
             )}
 
@@ -584,6 +593,7 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
                 onClose={handleCloseActionWindow}
                 errorMessage={modalErrorMessage}
                 isModalLoading={isModalLoading}
+                offlineMode={offlineMode}
               />
             )}
         </>
@@ -601,6 +611,7 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
             onClose={handleCloseActionWindow}
             errorMessage={modalErrorMessage}
             isModalLoading={isModalLoading}
+            offlineMode={offlineMode}
           />
         )}
     </div>

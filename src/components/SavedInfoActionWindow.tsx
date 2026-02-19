@@ -18,6 +18,10 @@ import {
   PaymentValidationErrors,
 } from "../utils/paymentValidation";
 import {
+  getCachedSavedAddresses,
+  setCachedSavedAddresses,
+} from "../utils/cacheUtils.ts";
+import {
   REQUEST_MAPPING,
   apiClient,
   getApiErrorMessage,
@@ -44,6 +48,7 @@ type SavedInfoActionWindowProps =
       setErrorMessage?: (message: string) => void;
       isModalLoading?: boolean;
       setIsModalLoading?: (loading: boolean) => void;
+      offlineMode?: boolean;
     }
   | {
       type: SavedInfoType.PAYMENT;
@@ -55,6 +60,7 @@ type SavedInfoActionWindowProps =
       setErrorMessage?: (message: string) => void;
       isModalLoading?: boolean;
       setIsModalLoading?: (loading: boolean) => void;
+      offlineMode?: boolean;
     }
   | {
       type: SavedInfoType.PAYMENT;
@@ -67,6 +73,7 @@ type SavedInfoActionWindowProps =
       setErrorMessage?: (message: string) => void;
       isModalLoading?: boolean;
       setIsModalLoading?: (loading: boolean) => void;
+      offlineMode?: boolean;
     }
   | {
       type: SavedInfoType.PAYMENT;
@@ -78,7 +85,12 @@ type SavedInfoActionWindowProps =
       setErrorMessage?: (message: string) => void;
       isModalLoading?: boolean;
       setIsModalLoading?: (loading: boolean) => void;
+      offlineMode?: boolean;
     };
+
+type AddressDTO = Omit<Address, "id" | "type"> & {
+  addressID: string;
+};
 
 const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   const {
@@ -90,6 +102,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     isModalLoading = false,
     setIsModalLoading,
     onClose = () => console.log("Close clicked"),
+    offlineMode = false,
   } = props;
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -131,7 +144,51 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   const [paymentTouched, setPaymentTouched] = useState<Set<string>>(new Set());
 
   // Functions for API calls
+  const getSavedAddresses = async (): Promise<Address[]> => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping get Saved Items API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return mockAddressList;
+    }
+
+    const cacheKey = "savedAddresses";
+
+    const cachedData = getCachedSavedAddresses(cacheKey);
+    if (cachedData) {
+      console.log("Using cached saved addresses for key:", cacheKey);
+      return cachedData.data;
+    }
+
+    console.log("Fetching saved items from API...");
+
+    // API returns AddressDTO[], transform to Address[]
+    const response = await apiClient.get<AddressDTO[]>(
+      `${REQUEST_MAPPING}/saved-items/addresses/user`,
+    );
+
+    const addressList: Address[] = response.data.map((item) => ({
+      ...item,
+      id: item.addressID,
+      type: SavedInfoType.ADDRESS,
+    }));
+
+    setCachedSavedAddresses(cacheKey, addressList);
+    console.log("Saved addresses cached with key:", cacheKey);
+
+    return addressList;
+  };
+
   const addPaymentMethod = async () => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping add payment method API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return;
+    }
+
     console.log("Making API to add payment method...");
 
     const response = await apiClient.post(
@@ -148,6 +205,22 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     );
 
     console.log("Payment method added successfully:", response.data);
+  };
+
+  const editPaymentMethod = async () => {
+    console.log("Making API to edit payment method...");
+
+    const response = await apiClient.put(
+      `${REQUEST_MAPPING}/saved-items/payment-method/${savedItemData?.id}`,
+      {
+        cardHolderName,
+        expirationMonth,
+        expirationYear,
+        billingAddressId: selectedBillingAddressId,
+      },
+    );
+
+    console.log("Payment method edited successfully:", response.data);
   };
 
   // Handler for buttons
@@ -190,6 +263,9 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         mode === SavedInfoAction.EDIT
       ) {
         // Edit mode for payment
+
+        await editPaymentMethod();
+
         const onEdit = props.onEdit || (() => console.log("Edit confirmed"));
         onEdit();
       } else {
@@ -473,25 +549,6 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
             )}
           </div>
         </div>
-
-        {/* Set as Default */}
-        <div className="checkbox-group">
-          <div className="checkbox-item">
-            <input
-              type="checkbox"
-              id="defaultPaymentMethod"
-              className={"checkbox-item"}
-              checked={isDefault}
-              onChange={(e) => setIsDefault(e.target.checked)}
-            />
-            <label
-              className={"filter-label"}
-              onClick={() => setIsDefault(!isDefault)}
-            >
-              Make this my default payment method
-            </label>
-          </div>
-        </div>
       </>
     );
   };
@@ -508,6 +565,25 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         {/* Left Column - Card Details */}
         <div className="add-edit-payment-left-column">
           {renderPaymentFormFields(true)}
+
+          {/* Set as Default */}
+          <div className="checkbox-group">
+            <div className="checkbox-item">
+              <input
+                type="checkbox"
+                id="defaultPaymentMethod"
+                className={"checkbox-item"}
+                checked={isDefault}
+                onChange={(e) => setIsDefault(e.target.checked)}
+              />
+              <label
+                className={"filter-label"}
+                onClick={() => setIsDefault(!isDefault)}
+              >
+                Make this my default payment method
+              </label>
+            </div>
+          </div>
         </div>
 
         {/* Right Column - Accepted Cards */}
