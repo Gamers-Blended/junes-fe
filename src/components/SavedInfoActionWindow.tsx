@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
 import {
@@ -106,6 +106,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   } = props;
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [billingAddressList, setBillingAddressList] = useState<Address[]>([]);
   const [selectedBillingAddressId, setSelectedBillingAddressId] = useState<
     string | null
   >(
@@ -144,6 +145,37 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   const [paymentTouched, setPaymentTouched] = useState<Set<string>>(new Set());
 
   // Functions for API calls
+  useEffect(() => {
+    // Trigger only in PAYMENT EDIT mode and on the first page
+    if (
+      type === SavedInfoType.PAYMENT &&
+      mode === SavedInfoAction.EDIT &&
+      currentPage === 1
+    ) {
+      fetchSavedAddresses();
+    }
+  }, [type, mode, currentPage]);
+
+  const fetchSavedAddresses = async () => {
+    setIsModalLoading?.(true);
+    setErrorMessage?.("");
+
+    try {
+      const response = await getSavedAddresses();
+      setBillingAddressList(response);
+    } catch (error) {
+      setErrorMessage?.(
+        getApiErrorMessage(
+          error,
+          "Failed to fetch saved billing addresses. Please try again.",
+        ),
+      );
+      console.error("Error fetching saved billing addresses:", error);
+    } finally {
+      setIsModalLoading?.(false);
+    }
+  };
+
   const getSavedAddresses = async (): Promise<Address[]> => {
     if (offlineMode) {
       console.log("Offline mode: Skipping get Saved Items API call");
@@ -263,7 +295,6 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         mode === SavedInfoAction.EDIT
       ) {
         // Edit mode for payment
-
         await editPaymentMethod();
 
         const onEdit = props.onEdit || (() => console.log("Edit confirmed"));
@@ -626,7 +657,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     if (type !== SavedInfoType.PAYMENT || !savedItemData) return null;
 
     const payment = savedItemData as PaymentMethod;
-    const billingAddress = mockAddressList.find(
+    const billingAddress = billingAddressList.find(
       (addr) => addr.id === payment.billingAddressId,
     );
 
@@ -684,12 +715,11 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
       <SavedItemSelector
         mode={SavedInfoType.ADDRESS}
         caller={SavedItemSelectorCaller.SAVED_INFO}
-        items={mockAddressList}
+        items={billingAddressList}
         initialSelectedId={selectedBillingAddressId}
         onItemSelect={handleAddressSelect}
         onConfirm={handleAction}
         showConfirmButton={true}
-        className=""
         enableDisplayMode={false}
       />
     );
