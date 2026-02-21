@@ -274,6 +274,25 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
     console.log("Payment method deleted");
   };
 
+  const setDefaultPaymentMethod = async (id: string) => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping set default payment method API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return;
+    }
+
+    console.log("Calling API to set default payment method with id:", id);
+
+    await apiClient.post(`${REQUEST_MAPPING}/saved-items/set-default`, {
+      mode: "payment_method",
+      savedItemID: id,
+    });
+
+    console.log("Default payment method set");
+  };
+
   const clearPaymentMethodCacheAndRefetch = async () => {
     clearSavedPaymentMethodsCache();
     await fetchSavedItems();
@@ -453,8 +472,13 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
     console.log(`Set default for item with id: ${id}`);
 
     try {
-      await setDefaultAddress(id);
-      clearAddressCacheAndRefetch();
+      if (type == SavedInfoType.ADDRESS) {
+        await setDefaultAddress(id);
+        clearAddressCacheAndRefetch();
+      } else {
+        await setDefaultPaymentMethod(id);
+        clearPaymentMethodCacheAndRefetch();
+      }
 
       setSuccessMessage({
         type:
