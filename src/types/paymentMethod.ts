@@ -8,6 +8,6 @@ export interface PaymentMethod {
   cardHolderName: string;
   expirationMonth: string;
   expirationYear: string;
-  billingAddressId: string;
+  billingAddressID: string;
   isDefault: boolean;
 }

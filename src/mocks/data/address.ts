@@ -5,7 +5,7 @@ type SavedItem = Address;
 
 export const mockAddressList: SavedItem[] = [
   {
-    id: "1",
+    id: "53ccfe3e-9302-40a1-bca9-949813e72c1f",
     type: SavedInfoType.ADDRESS,
     fullName: "Name1",
     addressLine: "Address Line 11",
@@ -16,7 +16,7 @@ export const mockAddressList: SavedItem[] = [
     isDefault: true,
   },
   {
-    id: "2",
+    id: "f3a932e8-5e2c-4626-9f75-8bc3aead5c36",
     type: SavedInfoType.ADDRESS,
     fullName: "Name2",
     addressLine: "Address Line 12",
@@ -27,7 +27,7 @@ export const mockAddressList: SavedItem[] = [
     isDefault: false,
   },
   {
-    id: "3",
+    id: "b846e017-7f9f-4b90-adc4-d785638a4ff6",
     type: SavedInfoType.ADDRESS,
     fullName: "Name",
     addressLine: "Address Line 1",
@@ -38,7 +38,7 @@ export const mockAddressList: SavedItem[] = [
     isDefault: false,
   },
   {
-    id: "4",
+    id: "ccade9b9-bbde-48fc-b967-540d4c9a6aa8",
     type: SavedInfoType.ADDRESS,
     fullName: "Name",
     addressLine: "Address Line 1",
@@ -49,7 +49,7 @@ export const mockAddressList: SavedItem[] = [
     isDefault: false,
   },
   {
-    id: "5",
+    id: "5924498e-fa9f-4759-a935-94e6fab3eada",
     type: SavedInfoType.ADDRESS,
     fullName: "Name",
     addressLine: "Address Line 1",

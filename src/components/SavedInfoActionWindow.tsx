@@ -111,7 +111,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     string | null
   >(
     type === SavedInfoType.PAYMENT && savedItemData
-      ? savedItemData.billingAddressId
+      ? savedItemData.billingAddressID
       : null,
   );
 
@@ -240,6 +240,14 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   };
 
   const editPaymentMethod = async () => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping edit payment method API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return;
+    }
+
     console.log("Making API to edit payment method...");
 
     const response = await apiClient.put(
@@ -253,6 +261,31 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     );
 
     console.log("Payment method edited successfully:", response.data);
+  };
+
+  const attachAddressToPaymentMethod = async () => {
+    if (offlineMode) {
+      console.log(
+        "Offline mode: Skipping attach address to payment method API call",
+      );
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return;
+    }
+    console.log("Making API call to attach address to payment method...");
+
+    await apiClient.post(
+      `${REQUEST_MAPPING}/saved-items/attach`,
+      {
+        addressID: selectedBillingAddressId,
+        paymentMethodID: savedItemData?.id,
+      },
+    );
+
+    console.log(
+      "Address attached to payment method successfully"
+    );
   };
 
   // Handler for buttons
@@ -295,10 +328,15 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         mode === SavedInfoAction.EDIT
       ) {
         // Edit mode for payment
-        await editPaymentMethod();
+        if (currentPage == 2) {
+          // Page 2: attach selected billing address to payment method
+          await attachAddressToPaymentMethod();
+        } else {
+          // Page 1: edit card details
+          await editPaymentMethod();
+        }
 
-        const onEdit = props.onEdit || (() => console.log("Edit confirmed"));
-        onEdit();
+        props.onEdit?.();
       } else {
         // Delete mode for address and payment
         const onConfirm =
@@ -586,11 +624,6 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
   // Render functions for different modes
   const renderAddPaymentMethodForm = () => {
-    const billingAddress =
-      type === SavedInfoType.PAYMENT && savedItemData
-        ? savedItemData.billingAddressId
-        : null;
-
     return (
       <div className="add-edit-payment-form-container">
         {/* Left Column - Card Details */}
@@ -658,7 +691,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
     const payment = savedItemData as PaymentMethod;
     const billingAddress = billingAddressList.find(
-      (addr) => addr.id === payment.billingAddressId,
+      (addr) => addr.id === payment.billingAddressID,
     );
 
     return (
