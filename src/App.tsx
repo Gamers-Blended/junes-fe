@@ -47,8 +47,8 @@ function AppLayout() {
             path="/products/listings/:platform"
             element={<ProductListingPage />}
           />
-          <Route path="/order/:orderId" element={<OrderDetailsPage />} />
-          <Route path="/invoice/:orderId" element={<InvoicePage />} />
+          <Route path="/order/:orderNumber" element={<OrderDetailsPage />} />
+          <Route path="/invoice/:orderNumber" element={<InvoicePage />} />
           <Route path="/games/:slug" element={<ProductDetailsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/createaccount" element={<CreateNewUserPage />} />

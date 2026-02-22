@@ -511,15 +511,15 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
     handlePageJump();
   };
 
-  const handleViewOrderDetails = (orderId: string) => {
-    const url = `/order/${orderId}`;
-    console.log(`Navigating to order details for ${orderId}`);
+  const handleViewOrderDetails = (orderNumber: string) => {
+    const url = `/order/${orderNumber}`;
+    console.log(`Navigating to order details for ${orderNumber}`);
     navigate(url);
   };
 
-  const handlePrintInvoice = (orderId: string) => {
-    const url = `/invoice/${orderId}`;
-    console.log(`Navigating to invoice page for ${orderId}`);
+  const handlePrintInvoice = (orderNumber: string) => {
+    const url = `/invoice/${orderNumber}`;
+    console.log(`Navigating to invoice page for ${orderNumber}`);
     navigate(url);
   };
 

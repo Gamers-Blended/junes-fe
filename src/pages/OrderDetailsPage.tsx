@@ -26,7 +26,7 @@ const OrderDetailsPage: React.FC<OrderDetailsPageProps> = ({
   offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
 }) => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
-  const { orderId } = useParams();
+  const { orderNumber } = useParams();
   const [transactionDetails, setTransactionDetails] = useState<OrderDetails>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -45,7 +45,7 @@ const OrderDetailsPage: React.FC<OrderDetailsPageProps> = ({
       setErrorMessage(
         getApiErrorMessage(
           error,
-          `Failed to fetch transaction details for ${orderId}. Please try again.`,
+          `Failed to fetch transaction details for ${orderNumber}. Please try again.`,
         ),
       );
       console.error("Error fetching transaction details:", error);
@@ -63,7 +63,7 @@ const OrderDetailsPage: React.FC<OrderDetailsPageProps> = ({
       return mockOrderDetails;
     }
 
-    const cacheKey = `transactionDetails_${orderId}`;
+    const cacheKey = `transactionDetails_${orderNumber}`;
 
     // Check if data exists in cache
     const cachedData = getCachedTransactionDetails(cacheKey);
@@ -75,7 +75,7 @@ const OrderDetailsPage: React.FC<OrderDetailsPageProps> = ({
     console.log("Fetching transaction details from API");
 
     const response = await apiClient.get<OrderDetails>(
-      `${REQUEST_MAPPING}/transaction/${orderId}/details`,
+      `${REQUEST_MAPPING}/transaction/${orderNumber}/details`,
     );
 
     // Store response in cache
@@ -92,7 +92,7 @@ const OrderDetailsPage: React.FC<OrderDetailsPageProps> = ({
   return (
     <div className="order-details-page-container">
       <div className="order-header">
-        <h1>ORDER #{orderId ?? ""}</h1>
+        <h1>ORDER #{orderNumber ?? ""}</h1>
       </div>
 
       <div className="order-details-row">
