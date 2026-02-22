@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Order } from "../types/order";
+import { OrderDetails } from "../types/orderDetails";
 import {
   appendUrlPrefix,
   formatFullPlatformName,
@@ -13,7 +13,7 @@ import { Item, setSelectedItem } from "../store/productSlice";
 import { OrderTableMode } from "../utils/Enums";
 
 interface OrderTableProps {
-  orderData: Order;
+  orderData: OrderDetails;
   mode: string;
 }
 

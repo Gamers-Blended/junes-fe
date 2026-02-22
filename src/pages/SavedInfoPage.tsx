@@ -472,7 +472,7 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
     console.log(`Set default for item with id: ${id}`);
 
     try {
-      if (type == SavedInfoType.ADDRESS) {
+      if (type === SavedInfoType.ADDRESS) {
         await setDefaultAddress(id);
         clearAddressCacheAndRefetch();
       } else {

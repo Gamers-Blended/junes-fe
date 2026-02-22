@@ -1,4 +1,5 @@
 import { TransactionHistoryResponse } from "../types/transaction";
+import { OrderDetails } from "../types/orderDetails";
 import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
 
@@ -15,6 +16,7 @@ interface Cache {
 // SessionStorage keys for different caches
 const CACHE_KEYS = {
   TRANSACTION_HISTORY: "transactionHistoryCache",
+  TRANSACTION_DETAILS: "transactionDetailsCache",
   USER_DETAILS: "userDetailsCache",
   SAVED_ADDRESSES: "savedAddressesCache",
   SAVED_PAYMENT_METHODS: "savedPaymentMethodsCache",
@@ -128,6 +130,45 @@ export const setCachedTransactionHistory = (
 ): void => {
   setCachedItem<TransactionHistoryResponse>(
     CACHE_KEYS.TRANSACTION_HISTORY,
+    itemKey,
+    data,
+  );
+};
+
+// ========== Transaction Details specific functions ==========
+
+/**
+ * Clear transaction cache from sessionStorage
+ * Calls this function when:
+ * - User logs out
+ * - User modifies an existing order
+ * - User cancels an order
+ */
+export const clearTransactionDetailsCache = (): void => {
+  clearCache(CACHE_KEYS.TRANSACTION_DETAILS);
+};
+
+/**
+ * Get a specific cached transaction details by key
+ */
+export const getCachedTransactionDetails = (
+  itemKey: string,
+): CacheEntry<OrderDetails> | null => {
+  return getCachedItem<OrderDetails>(
+    CACHE_KEYS.TRANSACTION_DETAILS,
+    itemKey,
+  );
+};
+
+/**
+ * Set a specific cached transaction details by key
+ */
+export const setCachedTransactionDetails = (
+  itemKey: string,
+  data: OrderDetails,
+): void => {
+  setCachedItem<OrderDetails>(
+    CACHE_KEYS.TRANSACTION_DETAILS,
     itemKey,
     data,
   );
