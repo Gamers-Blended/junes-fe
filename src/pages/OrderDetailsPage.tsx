@@ -1,21 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import OrderTable from "../components/OrderTable";
 import { OrderTableMode } from "../utils/Enums";
 import { formatDateTimeWithHyphens } from "../utils/utils.ts";
-import { OrderDetails } from "../types/orderDetails.ts";
-import {
-  REQUEST_MAPPING,
-  apiClient,
-  getApiErrorMessage,
-} from "../utils/api.ts";
-import {
-  getCachedTransactionDetails,
-  setCachedTransactionDetails,
-} from "../utils/cacheUtils.ts";
-import { mockOrderDetails } from "../mocks/data/orderDetails.ts";
+import { useTransactionDetails } from "../utils/useTransactionDetails.ts";
 import Footer from "../components/Footer";
 
 interface OrderDetailsPageProps {
@@ -27,67 +17,15 @@ const OrderDetailsPage: React.FC<OrderDetailsPageProps> = ({
 }) => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const { orderNumber } = useParams();
-  const [transactionDetails, setTransactionDetails] = useState<OrderDetails>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>("");
 
   useAuthRedirect(isLoggedIn);
 
-  const fetchTransactionDetails = async () => {
-    setIsLoading(true);
-    setErrorMessage("");
-
-    try {
-      const response = await getTransactionDetails();
-
-      setTransactionDetails(response);
-    } catch (error) {
-      setErrorMessage(
-        getApiErrorMessage(
-          error,
-          `Failed to fetch transaction details for ${orderNumber}. Please try again.`,
-        ),
-      );
-      console.error("Error fetching transaction details:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getTransactionDetails = async (): Promise<OrderDetails> => {
-    if (offlineMode) {
-      console.log("Offline mode: Skipping get Transaction Details API call");
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      return mockOrderDetails;
-    }
-
-    const cacheKey = `transactionDetails_${orderNumber}`;
-
-    // Check if data exists in cache
-    const cachedData = getCachedTransactionDetails(cacheKey);
-    if (cachedData) {
-      console.log("Using cached transaction details for key:", cacheKey);
-      return cachedData.data;
-    }
-
-    console.log("Fetching transaction details from API");
-
-    const response = await apiClient.get<OrderDetails>(
-      `${REQUEST_MAPPING}/transaction/${orderNumber}/details`,
-    );
-
-    // Store response in cache
-    setCachedTransactionDetails(cacheKey, response.data);
-    console.log("Transaction details cached with key:", cacheKey);
-
-    return response.data;
-  };
-
-  useEffect(() => {
-    fetchTransactionDetails();
-  }, []);
+  const { transactionDetails, isLoading, errorMessage } = useTransactionDetails(
+    {
+      orderNumber,
+      offlineMode,
+    },
+  );
 
   return (
     <div className="order-details-page-container">
