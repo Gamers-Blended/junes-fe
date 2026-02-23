@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import { NavigationState } from "../types/navigationState";
@@ -196,7 +196,6 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   const getTransactionHistory = async (
     params?: TransactionHistoryParams,
   ): Promise<TransactionHistoryResponse> => {
-
     if (offlineMode) {
       console.log("Offline mode: Skipping get Transaction History API call");
       // Simulate API delay
@@ -517,12 +516,6 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
     navigate(url);
   };
 
-  const handlePrintInvoice = (orderNumber: string) => {
-    const url = `/invoice/${orderNumber}`;
-    console.log(`Navigating to invoice page for ${orderNumber}`);
-    navigate(url);
-  };
-
   return (
     <div className="my-account-page-container">
       <div className="my-account-content">
@@ -691,14 +684,15 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
                       >
                         View order details
                       </button>
-                      <button
+
+                      <Link
+                        to={`/invoice/${transaction.orderNumber}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="action-link"
-                        onClick={() =>
-                          handlePrintInvoice(transaction.orderNumber)
-                        }
                       >
                         Print invoice
-                      </button>
+                      </Link>
                     </div>
 
                     {transaction.transactionItemDTOList.map((item) => (
