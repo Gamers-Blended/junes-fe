@@ -113,7 +113,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
   const handleForgotPassword = (): void => {
     console.log("Routing to forgot password page");
-    navigate("/resetpassword/");
+    navigate("/forgotpassword/");
   };
 
   return (

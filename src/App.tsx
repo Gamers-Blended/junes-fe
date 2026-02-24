@@ -3,6 +3,7 @@ import HomePage from "./pages/HomePage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import CreateNewUserPage from "./pages/CreateNewUserPage.tsx";
 import ForgetPasswordPage from "./pages/ForgetPasswordPage.tsx";
+import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
 import EmailSentPage from "./pages/EmailSentPage.tsx";
 import MyAccountPage from "./pages/MyAccountPage.tsx";
 import ChangeCredentialsPage from "./pages/ChangeCredentialsPage.tsx";
@@ -52,7 +53,8 @@ function AppLayout() {
           <Route path="/games/:slug" element={<ProductDetailsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/createaccount" element={<CreateNewUserPage />} />
-          <Route path="/resetpassword" element={<ForgetPasswordPage />} />
+          <Route path="/forgotpassword" element={<ForgetPasswordPage />} />
+          <Route path="/resetpassword" element={<ResetPasswordPage />} />
           <Route path="/emailsent" element={<EmailSentPage />} />
           <Route path="/myaccount" element={<MyAccountPage />} />
           <Route

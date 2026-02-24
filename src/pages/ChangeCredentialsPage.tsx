@@ -148,7 +148,7 @@ const ChangeCredentialsPage: React.FC = () => {
       <div className="form-parent-container">
         <div className="form">
           <div className="form-title text-align-left">
-            <h1>{renderHeader()}</h1>
+            {renderHeader()}
           </div>
 
           <div className="form-container">
