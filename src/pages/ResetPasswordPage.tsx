@@ -11,9 +11,16 @@ import {
   setMatchValidationError,
 } from "../utils/inputValidationUtils";
 import { createInputChangeHandler } from "../utils/FormHandlers";
+import { REQUEST_MAPPING, apiClient } from "../utils/api.ts";
 import { FormInput } from "../components/FormInput.tsx";
 
-const ResetPasswordPage: React.FC = () => {
+interface ResetPasswordPageProps {
+  offlineMode?: boolean;
+}
+
+const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
+  offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
+}) => {
   const navigate = useNavigate();
   const { token } = useParams<{ token: string }>();
   const [isTokenValid, setIsTokenValid] = useState<boolean | null>(null); // null = still checking
@@ -26,6 +33,7 @@ const ResetPasswordPage: React.FC = () => {
     confirmEmail: "",
     confirmPassword: "",
   });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!token) {
@@ -33,14 +41,32 @@ const ResetPasswordPage: React.FC = () => {
       return;
     }
 
-    try {
-      // Decode JWT payload (middle section)
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      const isExpired = payload.exp * 1000 < Date.now(); // exp is in seconds
-      setIsTokenValid(!isExpired);
-    } catch (error) {
-      setIsTokenValid(false);
-    }
+    const validateToken = async () => {
+      setIsLoading(true);
+
+      if (offlineMode) {
+        console.log(
+          "Offline mode: Skipping validate reset token API call",
+        );
+        // Simulate API delay
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        setIsTokenValid(true);
+        return;
+      }
+
+      try {
+        await apiClient.get(
+          `${REQUEST_MAPPING}/auth/validate-reset-token/${token}`,
+        );
+        setIsTokenValid(true);
+      } catch (error) {
+        setIsTokenValid(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    validateToken();
   }, [token]);
 
   const handleReset = (): void => {
@@ -104,7 +130,9 @@ const ResetPasswordPage: React.FC = () => {
             <h1>RESET PASSWORD</h1>
           </div>
 
-          {isTokenValid ? (
+          {isLoading || isTokenValid === null ? (
+            <div>Validating link, please wait...</div>
+          ) : isTokenValid ? (
             <>
               <div className="form-container">
                 {/* New Password Input */}
