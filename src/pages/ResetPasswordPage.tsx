@@ -11,7 +11,11 @@ import {
   setMatchValidationError,
 } from "../utils/inputValidationUtils";
 import { createInputChangeHandler } from "../utils/FormHandlers";
-import { REQUEST_MAPPING, apiClient } from "../utils/api.ts";
+import {
+  REQUEST_MAPPING,
+  apiClient,
+  getApiErrorMessage,
+} from "../utils/api.ts";
 import { FormInput } from "../components/FormInput.tsx";
 
 interface ResetPasswordPageProps {
@@ -33,6 +37,8 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
     confirmEmail: "",
     confirmPassword: "",
   });
+  const [apiError, setApiError] = useState<string>("");
+  const [isValidating, setisValidating] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -42,12 +48,10 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
     }
 
     const validateToken = async () => {
-      setIsLoading(true);
+      setisValidating(true);
 
       if (offlineMode) {
-        console.log(
-          "Offline mode: Skipping validate reset token API call",
-        );
+        console.log("Offline mode: Skipping validate reset token API call");
         // Simulate API delay
         await new Promise((resolve) => setTimeout(resolve, 500));
         setIsTokenValid(true);
@@ -62,12 +66,48 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
       } catch (error) {
         setIsTokenValid(false);
       } finally {
-        setIsLoading(false);
+        setisValidating(false);
       }
     };
 
     validateToken();
   }, [token]);
+
+  const resetPassword = async (password: string) => {
+    setIsLoading(true);
+    setApiError("");
+
+    if (offlineMode) {
+      console.log("Offline mode: Skipping reset password API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } else {
+      try {
+        await apiClient.post(`${REQUEST_MAPPING}/auth/reset-password`, {
+          token: token,
+          newPassword: password,
+        });
+      } catch (error) {
+        setApiError(
+          getApiErrorMessage(
+            error,
+            "Failed to reset password. Please try again.",
+          ),
+        );
+        console.error("Error resetting password:", error);
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    console.log("Password reset");
+    const state: NavigationState = {
+      from: "resetpassword",
+      successMessage: "Password reset",
+    };
+    navigate("/usercredentialschanged/", { state });
+    // No need to set isLoading to false here as we navigate away
+  };
 
   const handleReset = (): void => {
     let newErrors: FormErrors = {
@@ -93,11 +133,7 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
       !newErrors.confirmEmail &&
       !newErrors.confirmPassword
     ) {
-      const state: NavigationState = {
-        from: "resetpassword",
-        successMessage: "Password reset",
-      };
-      navigate("/usercredentialschanged/", { state });
+      resetPassword(password);
     }
   };
 
@@ -130,7 +166,7 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
             <h1>RESET PASSWORD</h1>
           </div>
 
-          {isLoading || isTokenValid === null ? (
+          {isValidating || isTokenValid === null ? (
             <div>Validating link, please wait...</div>
           ) : isTokenValid ? (
             <>
@@ -163,9 +199,15 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
                 />
               </div>
 
+              {apiError && <div className="error-message">{apiError}</div>}
+
               {/* Reset Button */}
               <div className="actions-container">
-                <button onClick={handleReset} className="form-button">
+                <button
+                  onClick={handleReset}
+                  className={`form-button ${isLoading ? "loading" : ""}`}
+                  disabled={isLoading}
+                >
                   Reset Password
                 </button>
               </div>
