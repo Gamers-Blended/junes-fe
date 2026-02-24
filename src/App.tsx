@@ -54,7 +54,7 @@ function AppLayout() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/createaccount" element={<CreateNewUserPage />} />
           <Route path="/forgotpassword" element={<ForgetPasswordPage />} />
-          <Route path="/resetpassword" element={<ResetPasswordPage />} />
+          <Route path="/resetpassword/:token" element={<ResetPasswordPage />} />
           <Route path="/emailsent" element={<EmailSentPage />} />
           <Route path="/myaccount" element={<MyAccountPage />} />
           <Route
