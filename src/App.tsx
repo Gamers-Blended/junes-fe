@@ -5,6 +5,7 @@ import CreateNewUserPage from "./pages/CreateNewUserPage.tsx";
 import ForgetPasswordPage from "./pages/ForgetPasswordPage.tsx";
 import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
 import EmailSentPage from "./pages/EmailSentPage.tsx";
+import VerifyPage from "./pages/VerifyPage.tsx";
 import UserCredentialsChangedPage from "./pages/UserCredentialsChangedPage.tsx";
 import MyAccountPage from "./pages/MyAccountPage.tsx";
 import ChangeCredentialsPage from "./pages/ChangeCredentialsPage.tsx";
@@ -57,6 +58,7 @@ function AppLayout() {
           <Route path="/forgotpassword" element={<ForgetPasswordPage />} />
           <Route path="/resetpassword/:token" element={<ResetPasswordPage />} />
           <Route path="/emailsent" element={<EmailSentPage />} />
+          <Route path="/verify" element={<VerifyPage />} />
           <Route path="/usercredentialschanged" element={<UserCredentialsChangedPage />} />
           <Route path="/myaccount" element={<MyAccountPage />} />
           <Route
