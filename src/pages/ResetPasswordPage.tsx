@@ -55,6 +55,7 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
         // Simulate API delay
         await new Promise((resolve) => setTimeout(resolve, 500));
         setIsTokenValid(true);
+        setisValidating(false);
         return;
       }
 
@@ -104,6 +105,7 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({
     const state: NavigationState = {
       from: "resetpassword",
       successMessage: "Password reset",
+      fieldToChange: Credentials.PASSWORD,
     };
     navigate("/usercredentialschanged/", { state });
     // No need to set isLoading to false here as we navigate away
