@@ -108,7 +108,7 @@ const ChangeCredentialsPage: React.FC = () => {
   const handleCurrentPasswordChange = createInputChangeHandler(
     setCurrentPassword,
     setErrors,
-    Credentials.PASSWORD,
+    Credentials.CURRENT_PASSWORD,
   );
 
   const handlePasswordChange = createInputChangeHandler(
