@@ -1,5 +1,7 @@
 import { useState, JSX } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../components/AuthContext";
+import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import { NavigationState } from "../types/navigationState";
 import { FormErrors } from "../types/formErrors";
 import { mockUserData } from "../mocks/data/userData.ts";
@@ -14,10 +16,22 @@ import {
   setMatchValidationError,
 } from "../utils/inputValidationUtils";
 import { createInputChangeHandler } from "../utils/FormHandlers";
+import {
+  REQUEST_MAPPING,
+  apiClient,
+  getApiErrorMessage,
+} from "../utils/api.ts";
 import { FormInput } from "../components/FormInput.tsx";
 import Breadcrumb from "../components/Breadcrumb.tsx";
 
-const ChangeCredentialsPage: React.FC = () => {
+interface ChangeCredentialsPageProps {
+  offlineMode?: boolean;
+}
+
+const ChangeCredentialsPage: React.FC<ChangeCredentialsPageProps> = ({
+  offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
+}) => {
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState<string>("");
@@ -32,9 +46,13 @@ const ChangeCredentialsPage: React.FC = () => {
     confirmEmail: "",
     confirmPassword: "",
   });
+  const [apiError, setApiError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { fieldToChange } = location.state || {};
   const isPasswordMode = fieldToChange === Credentials.PASSWORD;
+
+  useAuthRedirect(isLoggedIn);
 
   const breadcrumbItems = [
     {
@@ -54,7 +72,45 @@ const ChangeCredentialsPage: React.FC = () => {
     }
   };
 
-  const handleUpdate = (): void => {
+  const changePassword = async (password: string): Promise<void> => {
+    console.log("Calling update password API...");
+    setIsLoading(true);
+    setApiError("");
+
+    if (offlineMode) {
+      console.log("Offline mode: Skipping update password API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } else {
+      try {
+        await apiClient.patch(`${REQUEST_MAPPING}/user/password`, {
+          currentPassword: currentPassword,
+          newPassword: password,
+        });
+      } catch (error) {
+        setApiError(
+          getApiErrorMessage(
+            error,
+            "Failed to update password. Please try again.",
+          ),
+        );
+        console.error("Error updating password:", error);
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    console.log("Password updated");
+    const state: NavigationState = {
+      from: "changecredentials",
+      successMessage: "Password updated",
+      fieldToChange: Credentials.PASSWORD,
+    };
+    navigate("/myaccount/", { state });
+    // No need to set isLoading to false here as we navigate away
+  };
+
+  const handleUpdate = async (): Promise<void> => {
     let newErrors: FormErrors = {
       email: "",
       password: "",
@@ -90,15 +146,8 @@ const ChangeCredentialsPage: React.FC = () => {
       !newErrors.confirmEmail &&
       !newErrors.confirmPassword
     ) {
-      console.log(`Credentials (${fieldToChange}) updated!`);
       if (fieldToChange === Credentials.PASSWORD) {
-        const state: NavigationState = {
-          from: "changecredentials",
-          successMessage: `${
-            fieldToChange.charAt(0).toUpperCase() + fieldToChange.slice(1)
-          } changed`,
-        };
-        navigate("/myaccount/", { state });
+        await changePassword(password);
       } else if (fieldToChange === Credentials.EMAIL) {
         navigate("/emailsent/");
       }
@@ -246,10 +295,17 @@ const ChangeCredentialsPage: React.FC = () => {
 
             {/* Update Button */}
             <div className="actions-container">
-              <button onClick={handleUpdate} className="form-button">
+              <button
+                onClick={handleUpdate}
+                className={`form-button ${isLoading ? "loading" : ""}`}
+                disabled={isLoading}
+              >
                 Update {isPasswordMode ? "Password" : "Email"}
               </button>
             </div>
+
+            {/* Error Message */}
+            {apiError && <div className="error-message">{apiError}</div>}
           </div>
         </div>
       </div>
