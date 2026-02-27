@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import { NavigationState } from "../types/navigationState";
@@ -29,6 +29,7 @@ import {
   clearAllCaches,
 } from "../utils/cacheUtils.ts";
 import ProductImageAndDescription from "../components/ProductImageAndDescription";
+import AccountInfoChangedMessageBox from "../components/AccountInfoChangedMessageBox.tsx";
 import Footer from "../components/Footer";
 
 import bookIcon from "../assets/bookIcon.png";
@@ -66,7 +67,12 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   const [isLoadingTransactions, setIsLoadingTransactions] =
     useState<boolean>(false);
 
+  const location = useLocation();
   const navigate = useNavigate();
+  const navigationState = location.state as NavigationState | null;
+  const [successMessage, setSuccessMessage] = useState<string>(
+    navigationState?.successMessage || "",
+  );
 
   const sortOptions = [
     {
@@ -336,6 +342,12 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
     navigate("/savedinfo/", { state });
   };
 
+  const handleCloseSuccessMessage = () => {
+    setSuccessMessage("");
+  };
+
+  const getSuccessMessage = () => successMessage;
+
   const getCurrentSortValue = (): string => {
     const currentOption = sortOptions.find(
       (option) => option.sortBy === sortBy && option.orderBy === orderBy,
@@ -523,6 +535,14 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
           <div className="common-header">
             <h1>MY ACCOUNT</h1>
           </div>
+
+          {/* Success Message */}
+          {successMessage && (
+            <AccountInfoChangedMessageBox
+              message={getSuccessMessage()}
+              onClose={handleCloseSuccessMessage}
+            />
+          )}
 
           <div className="my-account-details">
             <p>
