@@ -8,6 +8,7 @@ import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_MAX_LENGTH,
   validateNewPasswordCreation,
+  validatePassword,
   validateEmail,
   validateMatch,
   setMatchValidationError,
@@ -19,6 +20,7 @@ import Breadcrumb from "../components/Breadcrumb.tsx";
 const ChangeCredentialsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [currentPassword, setCurrentPassword] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -26,6 +28,7 @@ const ChangeCredentialsPage: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({
     email: "",
     password: "",
+    currentPassword: "",
     confirmEmail: "",
     confirmPassword: "",
   });
@@ -55,23 +58,25 @@ const ChangeCredentialsPage: React.FC = () => {
     let newErrors: FormErrors = {
       email: "",
       password: "",
+      currentPassword: "",
       confirmEmail: "",
       confirmPassword: "",
     };
 
     if (isPasswordMode) {
+      newErrors.currentPassword = validatePassword(currentPassword);
       newErrors.password = validateNewPasswordCreation(password);
       newErrors.confirmPassword = validateMatch(
         password,
         confirmPassword,
-        Credentials.PASSWORD
+        Credentials.PASSWORD,
       );
     } else {
       newErrors.email = validateEmail(email);
       newErrors.confirmEmail = validateMatch(
         email,
         confirmEmail,
-        Credentials.EMAIL
+        Credentials.EMAIL,
       );
     }
 
@@ -80,6 +85,7 @@ const ChangeCredentialsPage: React.FC = () => {
     // If no errors, proceed update
     if (
       !newErrors.email &&
+      !newErrors.currentPassword &&
       !newErrors.password &&
       !newErrors.confirmEmail &&
       !newErrors.confirmPassword
@@ -99,28 +105,34 @@ const ChangeCredentialsPage: React.FC = () => {
     }
   };
 
+  const handleCurrentPasswordChange = createInputChangeHandler(
+    setCurrentPassword,
+    setErrors,
+    Credentials.PASSWORD,
+  );
+
   const handlePasswordChange = createInputChangeHandler(
     setPassword,
     setErrors,
-    Credentials.PASSWORD
+    Credentials.PASSWORD,
   );
 
   const handleConfirmPasswordChange = createInputChangeHandler(
     setConfirmPassword,
     setErrors,
-    Credentials.CONFIRM_PASSWORD
+    Credentials.CONFIRM_PASSWORD,
   );
 
   const handleEmailChange = createInputChangeHandler(
     setEmail,
     setErrors,
-    Credentials.EMAIL
+    Credentials.EMAIL,
   );
 
   const handleConfirmEmailChange = createInputChangeHandler(
     setConfirmEmail,
     setErrors,
-    Credentials.CONFIRM_EMAIL
+    Credentials.CONFIRM_EMAIL,
   );
 
   const validateConfirmPasswordOnBlur = (): void => {
@@ -128,7 +140,7 @@ const ChangeCredentialsPage: React.FC = () => {
       password,
       confirmPassword,
       setErrors,
-      Credentials.CONFIRM_PASSWORD
+      Credentials.CONFIRM_PASSWORD,
     );
   };
 
@@ -137,7 +149,7 @@ const ChangeCredentialsPage: React.FC = () => {
       email,
       confirmEmail,
       setErrors,
-      Credentials.CONFIRM_EMAIL
+      Credentials.CONFIRM_EMAIL,
     );
   };
 
@@ -147,13 +159,25 @@ const ChangeCredentialsPage: React.FC = () => {
 
       <div className="form-parent-container">
         <div className="form">
-          <div className="form-title text-align-left">
-            {renderHeader()}
-          </div>
+          <div className="form-title text-align-left">{renderHeader()}</div>
 
           <div className="form-container">
             {isPasswordMode ? (
               <>
+                {/* Current Password Input */}
+                <FormInput
+                  label="Current password"
+                  type={Credentials.PASSWORD}
+                  placeholder={"Please key in your current password here"}
+                  value={currentPassword}
+                  onChange={handleCurrentPasswordChange}
+                  error={errors.currentPassword}
+                  className={`input-field password-input ${
+                    errors.currentPassword ? "error" : ""
+                  }`}
+                  showPasswordToggle={true}
+                />
+
                 {/* New Password Input */}
                 <FormInput
                   label="New password"
