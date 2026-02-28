@@ -29,7 +29,9 @@ import {
   clearAllCaches,
 } from "../utils/cacheUtils.ts";
 import ProductImageAndDescription from "../components/ProductImageAndDescription";
-import AccountInfoChangedMessageBox from "../components/AccountInfoChangedMessageBox.tsx";
+import AccountInfoChangedMessageBox, {
+  MessageBoxMode,
+} from "../components/AccountInfoChangedMessageBox.tsx";
 import Footer from "../components/Footer";
 
 import bookIcon from "../assets/bookIcon.png";
@@ -72,6 +74,9 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   const navigationState = location.state as NavigationState | null;
   const [successMessage, setSuccessMessage] = useState<string>(
     navigationState?.successMessage || "",
+  );
+  const [messageBoxMode, setMessageBoxMode] = useState<MessageBoxMode>(
+    (navigationState?.mode as MessageBoxMode) || "success",
   );
 
   const sortOptions = [
@@ -541,6 +546,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
           {successMessage && (
             <AccountInfoChangedMessageBox
               message={getSuccessMessage()}
+              mode={messageBoxMode}
               onClose={handleCloseSuccessMessage}
             />
           )}

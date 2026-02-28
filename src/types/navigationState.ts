@@ -10,4 +10,5 @@ export interface NavigationState {
   action?: SavedInfoAction.ADD | SavedInfoAction.EDIT; // Action type for saved info
   item?: Address | PaymentMethod; // Item being edited (if applicable)
   successMessage?: string; // Optional success message to display on the target page
+  mode?: string; // Mode of AccountInfoChangedMessageBox
 }
