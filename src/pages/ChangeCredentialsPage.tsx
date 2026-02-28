@@ -144,7 +144,7 @@ const ChangeCredentialsPage: React.FC<ChangeCredentialsPageProps> = ({
     console.log("email updated");
     const state: NavigationState = {
       from: "changecredentials",
-      successMessage: `A verification email has been sent to ${email}.Please open it in your inbox and follow the steps stated in the email.`,
+      successMessage: `A verification email has been sent to ${email}.\nPlease open it in your inbox and follow the steps stated in the email.`,
       fieldToChange: Credentials.EMAIL,
       mode: "info",
     };

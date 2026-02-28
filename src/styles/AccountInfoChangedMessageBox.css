@@ -38,6 +38,7 @@
   color: #000;
   display: flex;
   align-items: center;
+  white-space: pre-line;
 }
 
 .account-info-changed-message p::before {
