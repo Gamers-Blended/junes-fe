@@ -16,6 +16,7 @@ const EmailSentPage: React.FC<EmailSentPageProps> = ({
   const location = useLocation();
   const navigate = useNavigate();
   const { from, email } = location.state || {};
+  const [successMessage, setSuccessMessage] = useState<string>("");
   const [apiError, setApiError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -36,6 +37,7 @@ const EmailSentPage: React.FC<EmailSentPageProps> = ({
   };
 
   const handleResendEmail = async (): Promise<void> => {
+    setSuccessMessage("");
     setApiError("");
     setIsLoading(true);
 
@@ -70,7 +72,7 @@ const EmailSentPage: React.FC<EmailSentPageProps> = ({
     );
 
     console.log("Resend verification email response:", response.data);
-    return response.data;
+    setSuccessMessage(response.data.message);
   };
 
   return (
@@ -86,6 +88,9 @@ const EmailSentPage: React.FC<EmailSentPageProps> = ({
               email.
             </p>
           )}
+
+          {/* Success Message */}
+          {successMessage && <div>{successMessage}</div>}
 
           {/* Error Message */}
           {apiError && <div className="error-message">{apiError}</div>}
