@@ -4,7 +4,6 @@ import { useAuth } from "../components/AuthContext";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import { NavigationState } from "../types/navigationState";
 import { FormErrors } from "../types/formErrors";
-import { mockUserData } from "../mocks/data/userData.ts";
 import { Credentials } from "../utils/Enums.tsx";
 import {
   PASSWORD_MIN_LENGTH,
@@ -34,6 +33,10 @@ const ChangeCredentialsPage: React.FC<ChangeCredentialsPageProps> = ({
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const navigationState = location.state as NavigationState | null;
+  const [currentEmail, setCurrentEmail] = useState<string>(
+    navigationState?.email || "",
+  );
   const [currentPassword, setCurrentPassword] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -110,6 +113,45 @@ const ChangeCredentialsPage: React.FC<ChangeCredentialsPageProps> = ({
     // No need to set isLoading to false here as we navigate away
   };
 
+  const changeEmail = async (email: string): Promise<void> => {
+    console.log("Calling update email API...");
+    setIsLoading(true);
+    setApiError("");
+
+    if (offlineMode) {
+      console.log("Offline mode: Skipping update email API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } else {
+      try {
+        await apiClient.patch(`${REQUEST_MAPPING}/user/email`, {
+          currentEmail: currentEmail,
+          newEmail: email,
+        });
+      } catch (error) {
+        setApiError(
+          getApiErrorMessage(
+            error,
+            "Failed to update email. Please try again.",
+          ),
+        );
+        console.error("Error updating email:", error);
+        setIsLoading(false);
+        return;
+      }
+    }
+
+    console.log("email updated");
+    const state: NavigationState = {
+      from: "changecredentials",
+      successMessage: `A verification email has been sent to ${email}.Please open it in your inbox and follow the steps stated in the email.`,
+      fieldToChange: Credentials.EMAIL,
+      mode: "info",
+    };
+    navigate("/myaccount/", { state });
+    // No need to set isLoading to false here as we navigate away
+  };
+
   const handleUpdate = async (): Promise<void> => {
     let newErrors: FormErrors = {
       email: "",
@@ -149,7 +191,7 @@ const ChangeCredentialsPage: React.FC<ChangeCredentialsPageProps> = ({
       if (fieldToChange === Credentials.PASSWORD) {
         await changePassword(password);
       } else if (fieldToChange === Credentials.EMAIL) {
-        navigate("/emailsent/");
+        await changeEmail(email);
       }
     }
   };
@@ -260,9 +302,9 @@ const ChangeCredentialsPage: React.FC<ChangeCredentialsPageProps> = ({
               <>
                 <div className="text-align-left">
                   <p>
-                    <strong>Old email</strong>
+                    <strong>Current email</strong>
                     <br />
-                    {mockUserData.email}
+                    {currentEmail}
                   </p>
                 </div>
                 {/* New Email Input */}

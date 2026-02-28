@@ -310,6 +310,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
     console.log("Directing user to change email");
     const state: NavigationState = {
       from: "myaccount",
+      email: email,
       fieldToChange: Credentials.EMAIL,
     };
     navigate("/changecredentials/", { state });
