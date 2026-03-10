@@ -15,24 +15,16 @@ import {
   ProductDetailsResponse,
 } from "../types/products.ts";
 import QuantitySelector from "./QuantitySelector.tsx";
+import { Item } from "../store/productSlice";
 
 interface QuickWindowProps {
-  item: {
-    id: string;
-    name: string;
-    slug: string;
-    platform: string;
-    region: string;
-    edition: string;
-    price: number;
-    productImageUrl: string;
-  };
+  Item: Item;
   onClose: () => void;
   onAddToCart: (item: any, quantity: number) => void;
 }
 
 const QuickShopWindow: React.FC<QuickWindowProps> = ({
-  item,
+  Item: item,
   onClose,
   onAddToCart,
 }) => {
