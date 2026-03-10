@@ -23,10 +23,18 @@ apiClient.interceptors.response.use(
 // Request interceptor to auto add JWT token in headers
 apiClient.interceptors.request.use(
   (config) => {
+    // 1. JWT Token
     const token = localStorage.getItem("jwtToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // 2. Session ID
+    const sessionId = localStorage.getItem("sessionId");
+    if (sessionId) {
+      config.headers["X-Session-Id"] = sessionId;
+    }
+
     return config;
   },
   (error) => {
