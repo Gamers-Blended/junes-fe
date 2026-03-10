@@ -1,5 +1,5 @@
 export interface ProductSliderItem {
-  id: string;
+  productID: string;
   name: string;
   slug: string;
   platform: string;

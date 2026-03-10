@@ -202,7 +202,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ title }) => {
           {/* Product Slider Component */}
           <div className='product-slider-items'>
             {items.map((item) => (
-              <ProductCard key={item.id} item={item} isLoading={isLoading} />
+              <ProductCard key={item.productID} Item={item} isLoading={isLoading} />
             ))}
           </div>
           

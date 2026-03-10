@@ -728,7 +728,7 @@ const ProductListingPage: React.FC = () => {
                                     {/* Products Grid */}
                                     <div className="product-grid">
                                         {products.map((product) => (
-                                            <ProductCard key={product.id} item={product} isLoading={isLoading} />
+                                            <ProductCard key={product.productID} item={product} isLoading={isLoading} />
                                         ))}
                                     </div>
 

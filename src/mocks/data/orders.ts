@@ -9,7 +9,7 @@ export const mockOrderList: Order[] = [
     totalAmount: 150.75,
     transactionItemDTOList: [
       {
-        productId: "65f8a12b3e5d827b94c8f2a1",
+        productID: "65f8a12b3e5d827b94c8f2a1",
         name: "Atelier Marie Remake: The Alchemist of Salburg",
         slug: "atelier-marie-remake-the-alchemist-of-salburg",
         platform: "nsw",
@@ -20,7 +20,7 @@ export const mockOrderList: Order[] = [
         quantity: 1,
       },
       {
-        productId: "681a55f2cb20535492b5e68e",
+        productID: "681a55f2cb20535492b5e68e",
         name: "Ninja Gaiden: Master Collection",
         slug: "ninja-gaiden-master-collection",
         platform: "nsw",
@@ -53,7 +53,7 @@ export const mockOrderList: Order[] = [
     totalAmount: 150.75,
     transactionItemDTOList: [
       {
-        productId: "65f8a12b3e5d827b94c8f2a1",
+        productID: "65f8a12b3e5d827b94c8f2a1",
         name: "Atelier Marie Remake: The Alchemist of Salburg",
         slug: "atelier-marie-remake-the-alchemist-of-salburg",
         platform: "nsw",
@@ -64,7 +64,7 @@ export const mockOrderList: Order[] = [
         quantity: 1,
       },
       {
-        productId: "681a55f2cb20535492b5e68e",
+        productID: "681a55f2cb20535492b5e68e",
         name: "Ninja Gaiden: Master Collection",
         slug: "ninja-gaiden-master-collection",
         platform: "nsw",
@@ -97,7 +97,7 @@ export const mockOrderList: Order[] = [
     totalAmount: 150.75,
     transactionItemDTOList: [
       {
-        productId: "65f8a12b3e5d827b94c8f2a1",
+        productID: "65f8a12b3e5d827b94c8f2a1",
         name: "Atelier Marie Remake: The Alchemist of Salburg",
         slug: "atelier-marie-remake-the-alchemist-of-salburg",
         platform: "nsw",
@@ -108,7 +108,7 @@ export const mockOrderList: Order[] = [
         quantity: 1,
       },
       {
-        productId: "681a55f2cb20535492b5e68e",
+        productID: "681a55f2cb20535492b5e68e",
         name: "Ninja Gaiden: Master Collection",
         slug: "ninja-gaiden-master-collection",
         platform: "nsw",
