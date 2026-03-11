@@ -12,6 +12,7 @@
 @import "./styles/OrderPlacedPage.css";
 @import "./styles/SavedInfoActionWindow.css";
 @import "./styles/AccountInfoChangedMessageBox.css";
+@import "./styles/NotificationPopUp.css";
 @import "./styles/OrderTable.css";
 @import "./styles/ProductImageAndDescription.css";
 @import "./styles/QuantitySelector.css";
@@ -319,22 +320,6 @@ button:disabled {
   align-self: center;
   margin: 0;
   color: #4ca0ff;
-}
-
-/* NOTIFICATION POP UP */
-.notification-popup-container {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #00c698;
-  color: black;
-  padding: 1px 10px;
-  border-radius: 4px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  z-index: 2000;
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
 }
 
 /* PRODUCT SELECTOR */

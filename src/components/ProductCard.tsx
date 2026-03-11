@@ -32,7 +32,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const [notificationMessage, setNotificationMessage] = useState<string>("");
   const [showQuickShop, setShowQuickShop] = useState<boolean>(false);
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [messageMode, setMessageMode] = useState<string>("success");
   const wordLimit = 40;
   // Title will only show up to wordLimit characters
   const trimmedTitle =
@@ -101,24 +101,26 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   const handleAddToCart = async (productItem: ProductCardProps["Item"]) => {
-    setErrorMessage("");
+    setNotificationMessage("");
     setIsAddingToCart(true);
 
     try {
       const response = await addToCart(productItem);
 
       setNotificationMessage(response);
-      setShowNotification(true);
+      setMessageMode("success");
     } catch (error) {
-      setErrorMessage(
+      setNotificationMessage(
         getApiErrorMessage(
           error,
           "Failed to add item to cart. Please try again.",
         ),
       );
+      setMessageMode("error");
       console.error("Error adding item to cart:", error);
     } finally {
       setIsAddingToCart(false);
+      setShowNotification(true);
     }
   };
 
@@ -190,14 +192,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </button>
       </div>
 
-      {/* Error Message */}
-      {errorMessage && <div className="error-message">{errorMessage}</div>}
-
       <NotificationPopUp
         message={notificationMessage}
         isVisible={showNotification}
         onClose={handleCloseNotification}
         duration={3000} // 3 seconds
+        mode={messageMode === "error" ? "error" : "success"}
       />
 
       {showQuickShop && <QuickShopModal />}
