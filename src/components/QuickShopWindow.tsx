@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { apiClient } from "../utils/api.ts";
+import { REQUEST_MAPPING, apiClient } from "../utils/api.ts";
 import {
   formatPlatformName,
   formatRegionName,
@@ -9,6 +9,7 @@ import {
   convertDate,
   appendUrlPrefix,
 } from "../utils/utils.ts";
+
 import {
   ProductDTO,
   ProductVariantDTO,
@@ -20,13 +21,15 @@ import { Item } from "../store/productSlice";
 interface QuickWindowProps {
   Item: Item;
   onClose: () => void;
-  onAddToCart: (item: any, quantity: number) => void;
+  onAddToCart: (item: Item) => void;
+  offlineMode?: boolean;
 }
 
 const QuickShopWindow: React.FC<QuickWindowProps> = ({
   Item: item,
   onClose,
   onAddToCart,
+  offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [quantity, setQuantity] = useState<number>(1);
@@ -35,7 +38,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
   const [selectedEdition, setSelectedEdition] = useState<string>("");
   const [productData, setProductData] = useState<ProductDTO | null>(null);
   const [productVariants, setProductVariants] = useState<ProductVariantDTO[]>(
-    []
+    [],
   );
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [currentProductImageUrl, setCurrentProductImageUrl] =
@@ -59,7 +62,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
         ...new Set(
           productVariants
             .filter((v) => v.platform === selectedPlatform)
-            .map((v) => v.region)
+            .map((v) => v.region),
         ),
       ]
     : availableRegions;
@@ -72,20 +75,22 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
             productVariants
               .filter(
                 (v) =>
-                  v.platform === selectedPlatform && v.region === selectedRegion
+                  v.platform === selectedPlatform &&
+                  v.region === selectedRegion,
               )
-              .map((v) => v.edition)
+              .map((v) => v.edition),
           ),
         ]
       : availableEditions;
 
+  // Functions that make API calls
   const fetchProductDetails = async () => {
     try {
       setIsLoading(true);
       setError("");
 
       const response = await apiClient.get(
-        `/junes/api/v1/product/details/${item.slug}`
+        `/junes/api/v1/product/details/${item.slug}`,
       );
 
       const data: ProductDetailsResponse = response.data;
@@ -110,7 +115,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
           (v) =>
             v.platform === item.platform &&
             v.region === item.region &&
-            v.edition === item.edition
+            v.edition === item.edition,
         );
         const defaultVariant = matchingVariant || data.productVariantDTOList[0];
 
@@ -122,7 +127,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
       }
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to fetch product details"
+        err instanceof Error ? err.message : "Failed to fetch product details",
       );
       console.error("Error fetching product details:", err);
     } finally {
@@ -133,11 +138,11 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
   const updatePriceAndProductImageUrl = (
     platform: string,
     region: string,
-    edition: string
+    edition: string,
   ) => {
     const variant = productVariants.find(
       (v) =>
-        v.platform === platform && v.region === region && v.edition == edition
+        v.platform === platform && v.region === region && v.edition == edition,
     );
     if (variant) {
       setCurrentPrice(variant.price);
@@ -153,7 +158,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
       ...new Set(
         productVariants
           .filter((v) => v.platform === platform)
-          .map((v) => v.region)
+          .map((v) => v.region),
       ),
     ];
 
@@ -167,7 +172,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
         ...new Set(
           productVariants
             .filter((v) => v.platform === platform && v.region === newRegion)
-            .map((v) => v.edition)
+            .map((v) => v.edition),
         ),
       ];
       const newEdition = availableEditionsForNewSelection[0] || "";
@@ -180,9 +185,9 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
         ...new Set(
           productVariants
             .filter(
-              (v) => v.platform === platform && v.region === selectedRegion
+              (v) => v.platform === platform && v.region === selectedRegion,
             )
-            .map((v) => v.edition)
+            .map((v) => v.edition),
         ),
       ];
 
@@ -197,7 +202,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
         updatePriceAndProductImageUrl(
           platform,
           selectedRegion,
-          selectedEdition
+          selectedEdition,
         );
       }
     }
@@ -210,7 +215,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
       ...new Set(
         productVariants
           .filter((v) => v.platform === selectedPlatform && v.region === region)
-          .map((v) => v.edition)
+          .map((v) => v.edition),
       ),
     ];
     // Reset to 1st new edition if current edition not available for new region
@@ -231,19 +236,17 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
   const handleAddToCart = () => {
     console.log(`Adding ${quantity} of ${item.name} to cart`);
     console.log(
-      `Selected variant: ${selectedPlatform}, ${selectedRegion}, ${selectedEdition}`
+      `Selected variant: ${selectedPlatform}, ${selectedRegion}, ${selectedEdition}`,
     );
 
-    onAddToCart(
-      {
-        ...item,
-        platform: selectedPlatform,
-        region: selectedRegion,
-        edition: selectedEdition,
-        price: currentPrice.toString(),
-      },
-      quantity
-    );
+    onAddToCart({
+      ...item,
+      platform: selectedPlatform,
+      region: selectedRegion,
+      edition: selectedEdition,
+      price: currentPrice,
+      quantity: quantity,
+    });
 
     // Close the window after a short delay
     setTimeout(onClose, 300);
@@ -301,7 +304,10 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
                   <div className="option-group">
                     {/* Quantity and price */}
                     <div className="option-row">
-                      <QuantitySelector />
+                      <QuantitySelector
+                        initialQuantity={1}
+                        onChange={setQuantity}
+                      />
                       <div className="product-price">
                         S${currentPrice.toFixed(2)}
                       </div>
