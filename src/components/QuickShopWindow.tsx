@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { apiClient } from "../utils/api.ts";
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { REQUEST_MAPPING, apiClient } from "../utils/api.ts";
 import {
   formatPlatformName,
   formatRegionName,
@@ -30,7 +30,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
   onAddToCart,
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [quantity, setQuantity] = useState<number>(1);
+  const quantityRef = useRef<number>(1);
   const [selectedPlatform, setSelectedPlatform] = useState<string>("");
   const [selectedRegion, setSelectedRegion] = useState<string>("");
   const [selectedEdition, setSelectedEdition] = useState<string>("");
@@ -247,7 +247,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
   };
 
   const handleAddToCart = () => {
-    console.log(`Adding ${quantity} of ${item.name} to cart`);
+    console.log(`Adding ${quantityRef.current} of ${item.name} to cart`);
     console.log(
       `Selected variant: ${selectedPlatform}, ${selectedRegion}, ${selectedEdition}`,
     );
@@ -258,7 +258,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
       region: selectedRegion,
       edition: selectedEdition,
       price: currentPrice,
-      quantity: quantity,
+      quantity: quantityRef.current,
     });
   };
 
@@ -316,7 +316,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
                     <div className="option-row">
                       <QuantitySelector
                         initialQuantity={1}
-                        onChange={setQuantity}
+                        onChange={(qty) => (quantityRef.current = qty)}
                       />
                       <div className="product-price">
                         S${currentPrice.toFixed(2)}
