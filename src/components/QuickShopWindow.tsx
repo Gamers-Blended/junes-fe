@@ -96,58 +96,6 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
     [productVariants, selectedPlatform, selectedRegion, availableEditions],
   );
 
-  // Functions that make API calls
-  const fetchProductDetails = async () => {
-    try {
-      setIsLoading(true);
-      setError("");
-
-      const response = await apiClient.get(
-        `/junes/api/v1/product/details/${item.slug}`,
-      );
-
-      const data: ProductDetailsResponse = response.data;
-
-      // Append prefix to each productImageUrl
-      data.productVariantDTOList.forEach((variant) => {
-        const prefixedUrl = appendUrlPrefix(variant.productImageUrl);
-        variant.productImageUrl = prefixedUrl as string;
-      });
-
-      setProductData(data.productDTO);
-      setProductVariants(data.productVariantDTOList);
-      setReleaseDate(data.productDTO.releaseDate);
-      setLanguages(data.productDTO.languages);
-      setGenres(data.productDTO.genres);
-      setNumberOfPlayers(data.productDTO.numberOfPlayers);
-
-      // Set default selections if variants exist
-      if (data.productVariantDTOList.length > 0) {
-        // Try to find a variant matching the platform from props
-        const matchingVariant = data.productVariantDTOList.find(
-          (v) =>
-            v.platform === item.platform &&
-            v.region === item.region &&
-            v.edition === item.edition,
-        );
-        const defaultVariant = matchingVariant || data.productVariantDTOList[0];
-
-        setSelectedPlatform(defaultVariant.platform);
-        setSelectedRegion(defaultVariant.region);
-        setSelectedEdition(defaultVariant.edition);
-        setCurrentPrice(defaultVariant.price);
-        setCurrentProductImageUrl(defaultVariant.productImageUrl);
-      }
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to fetch product details",
-      );
-      console.error("Error fetching product details:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const updatePriceAndProductImageUrl = (
     platform: string,
     region: string,
@@ -263,8 +211,75 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
   };
 
   useEffect(() => {
+    const abortController = new AbortController();
+
+    const fetchProductDetails = async () => {
+      try {
+        setIsLoading(true);
+        setError("");
+
+        const response = await apiClient.get(
+          `${REQUEST_MAPPING}/product/details/${item.slug}`,
+          { signal: abortController.signal },
+        );
+
+        const data: ProductDetailsResponse = response.data;
+
+        // Append prefix to each productImageUrl
+        data.productVariantDTOList.forEach((variant) => {
+          const prefixedUrl = appendUrlPrefix(variant.productImageUrl);
+          variant.productImageUrl = prefixedUrl as string;
+        });
+
+        setProductData(data.productDTO);
+        setProductVariants(data.productVariantDTOList);
+        setReleaseDate(data.productDTO.releaseDate);
+        setLanguages(data.productDTO.languages);
+        setGenres(data.productDTO.genres);
+        setNumberOfPlayers(data.productDTO.numberOfPlayers);
+
+        // Set default selections if variants exist
+        if (data.productVariantDTOList.length > 0) {
+          // Try to find a variant matching the platform from props
+          const matchingVariant = data.productVariantDTOList.find(
+            (v) =>
+              v.platform === item.platform &&
+              v.region === item.region &&
+              v.edition === item.edition,
+          );
+          const defaultVariant =
+            matchingVariant || data.productVariantDTOList[0];
+
+          setSelectedPlatform(defaultVariant.platform);
+          setSelectedRegion(defaultVariant.region);
+          setSelectedEdition(defaultVariant.edition);
+          setCurrentPrice(defaultVariant.price);
+          setCurrentProductImageUrl(defaultVariant.productImageUrl);
+        }
+      } catch (err) {
+        // Don't update state if request was intentionally aborted
+        if (err instanceof Error && err.name === "CanceledError") {
+          console.log("Fetch aborted");
+          return;
+        }
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Failed to fetch product details",
+        );
+        console.error("Error fetching product details:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchProductDetails();
-  }, [item.slug]);
+
+    return () => {
+      // Cancel in-flight request on slug change or component unmount
+      abortController.abort();
+    };
+  }, [item.slug, item.platform, item.region, item.edition]);
 
   // Log productData when it changes
   useEffect(() => {
