@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { REQUEST_MAPPING, apiClient } from "../utils/api.ts";
+import React, { useState, useEffect, useMemo } from "react";
+import { apiClient } from "../utils/api.ts";
 import {
   formatPlatformName,
   formatRegionName,
@@ -22,14 +22,12 @@ interface QuickWindowProps {
   Item: Item;
   onClose: () => void;
   onAddToCart: (item: Item) => void;
-  offlineMode?: boolean;
 }
 
 const QuickShopWindow: React.FC<QuickWindowProps> = ({
   Item: item,
   onClose,
   onAddToCart,
-  offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [quantity, setQuantity] = useState<number>(1);
@@ -50,38 +48,53 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
   const [error, setError] = useState<string>("");
 
   // Get unique options from variants
-  const availablePlatforms = [
-    ...new Set(productVariants.map((v) => v.platform)),
-  ];
-  const availableRegions = [...new Set(productVariants.map((v) => v.region))];
-  const availableEditions = [...new Set(productVariants.map((v) => v.edition))];
+  const availablePlatforms = useMemo(
+    () => [...new Set(productVariants.map((v) => v.platform))],
+    [productVariants],
+  );
+
+  const availableRegions = useMemo(
+    () => [...new Set(productVariants.map((v) => v.region))],
+    [productVariants],
+  );
+  const availableEditions = useMemo(
+    () => [...new Set(productVariants.map((v) => v.edition))],
+    [productVariants],
+  );
 
   // Get available regions for selected platform
-  const availableRegionsForPlatform = selectedPlatform
-    ? [
-        ...new Set(
-          productVariants
-            .filter((v) => v.platform === selectedPlatform)
-            .map((v) => v.region),
-        ),
-      ]
-    : availableRegions;
+  const availableRegionsForPlatform = useMemo(
+    () =>
+      selectedPlatform
+        ? [
+            ...new Set(
+              productVariants
+                .filter((v) => v.platform === selectedPlatform)
+                .map((v) => v.region),
+            ),
+          ]
+        : availableRegions,
+    [productVariants, selectedPlatform, availableRegions],
+  );
 
   // Get available editions for selected platform and region
-  const availableEditionsForSelection =
-    selectedPlatform && selectedRegion
-      ? [
-          ...new Set(
-            productVariants
-              .filter(
-                (v) =>
-                  v.platform === selectedPlatform &&
-                  v.region === selectedRegion,
-              )
-              .map((v) => v.edition),
-          ),
-        ]
-      : availableEditions;
+  const availableEditionsForSelection = useMemo(
+    () =>
+      selectedPlatform && selectedRegion
+        ? [
+            ...new Set(
+              productVariants
+                .filter(
+                  (v) =>
+                    v.platform === selectedPlatform &&
+                    v.region === selectedRegion,
+                )
+                .map((v) => v.edition),
+            ),
+          ]
+        : availableEditions,
+    [productVariants, selectedPlatform, selectedRegion, availableEditions],
+  );
 
   // Functions that make API calls
   const fetchProductDetails = async () => {
@@ -247,9 +260,6 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
       price: currentPrice,
       quantity: quantity,
     });
-
-    // Close the window after a short delay
-    setTimeout(onClose, 300);
   };
 
   useEffect(() => {
@@ -354,15 +364,15 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
                   {availableEditions.length > 0 && (
                     <div className="option-group option-buttons">
                       <label className="option-label">Edition</label>
-                      {availableEditionsForSelection.map((editon) => (
+                      {availableEditionsForSelection.map((edition) => (
                         <button
-                          key={editon}
+                          key={edition}
                           className={`option-btn ${
-                            selectedEdition === editon ? "active" : ""
+                            selectedEdition === edition ? "active" : ""
                           }`}
-                          onClick={() => handleEditionChange(editon)}
+                          onClick={() => handleEditionChange(edition)}
                         >
-                          {formatEditionName(editon)}
+                          {formatEditionName(edition)}
                         </button>
                       ))}
                     </div>
