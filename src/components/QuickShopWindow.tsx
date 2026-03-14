@@ -17,6 +17,7 @@ import {
 } from "../types/products.ts";
 import QuantitySelector from "./QuantitySelector.tsx";
 import { Item } from "../store/productSlice";
+import axios from "axios";
 
 interface QuickWindowProps {
   Item: Item;
@@ -258,7 +259,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
         }
       } catch (err) {
         // Don't update state if request was intentionally aborted
-        if (err instanceof Error && err.name === "CanceledError") {
+        if (axios.isCancel(err)) {
           console.log("Fetch aborted");
           return;
         }

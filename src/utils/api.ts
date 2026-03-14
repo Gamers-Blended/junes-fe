@@ -15,6 +15,11 @@ export const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (axios.isCancel(error)) {
+      // Silently pass through — let the caller handle it
+      return Promise.reject(error);
+    }
+
     console.error("API Error:", error);
     return Promise.reject(error);
   },
