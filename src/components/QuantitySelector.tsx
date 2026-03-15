@@ -1,32 +1,27 @@
-import React, { useState } from "react";
+import React from "react";
 
 interface QuantitySelectorProps {
-  initialQuantity?: number;
+  quantity: number;
   minQuantity?: number;
   maxQuantity?: number;
-  onChange?: (quantity: number) => void;
+  onChange: (quantity: number) => void;
   className?: string;
 }
 
 const QuantitySelector: React.FC<QuantitySelectorProps> = ({
-  initialQuantity = 1,
+  quantity,
   minQuantity = 1,
   maxQuantity,
   onChange,
   className = "",
 }) => {
-  const [quantity, setQuantity] = useState<number>(initialQuantity);
-
-  const handleQuantityChange = (change: number) => {
-    const newQuantity = quantity + change;
-
+  const handleQuantityChange = (newQuantity: number) => {
     // Check newQuantity is within limits
     if (
       newQuantity >= minQuantity &&
       (!maxQuantity || newQuantity <= maxQuantity)
     ) {
-      setQuantity(newQuantity);
-      onChange?.(newQuantity);
+      onChange(newQuantity);
     }
   };
 
@@ -34,11 +29,10 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
     const value = parseInt(e.target.value) || minQuantity;
     const clampedValue = Math.max(
       minQuantity,
-      maxQuantity ? Math.min(value, maxQuantity) : value
+      maxQuantity ? Math.min(value, maxQuantity) : value,
     );
 
-    setQuantity(clampedValue);
-    onChange?.(clampedValue);
+    onChange(clampedValue);
   };
 
   return (
@@ -47,7 +41,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
       <div className="quantity-selector">
         <button
           className="quantity-btn"
-          onClick={() => handleQuantityChange(-1)}
+          onClick={() => handleQuantityChange(quantity - 1)}
           disabled={quantity <= minQuantity}
         >
           -
@@ -60,7 +54,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
         />
         <button
           className="quantity-btn"
-          onClick={() => handleQuantityChange(1)}
+          onClick={() => handleQuantityChange(quantity + 1)}
           disabled={maxQuantity !== undefined && quantity >= maxQuantity}
         >
           +

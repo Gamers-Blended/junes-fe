@@ -2,17 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Page } from "../types/page.ts";
 import { ProductInCartDTO } from "../types/productInCartDTO.ts";
+import CartItemRow from "../components/CartItemRow.tsx";
 import { mockCartItemList } from "../mocks/data/productInCartDTO.ts";
 import {
   REQUEST_MAPPING,
   apiClient,
   getApiErrorMessage,
 } from "../utils/api.ts";
-import ProductImageAndDescription from "../components/ProductImageAndDescription";
-import QuantitySelector from "../components/QuantitySelector";
 
 import checkoutIcon from "../assets/checkoutIcon.png";
-import { mapDTOToDisplay } from "../utils/mappers.ts";
 
 interface CartItemProps {
   offlineMode?: boolean;
@@ -115,7 +113,7 @@ const CartPage: React.FC<CartItemProps> = ({
     setCartItems((prevItems) =>
       prevItems.map((cartItem) =>
         cartItem.id === itemId
-          ? { ...cartItem, item: { ...cartItem, quantity: newQuantity } }
+          ? { ...cartItem, quantity: newQuantity }
           : cartItem,
       ),
     );
@@ -131,7 +129,8 @@ const CartPage: React.FC<CartItemProps> = ({
     }
 
     return cartItems.reduce((total, cartItem) => {
-      if (!cartItem?.price || !cartItem?.quantity) {
+      // If either value is missing, skip this item in total calculation
+      if (cartItem.price == null || cartItem.quantity == null) {
         return total;
       }
 
@@ -183,33 +182,12 @@ const CartPage: React.FC<CartItemProps> = ({
       ) : (
         <div className="cart-items-list">
           {cartItems.map((cartItem) => (
-            <div key={cartItem.id} className="cart-item-container">
-              <ProductImageAndDescription
-                item={mapDTOToDisplay(cartItem)}
-                mode="cart"
-              />
-              <QuantitySelector
-                className="cart-item"
-                initialQuantity={cartItem.quantity}
-                onChange={(newQuantity) =>
-                  handleQuantityChange(cartItem.id, newQuantity)
-                }
-              />
-
-              <div className="cart-item-price">
-                $
-                {cartItem.price && cartItem.quantity
-                  ? (cartItem.price * cartItem.quantity).toFixed(2)
-                  : "0.00"}
-              </div>
-
-              <button
-                className="close-btn cart-item"
-                onClick={() => handleRemoveItem(cartItem.id)}
-              >
-                ✕
-              </button>
-            </div>
+            <CartItemRow
+              key={cartItem.id}
+              cartItem={cartItem}
+              onRemove={handleRemoveItem}
+              onQuantityChange={handleQuantityChange}
+            />
           ))}
         </div>
       )}

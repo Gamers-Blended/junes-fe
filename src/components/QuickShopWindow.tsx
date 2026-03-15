@@ -32,7 +32,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
-  const quantityRef = useRef<number>(1);
+  const [quantity, setQuantity] = useState<number>(1);
   const [selectedPlatform, setSelectedPlatform] = useState<string>("");
   const [selectedRegion, setSelectedRegion] = useState<string>("");
   const [selectedEdition, setSelectedEdition] = useState<string>("");
@@ -203,20 +203,20 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
   };
 
   const handleAddToCart = async () => {
-    console.log(`Adding ${quantityRef.current} of ${item.name} to cart`);
+    console.log(`Adding ${quantity} of ${item.name} to cart`);
     console.log(
       `Selected variant: ${selectedPlatform}, ${selectedRegion}, ${selectedEdition}`,
     );
     setIsAddingToCart(true);
 
     try {
-      await onAddToCart({
+      onAddToCart({
         ...item,
         platform: selectedPlatform,
         region: selectedRegion,
         edition: selectedEdition,
         price: currentPrice,
-        quantity: quantityRef.current,
+        quantity: quantity,
       });
       onClose();
     } catch (err) {
@@ -349,8 +349,8 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
                   {/* Quantity and price */}
                   <div className="option-row">
                     <QuantitySelector
-                      initialQuantity={1}
-                      onChange={(qty) => (quantityRef.current = qty)}
+                      quantity={quantity}
+                      onChange={(qty) => setQuantity(qty)}
                     />
                     <div className="product-price">
                       S${currentPrice.toFixed(2)}

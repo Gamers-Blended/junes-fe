@@ -44,7 +44,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   // Functions that make API calls
   const addToCart = async (item: Item): Promise<string> => {
-    const quantity = 1; // Default quantity to add
+    const quantity = item.quantity || 1; // Default quantity to add
     if (offlineMode) {
       console.log("Offline mode: Skipping add to cart API call");
       // Simulate API delay
