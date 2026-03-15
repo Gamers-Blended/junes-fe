@@ -66,6 +66,41 @@ const CartPage: React.FC<CartItemProps> = ({
     return page.content;
   };
 
+  const deleteCartItem = async (itemId: string) => {
+    setIsLoading(true);
+    setErrorMessage("");
+
+    try {
+      await callDeleteCartItemAPI(itemId);
+      setCartItems((prevItems) =>
+        prevItems.filter((cartItem) => cartItem.id !== itemId),
+      );
+    } catch (error) {
+      setErrorMessage(
+        getApiErrorMessage(error, "Failed to remove item from cart"),
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const callDeleteCartItemAPI = async (productId: string) => {
+    if (offlineMode) {
+      console.log("Offline mode: simulating cart item deletion");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return;
+    } else {
+      console.log("Deleting cart item from API");
+      const response = await apiClient.delete(
+        `${REQUEST_MAPPING}/cart/remove/${productId}`,
+      );
+
+      console.log("Delete cart item response:", response.data);
+    }
+  };
+
   const handleCheckout = (): void => {
     console.log("Navigating to checkout page");
     navigate("/checkout");
@@ -87,9 +122,7 @@ const CartPage: React.FC<CartItemProps> = ({
   };
 
   const handleRemoveItem = (itemId: string) => {
-    setCartItems((prevItems) =>
-      prevItems.filter((cartItem) => cartItem.id !== itemId),
-    );
+    deleteCartItem(itemId);
   };
 
   const calculateSubtotal = (): number => {
