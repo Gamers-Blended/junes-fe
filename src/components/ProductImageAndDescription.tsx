@@ -7,9 +7,10 @@ import {
   formatRegionName,
   formatEditionName,
 } from "../utils/utils";
+import { ProductDisplayItem } from "../types/productDisplay";
 
 interface ProductImageAndDescriptionProps {
-  item: Item;
+  item: ProductDisplayItem;
   mode: string;
 }
 
