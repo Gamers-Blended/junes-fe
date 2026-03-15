@@ -1,6 +1,10 @@
 import React, { useState, useEffect, CSSProperties } from "react";
 import { useParams } from "react-router-dom";
-import { apiClient } from "../utils/api.ts";
+import {
+  REQUEST_MAPPING,
+  apiClient,
+  getApiErrorMessage,
+} from "../utils/api.ts";
 import {
   formatPlatformName,
   formatFullPlatformName,
@@ -21,7 +25,13 @@ import { useAppSelector } from "../store/hooks";
 import Breadcrumb from "../components/Breadcrumb.tsx";
 import Footer from "../components/Footer";
 
-const ProductDetailsPage: React.FC = () => {
+interface ProductDetailsPageProps {
+  offlineMode?: boolean;
+}
+
+const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
+  offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
+}) => {
   const { slug } = useParams();
   const selectedItem = useAppSelector((state) => state.product.selectedItem);
 
@@ -43,6 +53,7 @@ const ProductDetailsPage: React.FC = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [messageMode, setMessageMode] = useState<string>("success");
 
   const [selectedPlatform, setSelectedPlatform] = useState<string>("");
   const [selectedRegion, setSelectedRegion] = useState<string>("");
@@ -65,7 +76,7 @@ const ProductDetailsPage: React.FC = () => {
         ...new Set(
           productDetails?.productVariantDTOList
             .filter((v) => v.platform === selectedPlatform)
-            .map((v) => v.region)
+            .map((v) => v.region),
         ),
       ]
     : availableRegions;
@@ -78,13 +89,15 @@ const ProductDetailsPage: React.FC = () => {
             productDetails?.productVariantDTOList
               .filter(
                 (v) =>
-                  v.platform === selectedPlatform && v.region === selectedRegion
+                  v.platform === selectedPlatform &&
+                  v.region === selectedRegion,
               )
-              .map((v) => v.edition)
+              .map((v) => v.edition),
           ),
         ]
       : availableEditions;
 
+  // Functions that make API calls
   useEffect(() => {
     const fetchProductDetails = async () => {
       if (!slug) return;
@@ -92,7 +105,7 @@ const ProductDetailsPage: React.FC = () => {
       try {
         setLoading(true);
         const response = await apiClient.get<ProductDetailsResponse>(
-          `/junes/api/v1/product/details/${slug}`
+          `${REQUEST_MAPPING}/product/details/${slug}`,
         );
         setProductDetails(response.data);
 
@@ -103,7 +116,7 @@ const ProductDetailsPage: React.FC = () => {
             (v) =>
               v.platform === selectedItem.platform &&
               v.region === selectedItem.region &&
-              v.edition === selectedItem.edition
+              v.edition === selectedItem.edition,
           );
           const defaultVariant =
             matchingVariant || response.data.productVariantDTOList[0];
@@ -125,7 +138,9 @@ const ProductDetailsPage: React.FC = () => {
         }
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to fetch product details"
+          err instanceof Error
+            ? err.message
+            : "Failed to fetch product details",
         );
         console.error("Error fetching product details:", err);
       } finally {
@@ -136,14 +151,41 @@ const ProductDetailsPage: React.FC = () => {
     fetchProductDetails();
   }, [slug]);
 
+  const addToCart = async (
+    productDTO: ProductDTO,
+    quantity: number,
+  ): Promise<string> => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping add to cart API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } else {
+      console.log("Calling API to add to cart with id:", productDTO.id);
+
+      const requestBody = {
+        productID: productDTO.id,
+        price: currentPrice,
+        quantity: quantity,
+        createdOn: new Date().toISOString(),
+      };
+
+      await apiClient.post(`${REQUEST_MAPPING}/cart/add`, requestBody);
+    }
+
+    const message = `${productDTO.name} added to cart!`;
+    console.log(`${productDTO.name} added to cart! Quantity: ${quantity}`);
+
+    return message;
+  };
+
   const updatePriceAndProductImageUrl = (
     platform: string,
     region: string,
-    edition: string
+    edition: string,
   ) => {
     const variant = productDetails?.productVariantDTOList.find(
       (v) =>
-        v.platform === platform && v.region === region && v.edition == edition
+        v.platform === platform && v.region === region && v.edition == edition,
     );
     if (variant) {
       setCurrentPrice(variant.price);
@@ -174,7 +216,7 @@ const ProductDetailsPage: React.FC = () => {
       ...new Set(
         productDetails?.productVariantDTOList
           .filter((v) => v.platform === platform)
-          .map((v) => v.region)
+          .map((v) => v.region),
       ),
     ];
 
@@ -188,7 +230,7 @@ const ProductDetailsPage: React.FC = () => {
         ...new Set(
           productDetails?.productVariantDTOList
             .filter((v) => v.platform === platform && v.region === newRegion)
-            .map((v) => v.edition)
+            .map((v) => v.edition),
         ),
       ];
       const newEdition = availableEditionsForNewSelection[0] || "";
@@ -201,9 +243,9 @@ const ProductDetailsPage: React.FC = () => {
         ...new Set(
           productDetails?.productVariantDTOList
             .filter(
-              (v) => v.platform === platform && v.region === selectedRegion
+              (v) => v.platform === platform && v.region === selectedRegion,
             )
-            .map((v) => v.edition)
+            .map((v) => v.edition),
         ),
       ];
 
@@ -218,7 +260,7 @@ const ProductDetailsPage: React.FC = () => {
         updatePriceAndProductImageUrl(
           platform,
           selectedRegion,
-          selectedEdition
+          selectedEdition,
         );
       }
     }
@@ -231,7 +273,7 @@ const ProductDetailsPage: React.FC = () => {
       ...new Set(
         productDetails?.productVariantDTOList
           .filter((v) => v.platform === selectedPlatform && v.region === region)
-          .map((v) => v.edition)
+          .map((v) => v.edition),
       ),
     ];
     // Reset to 1st new edition if current edition not available for new region
@@ -282,7 +324,7 @@ const ProductDetailsPage: React.FC = () => {
   // Button functions
   const handleAddToWishList = (productDTO: ProductDTO) => {
     const message = `${productDTO.name}, ${formatPlatformName(
-      selectedPlatform
+      selectedPlatform,
     )} added to Wish List!`;
     console.log(`${productDTO.name} added to wish list`);
 
@@ -290,15 +332,31 @@ const ProductDetailsPage: React.FC = () => {
     setShowNotification(true);
   };
 
-  const handleAddToCart = (productDTO: ProductDTO, quantity: number = 1) => {
+  const handleAddToCart = async (
+    productDTO: ProductDTO,
+    quantity: number = 1,
+  ) => {
+    setNotificationMessage("");
     setIsAddingToCart(true);
 
-    const message = `${productDTO.name} added to cart!`;
-    console.log(`${productDTO.name} added to cart! Quantity: ${quantity}`);
+    try {
+      const response = await addToCart(productDTO, quantity);
 
-    setNotificationMessage(message);
-    setShowNotification(true);
-    setIsAddingToCart(false);
+      setNotificationMessage(response);
+      setMessageMode("success");
+    } catch (error) {
+      setNotificationMessage(
+        getApiErrorMessage(
+          error,
+          "Failed to add item to cart. Please try again.",
+        ),
+      );
+      setMessageMode("error");
+      console.error("Error adding item to cart:", error);
+    } finally {
+      setIsAddingToCart(false);
+      setShowNotification(true);
+    }
   };
 
   const isOutOfStock = (stock: number) => {
@@ -396,7 +454,7 @@ const ProductDetailsPage: React.FC = () => {
                   src={
                     appendUrlPrefix(
                       currentImageUrlList[selectedImageIndex] ||
-                        currentProductImageUrl
+                        currentProductImageUrl,
                     ) as string
                   }
                   alt={productDTO.name}
