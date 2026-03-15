@@ -254,6 +254,19 @@
   margin-left: 20rem;
 }
 
+.clear-button {
+  background-color: #d41414;
+  color: white;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
+
+.clear-button:hover {
+  background-color: #9f0b0b;
+}
+
 /* CHECKOUT - ADD/USE PAYMENT METHOD BUTTON */
 .payment-method-width {
   width: 250px;

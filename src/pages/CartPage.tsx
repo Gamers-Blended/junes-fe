@@ -123,6 +123,39 @@ const CartPage: React.FC<CartItemProps> = ({
     deleteCartItem(itemId);
   };
 
+  const handleClearCart = () => {
+    clearCart();
+  };
+
+  const clearCart = async () => {
+    setIsLoading(true);
+    setErrorMessage("");
+
+    try {
+      await callClearCartAPI();
+      setCartItems([]);
+    } catch (error) {
+      setErrorMessage(getApiErrorMessage(error, "Failed to clear cart"));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const callClearCartAPI = async () => {
+    if (offlineMode) {
+      console.log("Offline mode: simulating cart clearance");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return;
+    } else {
+      console.log("Clearing cart via API");
+      const response = await apiClient.delete(`${REQUEST_MAPPING}/cart/items`);
+
+      console.log("Clear cart response:", response.data);
+    }
+  };
+
   const calculateSubtotal = (): number => {
     if (!cartItems || !Array.isArray(cartItems)) {
       return 0;
@@ -153,6 +186,14 @@ const CartPage: React.FC<CartItemProps> = ({
       </div>
 
       <div className="sub-header">
+        {cartItems.length === 0 ? null : (
+          <button
+            className="form-button clear-button"
+            onClick={handleClearCart}
+          >
+            Clear Cart
+          </button>
+        )}
         <div className="sub-header-subtotal">
           <div className="subtotal-label">Subtotal</div>
           <span className="subtotal-amount">
