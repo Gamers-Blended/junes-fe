@@ -206,6 +206,9 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
         <h1>CHECKOUT</h1>
       </div>
 
+      {/* Error Message */}
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
+
       <div className="content-wrapper">
         <div className="left-column">
           <div className="component-box">
