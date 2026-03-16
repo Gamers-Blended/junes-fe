@@ -19,6 +19,7 @@ interface SavedItemSelectorProps {
   showConfirmButton?: boolean;
   className?: string;
   enableDisplayMode?: boolean;
+  isDataLoading?: boolean;
 }
 
 type SavedItem = Address | PaymentMethod;
@@ -33,9 +34,10 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
   showConfirmButton = true,
   className = "",
   enableDisplayMode = true,
+  isDataLoading = false,
 }) => {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(
-    initialSelectedId
+    initialSelectedId,
   );
   const [isEditMode, setIsEditMode] = useState<boolean>(!enableDisplayMode); // Start in edit mode
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -109,9 +111,9 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
         caller === SavedItemSelectorCaller.SAVED_INFO
           ? "billing address"
           : isAddressMode
-          ? "address"
-          : "payment method"
-      }...`
+            ? "address"
+            : "payment method"
+      }...`,
     );
     setIsLoading(true);
     // Simulate loading
@@ -121,19 +123,19 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
       if (onConfirm) {
         onConfirm();
       }
-    }, 2000); // 2 seconds delay
+    }, 1000); // 1 second delay
   };
 
   const handleChangeClick = () => {
     setLoadingMessage(
-      `Loading your ${isAddressMode ? "address" : "payment"} information...`
+      `Loading your ${isAddressMode ? "address" : "payment"} information...`,
     );
     setIsLoading(true);
     // Simulate loading
     setTimeout(() => {
       setIsEditMode(true);
       setIsLoading(false);
-    }, 2000); // 2 seconds delay
+    }, 1000); // 1 second delay
   };
 
   const renderItemDetails = (item: Address | PaymentMethod) => {
@@ -186,6 +188,36 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
       );
     }
   };
+
+  const renderSkeleton = (): React.ReactElement => (
+    <div className={`saved-item-selector-container ${className}`}>
+      {/* Mimics label above list */}
+      <div className="skeleton skeleton-label" />
+      <div className="saved-item-list">
+        {/* Render 2 placeholder rows - matches typical number of saved items */}
+        {[0, 1].map((i) => (
+          <div key={i} className="saved-item skeleton-item">
+            <div className="skeleton skeleton-radio" />
+            <div className="item-details">
+              <div className="skeleton skeleton-line skeleton-line--name" />
+              <div className="skeleton skeleton-line skeleton-line--detail" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Mimics Add / Confirm button row */}
+      <div className="btn-container">
+        <div className="skeleton skeleton-button" />
+        {showConfirmButton && <div className="skeleton skeleton-button" />}
+      </div>
+    </div>
+  );
+
+  // SKELETON STATE: Parent is still fetching data
+  if (isDataLoading) {
+    return renderSkeleton();
+  }
 
   // LOADING STATE: Display loading messages
   if (isLoading) {
@@ -271,8 +303,8 @@ const SavedItemSelector: React.FC<SavedItemSelectorProps> = ({
               isAddressMode && canAddMoreItems
                 ? handleAddAddress
                 : canAddMoreItems
-                ? handleAddPaymentMethod
-                : () => {}
+                  ? handleAddPaymentMethod
+                  : () => {}
             }
           >
             {addButtonText}

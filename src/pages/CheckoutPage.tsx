@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { mockAddressList } from "../mocks/data/address";
 import { mockPaymentMethodList } from "../mocks/data/paymentMethod";
-import { mockOrderList } from "../mocks/data/orders";
+import { mockOrderDetails } from "../mocks/data/orderDetails";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import {
   SavedInfoType,
@@ -61,12 +61,15 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
   // Functions that make API calls
   const fetchSavedItems = async () => {
     setErrorMessage("");
+    setIsLoading(true);
 
     try {
-      const addressList = await getSavedAddresses();
-      console.log("Number of fetched addresses:", addressList.length);
+      const [addressList, paymentMethodList] = await Promise.all([
+        getSavedAddresses(),
+        getSavedPaymentMethods(),
+      ]);
 
-      const paymentMethodList = await getSavedPaymentMethods();
+      console.log("Number of fetched addresses:", addressList.length);
       console.log(
         "Number of fetched payment methods:",
         paymentMethodList.length,
@@ -82,6 +85,8 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
         ),
       );
       console.error("Error fetching saved items:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -193,6 +198,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
               onItemSelect={handleAddressSelection}
               showConfirmButton={true}
               className="checkout-page"
+              isDataLoading={isLoading}
             />
 
             <SavedItemSelector
@@ -203,13 +209,14 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
               onItemSelect={handlePaymentMethodSelection}
               showConfirmButton={true}
               className="checkout-page"
+              isDataLoading={isLoading}
             />
           </div>
         </div>
 
         <div className="right-column">
           <OrderTable
-            orderData={mockOrderList[0]}
+            orderData={mockOrderDetails}
             mode={OrderTableMode.INVOICE}
           />
 
