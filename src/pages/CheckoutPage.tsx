@@ -43,12 +43,12 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
 }) => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
-    mockAddressList[0].id,
+    null,
   );
   const [savedAddressList, setSavedAddressList] = useState<Address[]>([]);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
     string | null
-  >(mockPaymentMethodList[0].id);
+  >(null);
   const [savedPaymentMethodList, setSavedPaymentMethodList] = useState<
     PaymentMethod[]
   >([]);
@@ -77,6 +77,19 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
       setSavedAddressList(addressList);
       setSavedPaymentMethodList(paymentMethodList);
+
+      if (addressList.length > 0) {
+        setSelectedAddressId(getDefaultId(addressList));
+        console.log("Default selected address ID:", addressList[0].id);
+      }
+
+      if (paymentMethodList.length > 0) {
+        setSelectedPaymentMethodId(getDefaultId(paymentMethodList));
+        console.log(
+          "Default selected payment method ID:",
+          paymentMethodList[0].id,
+        );
+      }
     } catch (error) {
       setErrorMessage(
         getApiErrorMessage(
@@ -165,6 +178,12 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
   useEffect(() => {
     fetchSavedItems();
   }, []);
+
+  const getDefaultId = <T extends { id: string; isDefault: boolean }>(
+    items: T[],
+  ): string | null => {
+    return (items.find((item) => item.isDefault) ?? items[0])?.id ?? null;
+  };
 
   const handleAddressSelection = (addressId: string) => {
     setSelectedAddressId(addressId);
