@@ -232,12 +232,12 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
       return 5.99; // Mock shipping fee
     }
 
-    console.log("Fetching shipping fee from API...");
-
     if (items.length === 0) {
       console.warn("No items in cart, skipping shipping fee calculation");
       return 0;
     }
+
+    console.log("Fetching shipping fee from API...");
 
     const response = await apiClient.post<{ shippingFee: number }>(
       `${REQUEST_MAPPING}/shipping/calculate`,
@@ -248,18 +248,37 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
   };
 
   useEffect(() => {
+    let cancelled = false;
+
     const initialize = async () => {
       const [cartItems] = await Promise.all([
         fetchCartItems(),
         fetchSavedItems(),
       ]);
 
-      const shippingFee = await getShippingFee(cartItems);
+      if (cancelled) return;
 
-      setShippingFee(shippingFee);
+      try {
+        const shippingFee = await getShippingFee(cartItems);
+        if (!cancelled) setShippingFee(shippingFee);
+      } catch (error) {
+        if (!cancelled) {
+          setErrorMessage(
+            getApiErrorMessage(
+              error,
+              "Failed to calculate shipping fee. Please try again.",
+            ),
+          );
+          console.error("Error fetching shipping fee:", error);
+        }
+      }
     };
 
     initialize();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const getDefaultId = <T extends { id: string; isDefault: boolean }>(
