@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { mockAddressList } from "../mocks/data/address";
 import { mockPaymentMethodList } from "../mocks/data/paymentMethod";
+import { mockCartItemList } from "../mocks/data/productInCartDTO.ts";
 import { mockOrderDetails } from "../mocks/data/orderDetails";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import {
@@ -25,6 +26,9 @@ import OrderTable from "../components/OrderTable";
 import { useAuth } from "../components/AuthContext.tsx";
 import { Address } from "../types/address.ts";
 import { PaymentMethod } from "../types/paymentMethod.ts";
+import { Page } from "../types/page.ts";
+import { ProductInCartDTO } from "../types/productInCartDTO.ts";
+import { mapProductInCartDTOToOrderItemDTO } from "../utils/mappers.ts";
 
 type AddressDTO = Omit<Address, "id" | "type"> & {
   addressID: string;
@@ -52,7 +56,10 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
   const [savedPaymentMethodList, setSavedPaymentMethodList] = useState<
     PaymentMethod[]
   >([]);
+  const [cartItems, setCartItems] = useState<ProductInCartDTO[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingCartItems, setIsLoadingCartItems] = useState<boolean>(false);
+  const [shippingFee, setShippingFee] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const navigate = useNavigate();
 
@@ -175,8 +182,84 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     return paymentMethodList;
   };
 
+  const fetchCartItems = async (): Promise<ProductInCartDTO[]> => {
+    setIsLoadingCartItems(true);
+    setErrorMessage("");
+
+    try {
+      const response = await getCartItems();
+      setCartItems(response);
+      return response;
+    } catch (error) {
+      setErrorMessage(getApiErrorMessage(error, "Failed to load cart items"));
+      return [];
+    } finally {
+      setIsLoadingCartItems(false);
+    }
+  };
+
+  const getCartItems = async (): Promise<ProductInCartDTO[]> => {
+    if (offlineMode) {
+      console.log("Offline mode: using mock cart items");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return mockCartItemList;
+    }
+
+    console.log("Fetching cart items from API...");
+    const response = await apiClient.get<Page<ProductInCartDTO>>(
+      `${REQUEST_MAPPING}/cart/products`,
+    );
+
+    const page = response.data;
+
+    // Ensure content field is an array
+    if (!page || !Array.isArray(page.content)) {
+      console.warn("Unexpected cart API response shape", page);
+      return [];
+    }
+
+    return page.content;
+  };
+
+  const getShippingFee = async (items: ProductInCartDTO[]): Promise<number> => {
+    if (offlineMode) {
+      console.log("Offline mode: using mock shipping fee");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return 5.99; // Mock shipping fee
+    }
+
+    console.log("Fetching shipping fee from API...");
+
+    if (items.length === 0) {
+      console.warn("No items in cart, skipping shipping fee calculation");
+      return 0;
+    }
+
+    const response = await apiClient.post<{ shippingFee: number }>(
+      `${REQUEST_MAPPING}/shipping/calculate`,
+      { orderItemDTOList: items.map(mapProductInCartDTOToOrderItemDTO) },
+    );
+
+    return response.data.shippingFee;
+  };
+
   useEffect(() => {
-    fetchSavedItems();
+    const initialize = async () => {
+      const [cartItems] = await Promise.all([
+        fetchCartItems(),
+        fetchSavedItems(),
+      ]);
+
+      const shippingFee = await getShippingFee(cartItems);
+
+      setShippingFee(shippingFee);
+    };
+
+    initialize();
   }, []);
 
   const getDefaultId = <T extends { id: string; isDefault: boolean }>(
