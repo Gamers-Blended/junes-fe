@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { OrderDetails } from "../types/orderDetails";
+import { OrderTableData } from "../types/orderDetails";
 import {
   appendUrlPrefix,
   formatFullPlatformName,
@@ -13,7 +13,7 @@ import { Item, setSelectedItem } from "../store/productSlice";
 import { OrderTableMode } from "../utils/Enums";
 
 interface OrderTableProps {
-  orderData: OrderDetails;
+  orderData: OrderTableData;
   mode: string;
 }
 
@@ -98,7 +98,7 @@ const OrderTable: React.FC<OrderTableProps> = ({ orderData, mode }) => {
       <div className="table-footer">
         <div className="total-label">Total</div>
         <div className="total-amount">
-          ${formatPrice(orderData.totalAmount)}
+          ${formatPrice(orderData.totalAmount ?? 0)}
         </div>
       </div>
     </div>

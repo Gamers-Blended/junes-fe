@@ -23,3 +23,19 @@ export const mapProductInCartDTOToOrderItemDTO = (
   productID: dto.id,
   quantity: dto.quantity,
 });
+
+export const mapProductInCartDTOToItemList = (
+  dto: ProductInCartDTO,
+): Item[] => [
+  {
+    productID: dto.id,
+    name: dto.name,
+    slug: dto.slug,
+    price: dto.price,
+    platform: dto.platform,
+    region: dto.region,
+    edition: dto.edition,
+    productImageUrl: dto.productImageUrl,
+    quantity: dto.quantity,
+  },
+];

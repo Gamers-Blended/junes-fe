@@ -9,6 +9,7 @@ import {
   apiClient,
   getApiErrorMessage,
 } from "../utils/api.ts";
+import { calculateSubtotal } from "../utils/cartUtils.ts";
 
 import checkoutIcon from "../assets/checkoutIcon.png";
 
@@ -156,25 +157,6 @@ const CartPage: React.FC<CartItemProps> = ({
     }
   };
 
-  const calculateSubtotal = (): number => {
-    if (!cartItems || !Array.isArray(cartItems)) {
-      return 0;
-    }
-
-    return cartItems.reduce((total, cartItem) => {
-      // If either value is missing, skip this item in total calculation
-      if (cartItem.price == null || cartItem.quantity == null) {
-        return total;
-      }
-
-      // Ensure price and quantity are valid
-      const price = Number(cartItem.price) || 0;
-      const quantity = Number(cartItem.quantity) || 0;
-
-      return total + price * quantity;
-    }, 0);
-  };
-
   useEffect(() => {
     fetchCartItems();
   }, []);
@@ -197,7 +179,7 @@ const CartPage: React.FC<CartItemProps> = ({
         <div className="sub-header-subtotal">
           <div className="subtotal-label">Subtotal</div>
           <span className="subtotal-amount">
-            ${calculateSubtotal().toFixed(2)}
+            ${calculateSubtotal(cartItems).toFixed(2)}
           </span>
         </div>
         {cartItems.length === 0 ? null : (
@@ -238,7 +220,7 @@ const CartPage: React.FC<CartItemProps> = ({
           <div className="subtotal-row">
             <span className="subtotal-text">Subtotal</span>
             <span className="subtotal-value">
-              ${calculateSubtotal().toFixed(2)}
+              ${calculateSubtotal(cartItems).toFixed(2)}
             </span>
           </div>
           <div className="tax-note">

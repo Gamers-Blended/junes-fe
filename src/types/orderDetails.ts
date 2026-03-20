@@ -12,3 +12,11 @@ export interface OrderDetails {
   shippingWeight: number;
   trackingNumber: string;
 }
+
+export interface CheckoutOrderDetails {
+  totalAmount: number;
+  transactionItemDTOList: Item[];
+  shippingCost: number;
+}
+
+export type OrderTableData = OrderDetails | CheckoutOrderDetails;

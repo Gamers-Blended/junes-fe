@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { mockAddressList } from "../mocks/data/address";
 import { mockPaymentMethodList } from "../mocks/data/paymentMethod";
 import { mockCartItemList } from "../mocks/data/productInCartDTO.ts";
-import { mockOrderDetails } from "../mocks/data/orderDetails";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
 import {
   SavedInfoType,
@@ -21,6 +20,7 @@ import {
   apiClient,
   getApiErrorMessage,
 } from "../utils/api.ts";
+import { calculateSubtotal } from "../utils/cartUtils.ts";
 import SavedItemSelector from "../components/SavedItemSelector";
 import OrderTable from "../components/OrderTable";
 import { useAuth } from "../components/AuthContext.tsx";
@@ -28,7 +28,12 @@ import { Address } from "../types/address.ts";
 import { PaymentMethod } from "../types/paymentMethod.ts";
 import { Page } from "../types/page.ts";
 import { ProductInCartDTO } from "../types/productInCartDTO.ts";
-import { mapProductInCartDTOToOrderItemDTO } from "../utils/mappers.ts";
+import {
+  mapProductInCartDTOToItemList,
+  mapProductInCartDTOToOrderItemDTO,
+} from "../utils/mappers.ts";
+import { CheckoutOrderDetails } from "../types/orderDetails.ts";
+import { ResponseMessage } from "../types/responseMessage.ts";
 
 type AddressDTO = Omit<Address, "id" | "type"> & {
   addressID: string;
@@ -57,9 +62,13 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     PaymentMethod[]
   >([]);
   const [cartItems, setCartItems] = useState<ProductInCartDTO[]>([]);
+  const [orderDetails, setOrderDetails] = useState<CheckoutOrderDetails>({
+    totalAmount: 0,
+    transactionItemDTOList: [],
+    shippingCost: 0,
+  });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoadingCartItems, setIsLoadingCartItems] = useState<boolean>(false);
-  const [shippingFee, setShippingFee] = useState<number>(0);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const navigate = useNavigate();
 
@@ -239,12 +248,13 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
     console.log("Fetching shipping fee from API...");
 
-    const response = await apiClient.post<{ shippingFee: number }>(
+    const response = await apiClient.post<ResponseMessage>(
       `${REQUEST_MAPPING}/shipping/calculate`,
       { orderItemDTOList: items.map(mapProductInCartDTOToOrderItemDTO) },
     );
 
-    return response.data.shippingFee;
+    console.log("Shipping fee response:", response.data.message);
+    return response.data.message ? parseFloat(response.data.message) : 0;
   };
 
   useEffect(() => {
@@ -258,19 +268,25 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
       if (cancelled) return;
 
-      try {
-        const shippingFee = await getShippingFee(cartItems);
-        if (!cancelled) setShippingFee(shippingFee);
-      } catch (error) {
-        if (!cancelled) {
-          setErrorMessage(
-            getApiErrorMessage(
-              error,
-              "Failed to calculate shipping fee. Please try again.",
-            ),
-          );
-          console.error("Error fetching shipping fee:", error);
+      let fee = 0;
+      if (cartItems.length > 0) {
+        try {
+          fee = await getShippingFee(cartItems);
+        } catch (error) {
+          if (!cancelled) {
+            setErrorMessage(
+              getApiErrorMessage(
+                error,
+                "Failed to calculate shipping fee. Please try again.",
+              ),
+            );
+            console.error("Error fetching shipping fee:", error);
+          }
         }
+      }
+
+      if (!cancelled) {
+        setOrderDetails(buildCheckoutOrderDetails(cartItems, fee));
       }
     };
 
@@ -285,6 +301,32 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     items: T[],
   ): string | null => {
     return (items.find((item) => item.isDefault) ?? items[0])?.id ?? null;
+  };
+
+  const getTotalAmount = (
+    cartItems: ProductInCartDTO[],
+    shippingFee: number,
+  ): number => {
+    if (!shippingFee) {
+      shippingFee = 0;
+    }
+
+    return calculateSubtotal(cartItems) + shippingFee;
+  };
+
+  const buildCheckoutOrderDetails = (
+    cartItems: ProductInCartDTO[],
+    shippingFee: number,
+  ): CheckoutOrderDetails => {
+    const totalAmount = getTotalAmount(cartItems, shippingFee);
+
+    const checkoutOrderDetails = {
+      totalAmount: totalAmount,
+      transactionItemDTOList: cartItems.flatMap(mapProductInCartDTOToItemList),
+      shippingCost: shippingFee,
+    };
+
+    return checkoutOrderDetails;
   };
 
   const handleAddressSelection = (addressId: string) => {
@@ -339,10 +381,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
         </div>
 
         <div className="right-column">
-          <OrderTable
-            orderData={mockOrderDetails}
-            mode={OrderTableMode.INVOICE}
-          />
+          <OrderTable orderData={orderDetails} mode={OrderTableMode.INVOICE} />
 
           <div className="button-container">
             <button
