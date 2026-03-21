@@ -47,7 +47,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   const [email, setEmail] = useState<string>("");
 
   const [transactionHistory, setTransactionHistory] = useState<Order[]>([]);
-  const [sortBy, setSortBy] = useState("created_on");
+  const [sortBy, setSortBy] = useState("orderDate");
   const [orderBy, setOrderBy] = useState("desc");
   const [pageSize, setPageSize] = useState(10); // Must correspond with 1st option
   const [currentPage, setCurrentPage] = useState(0); // Zero-based index
@@ -326,7 +326,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
     const currentOption = sortOptions.find(
       (option) => option.sortBy === sortBy && option.orderBy === orderBy,
     );
-    return currentOption ? currentOption.value : sortOptions[0].value;
+    return currentOption ? currentOption.value : sortOptions[1].value;
   };
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
