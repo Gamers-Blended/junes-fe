@@ -1,14 +1,37 @@
+import { useState, useEffect } from "react";
 import { mockUserData } from "../mocks/data/userData";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavigationState } from "../types/navigationState";
-import { useState } from "react";
+import { fetchUserDetails } from "../utils/userUtils.ts";
 
-const OrderPlacedPage = () => {
+interface OrderPlacedPageProps {
+  offlineMode?: boolean;
+}
+
+const OrderPlacedPage: React.FC<OrderPlacedPageProps> = ({
+  offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
+}) => {
   const location = useLocation();
   const navigate = useNavigate();
   const navigationState = location.state as NavigationState | null;
 
+  const [email, setEmail] = useState<string>("");
   const [orderId] = useState<string>(navigationState?.orderNumber || "");
+
+  useEffect(() => {
+    const init = async () => {
+      const response = await fetchUserDetails({
+        offlineMode,
+        mockData: mockUserData,
+      });
+
+      if (response) {
+        setEmail(response.email);
+      }
+    };
+
+    init();
+  }, []);
 
   const handleViewOrderDetails = (orderId: string) => {
     const url = `/order/${orderId}`;
@@ -30,7 +53,7 @@ const OrderPlacedPage = () => {
 
         <div className="form-container">
           <p className="form-text text-align-center">
-            A confirmation email has been sent to {mockUserData.email}.<br />
+            A confirmation email has been sent to {email}.<br />
             Your order ID is
           </p>
           <div className="order-id-text">#{orderId}</div>

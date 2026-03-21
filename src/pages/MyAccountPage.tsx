@@ -22,12 +22,11 @@ import {
   getApiErrorMessage,
 } from "../utils/api.ts";
 import {
-  getCachedUserDetails,
-  setCachedUserDetails,
   getCachedTransactionHistory,
   setCachedTransactionHistory,
   clearAllCaches,
 } from "../utils/cacheUtils.ts";
+import { fetchUserDetails } from "../utils/userUtils.ts";
 import ProductImageAndDescription from "../components/ProductImageAndDescription";
 import AccountInfoChangedMessageBox, {
   MessageBoxMode,
@@ -120,50 +119,19 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
 
   useAuthRedirect(isLoggedIn);
 
-  // Functions to fetch user details and transaction history
-  const fetchUserDetails = async () => {
-    try {
-      const response = await getUserDetails();
-
-      setEmail(response.email);
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-    }
-  };
-
-  const getUserDetails = async (): Promise<{ email: string }> => {
-    if (offlineMode) {
-      console.log("Offline mode: Skipping get User Details API call");
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      return { email: mockUserData.email };
-    }
-
-    const cacheKey = "userDetails";
-
-    // Check if data exists in cache
-    const cachedData = getCachedUserDetails(cacheKey);
-    if (cachedData) {
-      console.log("Using cached user details for key:", cacheKey);
-      return cachedData.data;
-    }
-
-    console.log("Fetching user details from API");
-
-    const response = await apiClient.get<{ email: string }>(
-      `${REQUEST_MAPPING}/user/details`,
-    );
-
-    // Store response in cache
-    setCachedUserDetails(cacheKey, response.data);
-    console.log("User details cached with key:", cacheKey);
-
-    return response.data;
-  };
-
   useEffect(() => {
-    fetchUserDetails();
+    const init = async () => {
+      const response = await fetchUserDetails({
+        offlineMode,
+        mockData: mockUserData,
+      });
+
+      if (response) {
+        setEmail(response.email);
+      }
+    };
+
+    init();
   }, []);
 
   // Functions to fetch transaction history
