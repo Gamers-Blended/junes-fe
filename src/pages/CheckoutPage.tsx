@@ -33,7 +33,7 @@ import {
   mapProductInCartDTOToOrderItemDTO,
 } from "../utils/mappers.ts";
 import { CheckoutOrderDetails } from "../types/orderDetails.ts";
-import { ResponseMessage } from "../types/responseMessage.ts";
+import { ShippingResponse } from "../types/shippingResponse.ts";
 
 type AddressDTO = Omit<Address, "id" | "type"> & {
   addressID: string;
@@ -248,13 +248,13 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
     console.log("Fetching shipping fee from API...");
 
-    const response = await apiClient.post<ResponseMessage>(
+    const response = await apiClient.post<ShippingResponse>(
       `${REQUEST_MAPPING}/shipping/calculate`,
       { orderItemDTOList: items.map(mapProductInCartDTOToOrderItemDTO) },
     );
 
-    console.log("Shipping fee response:", response.data.message);
-    return response.data.message ? parseFloat(response.data.message) : 0;
+    console.log("Shipping fee retrieved:", response.data.shippingCost);
+    return response.data.shippingCost;
   };
 
   useEffect(() => {
