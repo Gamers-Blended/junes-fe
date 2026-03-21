@@ -11,6 +11,10 @@ const NavigationBar = () => {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
 
+  const handleLogoClick = () => {
+    navigate("/");
+  };
+
   const handleLoginClick = () => {
     if (isLoggedIn) {
       navigate("/myaccount");
@@ -30,7 +34,9 @@ const NavigationBar = () => {
   return (
     <div>
       <div className="navbar">
-        <div className="logo">Junes</div>
+        <div className="logo" onClick={handleLogoClick}>
+          Junes
+        </div>
         <div className="nav-search-bar-container">
           <input
             type="text"

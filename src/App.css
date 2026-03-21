@@ -79,6 +79,7 @@ button:disabled {
   font-weight: bold;
   font-size: 2em;
   transform: translateY(-4px);
+  cursor: pointer;
 }
 
 .nav-search-bar-container {
