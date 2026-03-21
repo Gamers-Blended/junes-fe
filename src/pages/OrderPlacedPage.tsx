@@ -1,10 +1,14 @@
 import { mockUserData } from "../mocks/data/userData";
-import { mockOrderList } from "../mocks/data/orders";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { NavigationState } from "../types/navigationState";
+import { useState } from "react";
 
 const OrderPlacedPage = () => {
-  const orderId = mockOrderList[0].orderNumber;
+  const location = useLocation();
   const navigate = useNavigate();
+  const navigationState = location.state as NavigationState | null;
+
+  const [orderId] = useState<string>(navigationState?.orderNumber || "");
 
   const handleViewOrderDetails = (orderId: string) => {
     const url = `/order/${orderId}`;

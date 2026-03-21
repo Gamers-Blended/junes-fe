@@ -11,4 +11,5 @@ export interface NavigationState {
   item?: Address | PaymentMethod; // Item being edited (if applicable)
   successMessage?: string; // Optional success message to display on the target page
   mode?: string; // Mode of AccountInfoChangedMessageBox
+  orderNumber?: string; // Order number for order confirmation messages
 }

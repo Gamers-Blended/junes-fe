@@ -4,6 +4,7 @@ import { mockAddressList } from "../mocks/data/address";
 import { mockPaymentMethodList } from "../mocks/data/paymentMethod";
 import { mockCartItemList } from "../mocks/data/productInCartDTO.ts";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
+import { NavigationState } from "../types/navigationState";
 import {
   SavedInfoType,
   SavedItemSelectorCaller,
@@ -51,7 +52,7 @@ interface CheckoutPageProps {
 const CheckoutPage: React.FC<CheckoutPageProps> = ({
   offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
 }) => {
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { isLoggedIn } = useAuth();
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
     null,
   );
@@ -264,7 +265,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      return { message: "Order placed successfully (offline mode)" };
+      return { message: "J123456789" }; // Mock order number
     }
 
     console.log("Calling Place Order API...");
@@ -381,8 +382,14 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     try {
       const response = await callPlaceOrderAPI();
 
-      console.log("Place order response:", response);
-      navigate("/orderplaced");
+      if (errorMessage === "" && response.message !== "") {
+        console.log("Place order response:", response);
+        const state: NavigationState = {
+          from: "checkout",
+          orderNumber: response.message,
+        };
+        navigate("/orderplaced/", { state });
+      }
     } catch (error) {
       setErrorMessage("Failed to place order. Please try again.");
     } finally {
