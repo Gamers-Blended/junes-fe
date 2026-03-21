@@ -427,12 +427,25 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
         </div>
 
         <div className="right-column">
-          <OrderTable orderData={orderDetails} mode={OrderTableMode.INVOICE} />
+          {isLoadingCartItems ? (
+            <div className="loading-container">
+              <p>Loading your order details...</p>
+            </div>
+          ) : (
+            cartItems.length > 0 && (
+              <OrderTable
+                orderData={orderDetails}
+                mode={OrderTableMode.INVOICE}
+              />
+            )
+          )}
 
           <div className="button-container">
             <button
-              className={`form-button cart-button extended-width ${isLoading ? "loading" : ""}`}
-              disabled={isLoading}
+              className={`form-button cart-button extended-width ${isLoading || isLoadingCartItems ? "loading" : ""}`}
+              disabled={
+                isLoading || isLoadingCartItems || cartItems.length === 0
+              }
               onClick={handlePlaceOrder}
             >
               {isLoading ? "Placing Your Order..." : "Place Your Order"}
