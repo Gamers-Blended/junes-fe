@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Credentials } from "../utils/Enums";
 import { validateEmail, validatePassword } from "../utils/inputValidationUtils";
 import { createInputChangeHandler } from "../utils/FormHandlers";
@@ -18,6 +18,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
 }) => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<FormErrors>({ email: "", password: "" });
@@ -66,7 +67,10 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
       setIsLoggedIn(true);
       console.log("Signed in");
-      navigate("/myaccount/");
+
+      const destination = location.state?.from || "/myaccount/";
+      console.log(`Navigating to ${destination}`);
+      navigate(destination, { replace: true });
       // No need to set isLoading to false here as we navigate away
     }
   };

@@ -1,13 +1,20 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // Redirect to login if user is not logged in
-export const useAuthRedirect = (isLoggedIn: boolean, redirectTo: string = "/login") => {
-    const navigate = useNavigate();
+export const useAuthRedirect = (
+  isLoggedIn: boolean,
+  redirectTo: string = "/login",
+) => {
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (!isLoggedIn) {
-      navigate(redirectTo, { replace: true });
+      navigate(redirectTo, {
+        replace: true,
+        state: { from: location.pathname },
+      });
     }
-  }, [isLoggedIn, navigate, redirectTo]);
+  }, [isLoggedIn, navigate, redirectTo, location.pathname]);
 };

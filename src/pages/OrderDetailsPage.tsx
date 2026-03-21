@@ -15,7 +15,7 @@ interface OrderDetailsPageProps {
 const OrderDetailsPage: React.FC<OrderDetailsPageProps> = ({
   offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
 }) => {
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { isLoggedIn } = useAuth();
   const { orderNumber } = useParams();
 
   useAuthRedirect(isLoggedIn);
@@ -78,11 +78,11 @@ const OrderDetailsPage: React.FC<OrderDetailsPageProps> = ({
       <div className="order-info-container">
         <div className="order-info-left-column">
           <h3>Shipping Address</h3>
-          <div>{transactionDetails?.shippingAddress.addressLine}</div>
+          <div>{transactionDetails?.shippingAddress?.addressLine}</div>
           <div>{transactionDetails?.shippingAddress?.unitNumber}</div>
-          <div>{transactionDetails?.shippingAddress.country}</div>
-          <div>{transactionDetails?.shippingAddress.zipCode}</div>
-          <div>{transactionDetails?.shippingAddress.phoneNumber}</div>
+          <div>{transactionDetails?.shippingAddress?.country}</div>
+          <div>{transactionDetails?.shippingAddress?.zipCode}</div>
+          <div>{transactionDetails?.shippingAddress?.phoneNumber}</div>
         </div>
 
         <div className="order-info-right-column">
