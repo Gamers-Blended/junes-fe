@@ -30,13 +30,11 @@ interface ChangeCredentialsPageProps {
 const ChangeCredentialsPage: React.FC<ChangeCredentialsPageProps> = ({
   offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
 }) => {
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { isLoggedIn } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const navigationState = location.state as NavigationState | null;
-  const [currentEmail, setCurrentEmail] = useState<string>(
-    navigationState?.email || "",
-  );
+  const [currentEmail] = useState<string>(navigationState?.email || "");
   const [currentPassword, setCurrentPassword] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");

@@ -75,7 +75,7 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
   const [successMessage, setSuccessMessage] = useState<string>(
     navigationState?.successMessage || "",
   );
-  const [messageBoxMode, setMessageBoxMode] = useState<MessageBoxMode>(
+  const [messageBoxMode] = useState<MessageBoxMode>(
     (navigationState?.mode as MessageBoxMode) || "success",
   );
 
