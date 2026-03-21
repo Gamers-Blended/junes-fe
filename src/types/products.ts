@@ -42,6 +42,7 @@ export interface ProductDTO {
 }
 
 export interface ProductVariantDTO {
+  productID: string;
   platform: string;
   region: string;
   edition: string;

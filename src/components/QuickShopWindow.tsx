@@ -209,9 +209,28 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
     );
     setIsAddingToCart(true);
 
+    const selectedVariant = productVariants.find(
+      (v) =>
+        v.platform === selectedPlatform &&
+        v.region === selectedRegion &&
+        v.edition === selectedEdition,
+    );
+
+    if (!selectedVariant) {
+      console.error(
+        "Selected variant not found. Cannot add to cart.",
+        selectedPlatform,
+        selectedRegion,
+        selectedEdition,
+      );
+      setIsAddingToCart(false);
+      return;
+    }
+
     try {
       onAddToCart({
         ...item,
+        productID: selectedVariant.productID,
         platform: selectedPlatform,
         region: selectedRegion,
         edition: selectedEdition,
@@ -225,14 +244,6 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
       setIsAddingToCart(false);
     }
   };
-
-  useEffect(() => {
-    itemVariantRef.current = {
-      platform: item.platform,
-      region: item.region,
-      edition: item.edition,
-    };
-  });
 
   useEffect(() => {
     const abortController = new AbortController();
