@@ -34,6 +34,7 @@ import {
 } from "../utils/mappers.ts";
 import { CheckoutOrderDetails } from "../types/orderDetails.ts";
 import { ShippingResponse } from "../types/shippingResponse.ts";
+import { ResponseMessage } from "../types/responseMessage.ts";
 
 type AddressDTO = Omit<Address, "id" | "type"> & {
   addressID: string;
@@ -257,6 +258,40 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     return response.data.shippingCost;
   };
 
+  const callPlaceOrderAPI = async (): Promise<ResponseMessage> => {
+    if (offlineMode) {
+      console.log("Offline mode: skipping Place Order API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return { message: "Order placed successfully (offline mode)" };
+    }
+
+    console.log("Calling Place Order API...");
+
+    // Build order request payload
+    const addressDTO = savedAddressList.find(
+      (addr) => addr.id === selectedAddressId,
+    );
+    if (!addressDTO || !selectedAddressId || !selectedPaymentMethodId) {
+      setErrorMessage("Please select a valid address and payment method.");
+      return { message: "Failed to place order." };
+    }
+
+    const orderRequest = {
+      addressDTO: addressDTO,
+      paymentMethodID: selectedPaymentMethodId,
+      orderItemDTOList: cartItems.map(mapProductInCartDTOToOrderItemDTO),
+      shippingCost: orderDetails.shippingCost,
+    };
+
+    const response = await apiClient.post<ResponseMessage>(
+      `${REQUEST_MAPPING}/order/place`,
+      orderRequest,
+    );
+    return response.data;
+  };
+
   useEffect(() => {
     let cancelled = false;
 
@@ -339,9 +374,20 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     console.log("Selected payment method ID:", paymentMethodId);
   };
 
-  const handlePlaceOrder = (): void => {
-    console.log("Placing order...");
-    navigate("/orderplaced");
+  const handlePlaceOrder = async (): Promise<void> => {
+    setErrorMessage("");
+    setIsLoading(true);
+
+    try {
+      const response = await callPlaceOrderAPI();
+
+      console.log("Place order response:", response);
+      navigate("/orderplaced");
+    } catch (error) {
+      setErrorMessage("Failed to place order. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -385,10 +431,11 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
           <div className="button-container">
             <button
-              className="form-button cart-button extended-width"
+              className={`form-button cart-button extended-width ${isLoading ? "loading" : ""}`}
+              disabled={isLoading}
               onClick={handlePlaceOrder}
             >
-              Place Your Order
+              {isLoading ? "Placing Your Order..." : "Place Your Order"}
             </button>
           </div>
         </div>
