@@ -8,10 +8,12 @@
     "dev:offline": "vite --mode development-offline",
     "build": "tsc -b && vite build",
     "build:prod": "vite build --mode production",
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "eslint src --ext js,jsx,ts,tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "preview": "vite preview",
-    "docs": "typedoc src/App.tsx src/components --out docs"
+    "docs": "typedoc src/App.tsx src/components --out docs",
+    "type-check": "tsc --noEmit",
+    "ci": "npm run type-check && npm run lint && npm run build:prod"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
