@@ -31,6 +31,8 @@ export default [
     rules: {
       ...ts.configs.recommended.rules,
       "@typescript-eslint/no-unused-vars": "warn",
+      "no-redeclare": "off", // Handled by @typescript-eslint/no-redeclare
+      "@typescript-eslint/no-redeclare": "warn",
     },
   },
 
