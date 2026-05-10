@@ -10,7 +10,7 @@ interface CacheEntry<T> {
 }
 
 interface Cache {
-  [key: string]: CacheEntry<any>;
+  [key: string]: CacheEntry<unknown>;
 }
 
 // SessionStorage keys for different caches
@@ -79,7 +79,8 @@ export const getCachedItem = <T>(
   itemKey: string,
 ): CacheEntry<T> | null => {
   const cache = getCache(cacheKey);
-  return cache[itemKey] || null;
+  const entry = cache[itemKey];
+  return (entry as CacheEntry<T>) || null;
 };
 
 /**
@@ -154,10 +155,7 @@ export const clearTransactionDetailsCache = (): void => {
 export const getCachedTransactionDetails = (
   itemKey: string,
 ): CacheEntry<OrderDetails> | null => {
-  return getCachedItem<OrderDetails>(
-    CACHE_KEYS.TRANSACTION_DETAILS,
-    itemKey,
-  );
+  return getCachedItem<OrderDetails>(CACHE_KEYS.TRANSACTION_DETAILS, itemKey);
 };
 
 /**
@@ -167,11 +165,7 @@ export const setCachedTransactionDetails = (
   itemKey: string,
   data: OrderDetails,
 ): void => {
-  setCachedItem<OrderDetails>(
-    CACHE_KEYS.TRANSACTION_DETAILS,
-    itemKey,
-    data,
-  );
+  setCachedItem<OrderDetails>(CACHE_KEYS.TRANSACTION_DETAILS, itemKey, data);
 };
 
 // ========== User Details specific functions ==========

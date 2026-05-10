@@ -63,7 +63,7 @@ export const validateNewPasswordCreation = (password: string): string => {
     return "Password must contain at least 1 digit";
   }
 
-  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+  if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
     return "Password must contain at least 1 special character";
   }
 

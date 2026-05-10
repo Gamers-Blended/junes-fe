@@ -80,7 +80,7 @@ export const validatePaymentField = (
   allValues?: PaymentFormData
 ): string | undefined => {
   switch (fieldName) {
-    case PaymentFormField.CARD_NUMBER:
+    case PaymentFormField.CARD_NUMBER: {
       if (!value || value.trim() === "") {
         return "Card number is required";
       }
@@ -99,8 +99,9 @@ export const validatePaymentField = (
         return "Please enter a valid card number";
       }
       break;
+    }
 
-    case PaymentFormField.CARD_HOLDER_NAME:
+    case PaymentFormField.CARD_HOLDER_NAME: {
       if (!value || value.trim() === "") {
         return "Cardholder name is required";
       }
@@ -111,8 +112,9 @@ export const validatePaymentField = (
         return "Cardholder name can only contain letters, spaces, hypens, and apostrophes";
       }
       break;
+    }
 
-    case PaymentFormField.EXPIRATION_MONTH:
+    case PaymentFormField.EXPIRATION_MONTH: {
       if (!value || value.trim() === "") {
         return "Please select an expiration month";
       }
@@ -128,8 +130,9 @@ export const validatePaymentField = (
         return "Card has expired";
       }
       break;
+    }
 
-    case PaymentFormField.EXPIRATION_YEAR:
+    case PaymentFormField.EXPIRATION_YEAR: {
       if (!value || value.trim() === "") {
         return "Please select an expiration year";
       }
@@ -146,6 +149,7 @@ export const validatePaymentField = (
         return "Card has expired";
       }
       break;
+    }
   }
   return undefined;
 };
