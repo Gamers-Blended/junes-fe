@@ -1,11 +1,10 @@
-// eslint.config.js
 import js from "@eslint/js";
 import ts from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import reactPlugin from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import jsxA11y from "eslint-plugin-jsx-a11y";
-import globals from "globals"; // Import the globals package
+import globals from "globals";
 
 export default [
   // Base ESLint recommended rules
@@ -21,10 +20,10 @@ export default [
         ecmaVersion: "latest",
         sourceType: "module",
         project: ['./tsconfig.app.json', './tsconfig.node.json'],
-        globals: {
-          ...globals.browser, // Add browser globals
-        }
       },
+      globals: {
+          ...globals.browser, // Add console, window, document, etc.
+      }
     },
     plugins: {
       "@typescript-eslint": ts,
