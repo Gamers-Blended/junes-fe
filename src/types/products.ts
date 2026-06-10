@@ -29,7 +29,7 @@ export interface ProductDTO {
   region: string;
   edition: string;
   publisher: string;
-  releaseDate: number[];
+  releaseDate: string;
   series: string[];
   genres: string[];
   languages: string[];

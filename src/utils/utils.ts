@@ -140,14 +140,14 @@ export function formatDateTimeWithHyphens(dateString: string | Date): string {
   return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
 }
 
-// Convert [yyy,mm,dd] date array to dd Month yyyy format
-export const convertDate = (dateArray: number[]) => {
-  if (!dateArray || dateArray.length === 0) return "Not Available";
-
-  const day = dateArray[2];
-  const month = dateArray[1];
-  const year = dateArray[0];
-  const date = new Date(year, month - 1, day); // month is 0-indexed
+// Convert "yyyy-mm-dd" date string to dd Month yyyy format
+export const convertDate = (dateString: string) => {
+  if (!dateString) return "Not Available";
+  
+  const date = new Date(dateString);
+  
+  if (isNaN(date.getTime())) return "Invalid Date";
+  
   return date.toLocaleDateString("en-GB", {
     day: "numeric",
     month: "long",
