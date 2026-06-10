@@ -170,7 +170,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <p className="product-card-title" onClick={handleNavigateToProduct}>
         {trimmedTitle}
       </p>
-      <p className="product-card-price">{item.price}</p>
+      <p className="product-card-price">S${item.price?.toFixed(2)}</p>
 
       {/* Buttons that appear on hover */}
       <div className="product-card-buttons">
