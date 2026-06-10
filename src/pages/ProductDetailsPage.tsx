@@ -22,6 +22,7 @@ import { ProductDTO, ProductDetailsResponse } from "../types/products.ts";
 import NotificationPopUp from "../components/NotificationPopUp.tsx";
 import { StockStatus } from "../utils/Enums.tsx";
 import { useAppSelector } from "../store/hooks";
+import { useBrowsingCache } from "../store/browsingCache";
 import Breadcrumb from "../components/Breadcrumb.tsx";
 import Footer from "../components/Footer";
 
@@ -34,6 +35,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
 }) => {
   const { slug } = useParams();
   const selectedItem = useAppSelector((state) => state.product.selectedItem);
+  const { addEntry } = useBrowsingCache();
 
   const [productDetails, setProductDetails] =
     useState<ProductDetailsResponse | null>(null);
@@ -108,6 +110,16 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
           `${REQUEST_MAPPING}/product/details/${slug}`,
         );
         setProductDetails(response.data);
+
+        if (response.data.productDTO) {
+          addEntry({
+            productID: response.data.productDTO.id,
+            name: response.data.productDTO.name,
+            slug: response.data.productDTO.slug,
+          });
+
+          console.log("Product added to browsing cache:", slug);
+        }
 
         // Set default selections if variants exist
         if (response.data.productVariantDTOList.length > 0 && selectedItem) {
