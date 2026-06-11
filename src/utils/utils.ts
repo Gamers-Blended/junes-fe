@@ -85,7 +85,7 @@ export const formatStringGeneral = (string: string) => {
 
   const words = string.replace(/_/g, " ").split(" ");
   const capitalized = words.map(
-    (word) => word.charAt(0).toUpperCase() + word.slice(1)
+    (word) => word.charAt(0).toUpperCase() + word.slice(1),
   );
   return capitalized.join(" ");
 };
@@ -143,11 +143,11 @@ export function formatDateTimeWithHyphens(dateString: string | Date): string {
 // Convert "yyyy-mm-dd" date string to dd Month yyyy format
 export const convertDate = (dateString: string) => {
   if (!dateString) return "Not Available";
-  
+
   const date = new Date(dateString);
-  
+
   if (isNaN(date.getTime())) return "Invalid Date";
-  
+
   return date.toLocaleDateString("en-GB", {
     day: "numeric",
     month: "long",
@@ -166,17 +166,24 @@ export function appendUrlPrefix(input: string | string[]) {
 }
 
 // Derive product status from releaseDate and stock
-export const getStockStatus = (
-  releaseDate: number[],
-  stock: number
-): string => {
+export const getStockStatus = (releaseDate: string, stock: number): string => {
   // Parse the release date
-  const [year, month, day] = releaseDate;
-  // Month is 0-indexed in JavaScript Date
-  const releaseDateObj = new Date(year, month - 1, day);
+  const releaseDateObj = new Date(releaseDate);
   console.log("Release Date Object:", releaseDateObj, "stock:", stock);
 
-  if (releaseDateObj > new Date()) {
+  // Check if date is valid
+  if (isNaN(releaseDateObj.getTime())) {
+    console.error("Invalid release date:", releaseDate);
+    return StockStatus.OUT_OF_STOCK;
+  }
+
+  const currentDate = new Date();
+
+  // Compare dates (reset time to 00:00:00 for accurate day comparison)
+  const releaseDateOnly = new Date(releaseDateObj.toDateString());
+  const currentDateOnly = new Date(currentDate.toDateString());
+
+  if (releaseDateOnly > currentDateOnly) {
     return StockStatus.PRE_ORDER;
   } else if (stock > 0) {
     return StockStatus.IN_STOCK;
