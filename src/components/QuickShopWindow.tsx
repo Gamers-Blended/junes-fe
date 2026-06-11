@@ -43,7 +43,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [currentProductImageUrl, setCurrentProductImageUrl] =
     useState<string>("");
-  const [releaseDate, setReleaseDate] = useState<number[]>([]);
+  const [releaseDate, setReleaseDate] = useState<string>("");
   const [languages, setLanguages] = useState<string[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
   const [numberOfPlayers, setNumberOfPlayers] = useState<string[]>([]);
