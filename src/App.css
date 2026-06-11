@@ -10,6 +10,7 @@
 @import "./styles/CartPage.css";
 @import "./styles/CheckoutPage.css";
 @import "./styles/OrderPlacedPage.css";
+@import "./styles/ProductDetailsPage.css";
 @import "./styles/SavedInfoActionWindow.css";
 @import "./styles/AccountInfoChangedMessageBox.css";
 @import "./styles/NotificationPopUp.css";
@@ -1156,111 +1157,6 @@ body.modal-open {
 input[type="number"] {
   -moz-appearance: textfield; /* Firefox */
   appearance: textfield; /* Other modern browsers */
-}
-
-/* PRODUCT DETAILS PAGE */
-.product-details-container {
-  max-width: 1200px;
-  display: flex;
-  flex-direction: column;
-}
-
-.product-variant-section {
-  text-align: left;
-}
-
-.product-title {
-  font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.product-publisher {
-  font-size: 16px;
-  margin-bottom: 20px;
-}
-
-.option-group-details {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.option-label-details {
-  font-size: 24px;
-  font-weight: bold;
-  justify-content: left;
-  align-items: center;
-  display: flex;
-  width: 100px;
-}
-
-.option-buttons-details {
-  display: flex;
-  flex-direction: row;
-  gap: 15px;
-}
-
-/* PRODUCT DETAILS PAGE - STOCK STATUS */
-.product-stock-status {
-  background-color: #22c55e;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 14px;
-  text-align: center;
-  display: inline-block;
-  border: none;
-}
-
-/* PRODUCT DETAILS PAGE - USER ACTION BOX */
-.product-main-content {
-  display: flex;
-  gap: 2rem;
-  margin: 2rem 0;
-}
-
-.product-options-left {
-  flex: 1;
-}
-
-.product-card-right {
-  flex: 0 0 300px; /* Fixed width for the card */
-}
-
-.price-card {
-  border: 2px solid black;
-  border-radius: 8px;
-  padding: 1.5rem;
-  text-align: center;
-}
-
-.price-display {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-/* PRODUCT DETAILS PAGE - DESCRIPTION */
-.product-details-section-header {
-  background: #00d4aa;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  font-weight: bold;
-  font-size: 25px;
-  text-align: center;
-}
-
-.product-description {
-  background: #c2e0b4;
-  text-align: left;
-  padding: 1rem;
-  padding-top: 0;
-}
-
-.product-detail-row-first {
-  border-bottom: black 2px solid;
 }
 
 /* Commons */

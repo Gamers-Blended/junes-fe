@@ -476,119 +476,137 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
             </div>
           )}
 
-          {/* Product Options */}
-          <div className="product-options-left">
-            <div className="product-options">
-              <div className="option-group-details">
-                {/* Platform */}
-                {availableRegions.length > 0 && (
-                  <div className="option-group-details option-buttons-details">
-                    <label className="option-label-details">Platform</label>
-                    {availablePlatforms.map((platform) => (
-                      <button
-                        key={platform}
-                        className={`option-btn ${
-                          selectedPlatform === platform ? "active" : ""
-                        }`}
-                        onClick={() => handlePlatformChange(platform)}
-                      >
-                        {formatPlatformName(platform)}
-                      </button>
-                    ))}
+          <div className="product-right-section">
+            <div className="product-right-top">
+              {/* Product Options */}
+              <div className="product-options-left">
+                <div className="product-options">
+                  <div className="option-group-details">
+                    {/* Platform */}
+                    {availableRegions.length > 0 && (
+                      <div className="option-group-details option-buttons-details">
+                        <label className="option-label-details">Platform</label>
+                        {availablePlatforms.map((platform) => (
+                          <button
+                            key={platform}
+                            className={`option-btn ${
+                              selectedPlatform === platform ? "active" : ""
+                            }`}
+                            onClick={() => handlePlatformChange(platform)}
+                          >
+                            {formatPlatformName(platform)}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Region */}
+                    {availableRegions.length > 0 && (
+                      <div className="option-group-details option-buttons-details">
+                        <label className="option-label-details">Region</label>
+                        {availableRegionsForPlatform.map((region) => (
+                          <button
+                            key={region}
+                            className={`option-btn ${
+                              selectedRegion === region ? "active" : ""
+                            }`}
+                            onClick={() => handleRegionChange(region)}
+                          >
+                            {formatRegionName(region)}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Edition */}
+                    {availableEditions.length > 0 && (
+                      <div className="option-group-details option-buttons-details">
+                        <label className="option-label-details">Edition</label>
+                        {availableEditionsForSelection.map((editon) => (
+                          <button
+                            key={editon}
+                            className={`option-btn ${
+                              selectedEdition === editon ? "active" : ""
+                            }`}
+                            onClick={() => handleEditionChange(editon)}
+                          >
+                            {formatEditionName(editon)}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
 
-                {/* Region */}
-                {availableRegions.length > 0 && (
-                  <div className="option-group-details option-buttons-details">
-                    <label className="option-label-details">Region</label>
-                    {availableRegionsForPlatform.map((region) => (
-                      <button
-                        key={region}
-                        className={`option-btn ${
-                          selectedRegion === region ? "active" : ""
-                        }`}
-                        onClick={() => handleRegionChange(region)}
-                      >
-                        {formatRegionName(region)}
-                      </button>
-                    ))}
+                {/* Stock Status */}
+                <div className="stock-status-container">
+                  <div style={getStatusStyle(status)}>
+                    {getStockStatus(productDTO.releaseDate, currentStock)}
                   </div>
-                )}
+                </div>
 
-                {/* Edition */}
-                {availableEditions.length > 0 && (
-                  <div className="option-group-details option-buttons-details">
-                    <label className="option-label-details">Edition</label>
-                    {availableEditionsForSelection.map((editon) => (
-                      <button
-                        key={editon}
-                        className={`option-btn ${
-                          selectedEdition === editon ? "active" : ""
-                        }`}
-                        onClick={() => handleEditionChange(editon)}
-                      >
-                        {formatEditionName(editon)}
-                      </button>
-                    ))}
+                {/* Image Zoom Hint */}
+                <div className="image-zoom-hint">
+                  <span>ℹ️ Hover over image to zoom in</span>
+                </div>
+              </div>
+
+              {/* Price and Actions Card */}
+              <div className="product-card-right">
+                <div className="price-card">
+                  <div className="price-display">
+                    {formatCurrency(currentCurrency)}
+                    {currentPrice.toFixed(2)}
                   </div>
-                )}
+
+                  <div className="product-details-buttons-container">
+                    <button
+                      className="common-button product-details-wishlist-button"
+                      onClick={() => handleAddToWishList(productDTO)}
+                    >
+                      Add to Wishlist
+                    </button>
+
+                    <button
+                      className={`common-button add-to-cart-button product-details-cart-button ${
+                        isAddingToCart ? "adding-to-cart" : ""
+                      }`}
+                      onClick={() => handleAddToCart(productDTO)}
+                      disabled={isAddingToCart || isOutOfStock(currentStock)}
+                    >
+                      {isAddingToCart ? (
+                        <div className="add-to-cart-spinner-container">
+                          <div className="add-to-cart-spinner"></div>
+                        </div>
+                      ) : (
+                        "Add To Cart"
+                      )}
+                    </button>
+                  </div>
+
+                  <NotificationPopUp
+                    message={notificationMessage}
+                    isVisible={showNotification}
+                    onClose={handleCloseNotification}
+                    duration={3000} // 3 seconds
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Stock Status */}
-            <div className="stock-status-container">
-              <div style={getStatusStyle(status)}>
-                {getStockStatus(productDTO.releaseDate, currentStock)}
+            {/* Edition Notes */}
+            {productDTO.editionNotes && (
+              <div className="product-edition-notes">
+                <div className="product-details-section-header">
+                  Edition Notes
+                </div>
+                <div className="product-description">
+                  <p style={{ whiteSpace: "pre-wrap" }}>
+                    {productDTO.editionNotes}
+                  </p>
+                </div>
               </div>
-            </div>
-
-            {/* Image Zoom Hint */}
-            <div className="image-zoom-hint">
-              <span>ℹ️ Hover over image to zoom in</span>
-            </div>
-          </div>
-
-          {/* Price and Actions Card */}
-          <div className="product-cart-right">
-            <div className="price-card">
-              <div className="price-display">
-                {formatCurrency(currentCurrency)}
-                {currentPrice.toFixed(2)}
-              </div>
-
-              <div className="product-details-buttons-container">
-                <button
-                  className="common-button product-details-wishlist-button"
-                  onClick={() => handleAddToWishList(productDTO)}
-                >
-                  Add to Wishlist
-                </button>
-
-                <button
-                  className={`common-button add-to-cart-button product-details-cart-button ${
-                    isAddingToCart ? "adding-to-cart" : ""
-                  }`}
-                  onClick={() => handleAddToCart(productDTO)}
-                  disabled={isAddingToCart || isOutOfStock(currentStock)}
-                >
-                  {isAddingToCart ? (
-                    <div className="add-to-cart-spinner-container">
-                      <div className="add-to-cart-spinner"></div>
-                    </div>
-                  ) : (
-                    "Add To Cart"
-                  )}
-                </button>
-              </div>
-
-              <NotificationPopUp
-                message={notificationMessage}
-                isVisible={showNotification}
-                onClose={handleCloseNotification}
-                duration={3000} // 3 seconds
-              />
-            </div>
+            )}
           </div>
         </div>
       </div>
