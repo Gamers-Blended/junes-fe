@@ -43,8 +43,9 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [currentProductImageUrl, setCurrentProductImageUrl] =
     useState<string>("");
-  const [releaseDate, setReleaseDate] = useState<string>("");
-  const [languages, setLanguages] = useState<string[]>([]);
+  const [currentName, setCurrentName] = useState<string>("");
+  const [currentReleaseDate, setCurrentReleaseDate] = useState<string>("");
+  const [currentLanguages, setCurrentLanguages] = useState<string[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
   const [numberOfPlayers, setNumberOfPlayers] = useState<string[]>([]);
   const [error, setError] = useState<string>("");
@@ -104,7 +105,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
     edition: item.edition,
   });
 
-  const updatePriceAndProductImageUrl = (
+  const updateCurrentMetadata = (
     platform: string,
     region: string,
     edition: string,
@@ -116,6 +117,9 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
     if (variant) {
       setCurrentPrice(variant.price);
       setCurrentProductImageUrl(variant.productImageUrl);
+      setCurrentName(variant.name);
+      setCurrentReleaseDate(variant.releaseDate);
+      setCurrentLanguages(variant.languages);
     }
   };
 
@@ -147,7 +151,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
       const newEdition = availableEditionsForNewSelection[0] || "";
       setSelectedEdition(newEdition);
 
-      updatePriceAndProductImageUrl(platform, newRegion, newEdition);
+      updateCurrentMetadata(platform, newRegion, newEdition);
     } else {
       // Currently selected region also available for new platform
       const availableEditionsForNewSelection = [
@@ -165,10 +169,10 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
         const newEdition = availableEditionsForNewSelection[0] || "";
         setSelectedEdition(newEdition);
 
-        updatePriceAndProductImageUrl(platform, selectedRegion, newEdition);
+        updateCurrentMetadata(platform, selectedRegion, newEdition);
       } else {
         // Currently selected edition also available for new platform and region
-        updatePriceAndProductImageUrl(
+        updateCurrentMetadata(
           platform,
           selectedRegion,
           selectedEdition,
@@ -191,15 +195,15 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
     if (!availableEditionsForNewSelection.includes(selectedEdition)) {
       const newEdition = availableEditionsForNewSelection[0] || "";
       setSelectedEdition(newEdition);
-      updatePriceAndProductImageUrl(selectedPlatform, region, newEdition);
+      updateCurrentMetadata(selectedPlatform, region, newEdition);
     } else {
-      updatePriceAndProductImageUrl(selectedPlatform, region, selectedEdition);
+      updateCurrentMetadata(selectedPlatform, region, selectedEdition);
     }
   };
 
   const handleEditionChange = (edition: string) => {
     setSelectedEdition(edition);
-    updatePriceAndProductImageUrl(selectedPlatform, selectedRegion, edition);
+    updateCurrentMetadata(selectedPlatform, selectedRegion, edition);
   };
 
   const handleAddToCart = async () => {
@@ -268,8 +272,7 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
 
         setProductData(data.productDTO);
         setProductVariants(data.productVariantDTOList);
-        setReleaseDate(data.productDTO.releaseDate);
-        setLanguages(data.productDTO.languages);
+        setCurrentName(data.productDTO.name);
         setGenres(data.productDTO.genres);
         setNumberOfPlayers(data.productDTO.numberOfPlayers);
 
@@ -291,6 +294,9 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
           setSelectedEdition(defaultVariant.edition);
           setCurrentPrice(defaultVariant.price);
           setCurrentProductImageUrl(defaultVariant.productImageUrl);
+          setCurrentName(defaultVariant.name);
+          setCurrentReleaseDate(defaultVariant.releaseDate);
+          setCurrentLanguages(defaultVariant.languages);
         }
       } catch (err) {
         // Don't update state if request was intentionally aborted
@@ -348,12 +354,12 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
               <img
                 className="product-image"
                 src={currentProductImageUrl}
-                alt={productData.name}
+                alt={currentName}
               />
             </div>
 
             <div className="product-info-section">
-              <h1 className="product-title">{productData.name}</h1>
+              <h1 className="product-title">{currentName}</h1>
 
               <div className="product-options">
                 <div className="option-group">
@@ -429,13 +435,13 @@ const QuickShopWindow: React.FC<QuickWindowProps> = ({
                 <div className="detail-row">
                   <span className="detail-label">Official Release Date</span>
                   <span className="detail-value">
-                    {convertDate(releaseDate)}
+                    {convertDate(currentReleaseDate)}
                   </span>
                 </div>
                 <div className="detail-row">
                   <span className="detail-label">Language(s)</span>
                   <span className="detail-value">
-                    {formatStringArrays(languages)}
+                    {formatStringArrays(currentLanguages)}
                   </span>
                 </div>
                 <div className="detail-row">
