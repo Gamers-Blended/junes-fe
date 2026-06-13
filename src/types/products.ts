@@ -49,6 +49,7 @@ export interface ProductVariantDTO {
   price: number;
   stock: number;
   productImageUrl: string;
+  editionNotes: string;
 }
 
 export interface ProductDetailsResponse {

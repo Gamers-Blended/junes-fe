@@ -48,6 +48,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
     useState<string>("");
   const [currentImageUrlList, setCurrentImageUrlList] = useState<string[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+  const [currentEditionNotes, setCurrentEditionNotes] = useState<string>("");
 
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
   const [showNotification, setShowNotification] = useState<boolean>(false);
@@ -139,6 +140,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
           setCurrentPrice(defaultVariant.price);
           setCurrentStock(defaultVariant.stock);
           setCurrentProductImageUrl(defaultVariant.productImageUrl);
+          setCurrentEditionNotes(defaultVariant.editionNotes || "");
 
           // Combine variant image with product images
           const allImages = [
@@ -202,6 +204,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
     if (variant) {
       setCurrentPrice(variant.price);
       setCurrentProductImageUrl(variant.productImageUrl);
+      setCurrentEditionNotes(variant.editionNotes || "");
 
       // Update image list when variant changes
       const allImages = [
@@ -595,14 +598,14 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
             </div>
 
             {/* Edition Notes */}
-            {productDTO.editionNotes && (
+            {currentEditionNotes !== "" && (
               <div className="product-edition-notes">
                 <div className="product-details-section-header">
                   Edition Notes
                 </div>
                 <div className="product-description">
                   <p style={{ whiteSpace: "pre-wrap" }}>
-                    {productDTO.editionNotes}
+                    {currentEditionNotes}
                   </p>
                 </div>
               </div>
