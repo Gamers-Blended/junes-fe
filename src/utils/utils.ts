@@ -60,6 +60,10 @@ export const formatEditionName = (edition: string) => {
   switch (edition.toLowerCase()) {
     case "std":
       return "Standard";
+    case "dlx_e":
+      return "Deluxe Edition";
+    case "ge":
+      return "Gold Edition";
     case "ce":
       return "Collector's";
     default:
