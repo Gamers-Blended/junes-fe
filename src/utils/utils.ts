@@ -47,6 +47,8 @@ export const formatRegionName = (region: string) => {
   switch (region.toLowerCase()) {
     case "asia":
       return "Asia";
+    case "jp":
+      return "Japan";
     case "us":
       return "United States";
     case "eur":
