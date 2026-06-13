@@ -49,6 +49,9 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
   const [currentImageUrlList, setCurrentImageUrlList] = useState<string[]>([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
   const [currentEditionNotes, setCurrentEditionNotes] = useState<string>("");
+  const [currentName, setCurrentName] = useState<string>("");
+  const [currentReleaseDate, setCurrentReleaseDate] = useState<string>("");
+  const [currentLanguages, setCurrentLanguages] = useState<string[]>([]);
 
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
   const [showNotification, setShowNotification] = useState<boolean>(false);
@@ -141,6 +144,9 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
           setCurrentStock(defaultVariant.stock);
           setCurrentProductImageUrl(defaultVariant.productImageUrl);
           setCurrentEditionNotes(defaultVariant.editionNotes || "");
+          setCurrentName(defaultVariant.name);
+          setCurrentReleaseDate(defaultVariant.releaseDate);
+          setCurrentLanguages(defaultVariant.languages || []);
 
           // Combine variant image with product images
           const allImages = [
@@ -192,7 +198,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
     return message;
   };
 
-  const updatePriceAndProductImageUrl = (
+  const updateCurrentMetadata = (
     platform: string,
     region: string,
     edition: string,
@@ -205,6 +211,9 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
       setCurrentPrice(variant.price);
       setCurrentProductImageUrl(variant.productImageUrl);
       setCurrentEditionNotes(variant.editionNotes || "");
+      setCurrentName(variant.name);
+      setCurrentReleaseDate(variant.releaseDate);
+      setCurrentLanguages(variant.languages);
 
       // Update image list when variant changes
       const allImages = [
@@ -251,7 +260,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
       const newEdition = availableEditionsForNewSelection[0] || "";
       setSelectedEdition(newEdition);
 
-      updatePriceAndProductImageUrl(platform, newRegion, newEdition);
+      updateCurrentMetadata(platform, newRegion, newEdition);
     } else {
       // Currently selected region also available for new platform
       const availableEditionsForNewSelection = [
@@ -269,14 +278,10 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
         const newEdition = availableEditionsForNewSelection[0] || "";
         setSelectedEdition(newEdition);
 
-        updatePriceAndProductImageUrl(platform, selectedRegion, newEdition);
+        updateCurrentMetadata(platform, selectedRegion, newEdition);
       } else {
         // Currently selected edition also available for new platform and region
-        updatePriceAndProductImageUrl(
-          platform,
-          selectedRegion,
-          selectedEdition,
-        );
+        updateCurrentMetadata(platform, selectedRegion, selectedEdition);
       }
     }
   };
@@ -295,15 +300,15 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
     if (!availableEditionsForNewSelection.includes(selectedEdition)) {
       const newEdition = availableEditionsForNewSelection[0] || "";
       setSelectedEdition(newEdition);
-      updatePriceAndProductImageUrl(selectedPlatform, region, newEdition);
+      updateCurrentMetadata(selectedPlatform, region, newEdition);
     } else {
-      updatePriceAndProductImageUrl(selectedPlatform, region, selectedEdition);
+      updateCurrentMetadata(selectedPlatform, region, selectedEdition);
     }
   };
 
   const handleEditionChange = (edition: string) => {
     setSelectedEdition(edition);
-    updatePriceAndProductImageUrl(selectedPlatform, selectedRegion, edition);
+    updateCurrentMetadata(selectedPlatform, selectedRegion, edition);
   };
 
   // Handle thumbnail click
@@ -433,7 +438,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
       <Breadcrumb items={breadcrumbItems} />
 
       <div className="product-variant-section">
-        <h1 className="product-title">{productDTO.name}</h1>
+        <h1 className="product-title">{currentName}</h1>
 
         <div className="product-publisher">
           <p>{formatStringGeneral(productDTO.publisher)}</p>
@@ -472,7 +477,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
                         currentProductImageUrl,
                     ) as string
                   }
-                  alt={productDTO.name}
+                  alt={currentName}
                   className="product-main-image"
                 />
               </div>
@@ -624,19 +629,19 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
           <div className="detail-row product-detail-row-first">
             <span className="detail-label">Name</span>
             <span className="detail-value">
-              {formatStringGeneral(productDTO.name)}
+              {formatStringGeneral(currentName)}
             </span>
           </div>
           <div className="detail-row">
             <span className="detail-label">Official Release Date</span>
             <span className="detail-value">
-              {convertDate(productDTO.releaseDate)}
+              {convertDate(currentReleaseDate)}
             </span>
           </div>
           <div className="detail-row">
             <span className="detail-label">Language(s)</span>
             <span className="detail-value">
-              {formatStringArrays(productDTO.languages)}
+              {formatStringArrays(currentLanguages)}
             </span>
           </div>
           <div className="detail-row">

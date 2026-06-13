@@ -43,10 +43,13 @@ export interface ProductDTO {
 
 export interface ProductVariantDTO {
   productID: string;
+  name: string;
+  price: number;
   platform: string;
   region: string;
   edition: string;
-  price: number;
+  releaseDate: string;
+  languages: string[];
   stock: number;
   productImageUrl: string;
   editionNotes: string;
