@@ -243,6 +243,8 @@ const MyAccountPage: React.FC<MyAccountPageProps> = ({
         );
         setIsLoading(false);
         return;
+      } finally {
+        localStorage.removeItem("jwtToken");
       }
     }
 
