@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ProductSliderItem } from "../types/products.ts";
 import { RecommendedProductRequestDTO } from "../types/recommendations.ts";
 import { Page } from "../types/page.ts";
@@ -42,12 +42,22 @@ const ProductSlider: React.FC<ProductSliderProps> = ({
   const { debugDate } = useDebug();
   const { history } = useBrowsingCache();
 
+  // Tracks latest in-flight request so stale responses can be ignored
+  const requestIdRef = useRef(0);
+  const isInitialDebugMount = useRef(true);
+
   const fetchItems = async (pageNumber: number) => {
+    const requestId = ++requestIdRef.current;
     setIsLoading(true);
     setErrorMessage(""); // Clear any previous errors
 
     try {
       const response = await getProductSliderItems(pageNumber);
+
+      // A newer request has since started - discard stale result
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
 
       const imageUrls = response.content.map(
         (item) => item.productImageUrl || "",
@@ -211,10 +221,26 @@ const ProductSlider: React.FC<ProductSliderProps> = ({
     }
   };
 
+  // Initial mount fetch
   useEffect(() => {
     console.log(`${title} - Component mounted, fetching initial data...`);
     fetchItems(0);
-  }, []); // Runs once component mounts
+  }, []);
+
+  // Re-fetch preorders whenever debugDate changes
+  useEffect(() => {
+    if (title !== "Preorders") return;
+
+    if (isInitialDebugMount.current) {
+      isInitialDebugMount.current = false;
+      return; // Skip the first mount to avoid double-fetching
+    }
+
+    console.log(
+      `${title} - debugDate changed to ${debugDate}, refetching page 0...`,
+    );
+    fetchItems(0);
+  }, [debugDate, title]);
 
   if (errorMessage) {
     return (
