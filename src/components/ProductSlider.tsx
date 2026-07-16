@@ -11,10 +11,12 @@ import {
   getApiErrorMessage,
 } from "../utils/api.ts";
 import { useAuth } from "../components/AuthContext.tsx";
+import { useDebug } from "../components/DebugContext.tsx";
 import { useBrowsingCache } from "../store/browsingCache";
 
 import arrowLeftIcon from "../assets/arrowLeftIcon.png";
 import arrowRightIcon from "../assets/arrowRightIcon.png";
+import { toLocalDateInputValue } from "../utils/dateUtils.ts";
 
 interface ProductSliderProps {
   offlineMode?: boolean;
@@ -37,6 +39,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const { isLoggedIn } = useAuth();
+  const { debugDate } = useDebug();
   const { history } = useBrowsingCache();
 
   const fetchItems = async (pageNumber: number) => {
@@ -131,7 +134,9 @@ const ProductSlider: React.FC<ProductSliderProps> = ({
       case "Preorders":
         console.info(`Fetching ${title} data for page ${pageNumber}`);
 
-        const referenceDate = "2023-01-01"; // TODO get from DebugWindow
+        const referenceDate = debugDate
+          ? toLocalDateInputValue(debugDate)
+          : "2023-01-01";
 
         response = await apiClient.get<Page<ProductSliderItem>>(
           `/junes/api/v1/frontpage/preorders`,

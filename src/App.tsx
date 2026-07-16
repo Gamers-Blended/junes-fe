@@ -23,15 +23,18 @@ import OrderPlacedPage from "./pages/OrderPlacedPage.tsx";
 import NavigationBar from "./components/NavigationBar.tsx";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "./components/AuthContext";
+import { DebugProvider } from "./components/DebugContext";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppLayout />
-      </AuthProvider>
+      <DebugProvider>
+        <AuthProvider>
+          <AppLayout />
+        </AuthProvider>
+      </DebugProvider>
     </BrowserRouter>
   );
 }
