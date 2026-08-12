@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  useStripe,
+  useElements,
+  PaymentElement,
+} from "@stripe/react-stripe-js";
 import { Address } from "../types/address";
 import { PaymentMethod } from "../types/paymentMethod";
 import {
   SavedInfoType,
   SavedInfoAction,
   SavedItemSelectorCaller,
+  PaymentFormField,
 } from "../utils/Enums.tsx";
 import AddressCardContent from "../components/AddressCardContent";
 import SavedItemSelector from "../components/SavedItemSelector";
-import { formatCardNumber } from "../utils/utils";
-import { getCardType } from "../utils/cardTypeUtils";
-import { PaymentFormField } from "../utils/Enums";
 import {
-  CARD_NUMBER_WITH_SPACES_LENGTH,
   validatePaymentField,
-  validateAllPaymentFields,
   PaymentValidationErrors,
 } from "../utils/paymentValidation";
 import {
@@ -35,6 +38,9 @@ import dinnersClubIcon from "../assets/acceptedCardsIcons/dinersClubIcon.png";
 import discoverIcon from "../assets/acceptedCardsIcons/discoverIcon.png";
 import jcbIcon from "../assets/acceptedCardsIcons/jcbIcon.png";
 import unionPayIcon from "../assets/acceptedCardsIcons/unionPayIcon.png";
+
+// Loaded once at module scope - recreating this pre-render would tear down and remount Stripe.js on every re-render
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 // Discriminated union type guard
 type SavedInfoActionWindowProps =
@@ -92,7 +98,9 @@ type AddressDTO = Omit<Address, "id" | "type"> & {
   addressID: string;
 };
 
-const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
+const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
+  props,
+) => {
   const {
     type,
     mode,
@@ -116,7 +124,6 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   );
 
   // Form state for payment methods
-  const [cardNumber, setCardNumber] = useState("");
   const [cardHolderName, setCardHolderName] = useState(
     type === SavedInfoType.PAYMENT && savedItemData
       ? savedItemData.cardHolderName
@@ -143,6 +150,10 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
   const [paymentValidationError, setPaymentValidationError] =
     useState<PaymentValidationErrors>({});
   const [paymentTouched, setPaymentTouched] = useState<Set<string>>(new Set());
+
+  // Stripe
+  const stripe = useStripe();
+  const elements = useElements();
 
   // Functions for API calls
   useEffect(() => {
@@ -212,33 +223,6 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     return addressList;
   };
 
-  const addPaymentMethod = async () => {
-    if (offlineMode) {
-      console.log("Offline mode: Skipping add payment method API call");
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      return;
-    }
-
-    console.log("Making API to add payment method...");
-
-    const response = await apiClient.post(
-      `${REQUEST_MAPPING}/saved-items/payment-method`,
-      {
-        cardType: getCardType(cardNumber),
-        cardLastFour: cardNumber.replace(/\s/g, "").slice(-4), // Remove spaces, then take the last 4 characters
-        cardHolderName,
-        expirationMonth,
-        expirationYear,
-        billingAddressId: selectedBillingAddressId,
-        isDefault: isDefault,
-      },
-    );
-
-    console.log("Payment method added successfully:", response.data);
-  };
-
   const editPaymentMethod = async () => {
     if (offlineMode) {
       console.log("Offline mode: Skipping edit payment method API call");
@@ -275,17 +259,12 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     }
     console.log("Making API call to attach address to payment method...");
 
-    await apiClient.post(
-      `${REQUEST_MAPPING}/saved-items/attach`,
-      {
-        addressID: selectedBillingAddressId,
-        paymentMethodID: savedItemData?.id,
-      },
-    );
+    await apiClient.post(`${REQUEST_MAPPING}/saved-items/attach`, {
+      addressID: selectedBillingAddressId,
+      paymentMethodID: savedItemData?.id,
+    });
 
-    console.log(
-      "Address attached to payment method successfully"
-    );
+    console.log("Address attached to payment method successfully");
   };
 
   // Handler for buttons
@@ -296,31 +275,28 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     try {
       if (type === SavedInfoType.PAYMENT && mode === SavedInfoAction.ADD) {
         // Add mode for payment
-        // Validate payment fields
-        const { errors: paymentErrors, isValid: isPaymentValid } =
-          validateAllPaymentFields({
-            cardNumber,
+        // Card number/expiration/CVC live inside Stripe's PaymentElement - validated by Stripe on confirmSetup
+        // Validate only cardHolderName
+        const cardHolderNameError = validatePaymentField(
+          PaymentFormField.CARD_HOLDER_NAME,
+          cardHolderName,
+          {
+            cardNumber: "",
             cardHolderName,
-            expirationMonth,
-            expirationYear,
-          });
-
-        setPaymentValidationError(paymentErrors);
-        setPaymentTouched(
-          new Set([
-            PaymentFormField.CARD_NUMBER,
-            PaymentFormField.CARD_HOLDER_NAME,
-            PaymentFormField.EXPIRATION_MONTH,
-            PaymentFormField.EXPIRATION_YEAR,
-          ]),
+            expirationMonth: "",
+            expirationYear: "",
+          },
         );
 
-        if (!isPaymentValid) {
+        setPaymentValidationError({ cardHolderName: cardHolderNameError });
+        setPaymentTouched(new Set([PaymentFormField.CARD_HOLDER_NAME]));
+
+        if (cardHolderNameError) {
           console.log("Validation failed");
           return;
         }
 
-        await addPaymentMethod();
+        await handleAddPaymentMethod();
 
         props.onAdd?.();
       } else if (
@@ -356,30 +332,6 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     }
   };
 
-  // Card number needs to be formatted before processing
-  const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formattedCardNumber = formatCardNumber(e.target.value);
-    setCardNumber(formattedCardNumber);
-
-    // Clear error if field has been touched
-    if (paymentTouched.has(PaymentFormField.CARD_NUMBER)) {
-      const error = validatePaymentField(
-        PaymentFormField.CARD_NUMBER,
-        formattedCardNumber,
-        {
-          cardNumber: formattedCardNumber,
-          cardHolderName,
-          expirationMonth,
-          expirationYear,
-        },
-      );
-      setPaymentValidationError((prevErrors) => ({
-        ...prevErrors,
-        cardNumber: error,
-      }));
-    }
-  };
-
   const handlePaymentFieldChange = (fieldName: string, value: string) => {
     switch (fieldName) {
       case PaymentFormField.CARD_HOLDER_NAME:
@@ -399,7 +351,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         fieldName as keyof PaymentValidationErrors,
         value,
         {
-          cardNumber,
+          cardNumber: "",
           cardHolderName:
             fieldName === PaymentFormField.CARD_HOLDER_NAME
               ? value
@@ -426,9 +378,6 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
     let value = "";
     switch (fieldName) {
-      case PaymentFormField.CARD_NUMBER:
-        value = cardNumber;
-        break;
       case PaymentFormField.CARD_HOLDER_NAME:
         value = cardHolderName;
         break;
@@ -444,7 +393,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
       fieldName as keyof PaymentValidationErrors,
       value,
       {
-        cardNumber,
+        cardNumber: "",
         cardHolderName,
         expirationMonth,
         expirationYear,
@@ -502,34 +451,10 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
 
   const years = Array.from({ length: 10 }, (_, i) => String(2025 + i));
 
-  // Common payment form fields component
-  const renderPaymentFormFields = (includeCardNumber: boolean = true) => {
+  // EDIT-mode fields only
+  const renderEditableCardFields = () => {
     return (
       <>
-        {/* Card Number - only for ADD mode */}
-        {includeCardNumber && (
-          <div className="input-group padding-bottom">
-            <label className="label bold">Card number</label>
-            <input
-              type="text"
-              value={cardNumber}
-              onChange={handleCardNumberChange}
-              onBlur={() => handlePaymentBlur(PaymentFormField.CARD_NUMBER)}
-              className={`input-field ${
-                showPaymentValidationError(PaymentFormField.CARD_NUMBER)
-                  ? "error"
-                  : ""
-              }`}
-              maxLength={CARD_NUMBER_WITH_SPACES_LENGTH}
-            />
-            {showPaymentValidationError(PaymentFormField.CARD_NUMBER) && (
-              <div className="form-error-message">
-                {paymentValidationError.cardNumber}
-              </div>
-            )}
-          </div>
-        )}
-
         {/* Cardholder Name */}
         <div className="input-group padding-bottom">
           <label className="label bold">Name on card</label>
@@ -628,7 +553,50 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
       <div className="add-edit-payment-form-container">
         {/* Left Column - Card Details */}
         <div className="add-edit-payment-left-column">
-          {renderPaymentFormFields(true)}
+          {/* Cardholder Name */}
+          <div className="input-group padding-bottom">
+            <label className="label bold">Name on card</label>
+            <input
+              type="text"
+              value={cardHolderName}
+              onChange={(e) =>
+                handlePaymentFieldChange(
+                  PaymentFormField.CARD_HOLDER_NAME,
+                  e.target.value,
+                )
+              }
+              onBlur={() =>
+                handlePaymentBlur(PaymentFormField.CARD_HOLDER_NAME)
+              }
+              className={`input-field ${
+                showPaymentValidationError(PaymentFormField.CARD_HOLDER_NAME)
+                  ? "error"
+                  : ""
+              }`}
+            />
+            {showPaymentValidationError(PaymentFormField.CARD_HOLDER_NAME) && (
+              <div className="form-error-message">
+                {paymentValidationError.cardHolderName}
+              </div>
+            )}
+          </div>
+
+          {/* Card number / expiration / CVC - rendered and validated by Stripe inside iframe */}
+          <div className="input-group padding-bottom">
+            <label className="label bold">Card details</label>
+            <div className="input-field stripe-element-wrapper">
+              <PaymentElement
+                options={{
+                  fields: { billingDetails: { name: "never" } },
+                }}
+              />
+            </div>
+            {!stripe && (
+              <div className="form-error-message">
+                Loading secure payment form...
+              </div>
+            )}
+          </div>
 
           {/* Set as Default */}
           <div className="checkbox-group">
@@ -698,7 +666,7 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
       <div className="add-edit-payment-form-container">
         {/* Left Column - Card Details without Card Number */}
         <div className="add-edit-payment-left-column">
-          {renderPaymentFormFields(false)}
+          {renderEditableCardFields()}
         </div>
 
         {/* Right Column - Billing Adress */}
@@ -782,6 +750,76 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
     );
   };
 
+  // Functions for Stripe integration
+  const handleAddPaymentMethod = async () => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping add payment method API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return;
+    }
+
+    if (!stripe || !elements) {
+      setErrorMessage?.(
+        "Payment form is still loading. Please wait a moment and try again.",
+      );
+      console.error("Stripe.js has not loaded yet.");
+      return;
+    }
+
+    // Deferred-Elements
+    // Validate & collect entered card details BEFORE SetupIntent exists server-side
+    const { error: submitError } = await elements.submit();
+    if (submitError) {
+      setErrorMessage?.(
+        getApiErrorMessage(
+          submitError,
+          "Please check your card details and try again.",
+        ),
+      );
+      console.error("Error submitting payment element:", submitError);
+      throw submitError;
+    }
+
+    // Ask backend for SetupIntent client_secret
+    const { data } = await apiClient.post(
+      `${REQUEST_MAPPING}/saved-items/payment-method/setup-intent`,
+    );
+    const { clientSecret } = data;
+
+    // Confirm directly with Stripe - card data never touches server
+    const { setupIntent, error } = await stripe.confirmSetup({
+      elements,
+      clientSecret,
+      confirmParams: {
+        return_url: window.location.href,
+        payment_method_data: {
+          billing_details: { name: cardHolderName },
+        },
+      },
+      redirect: "if_required",
+    });
+
+    if (error) {
+      setErrorMessage?.(
+        getApiErrorMessage(
+          error,
+          "Failed to process your request. Please try again.",
+        ),
+      );
+      console.error("Error confirming setup intent:", error);
+      throw error;
+    }
+
+    // Confirmed with Stripe, persist in own database, send Stripe PaymentMethod ID
+    await apiClient.post(`${REQUEST_MAPPING}/saved-items/payment-method`, {
+      stripePaymentMethodId: setupIntent.payment_method as string,
+      billingAddressId: selectedBillingAddressId,
+      isDefault: isDefault,
+    });
+  };
+
   return (
     <div className="saved-info-overlay">
       <div className="saved-info-modal">
@@ -859,6 +897,25 @@ const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
         )}
       </div>
     </div>
+  );
+};
+
+// Deferred initialization
+// (mode: "setup", no clientSecret)
+// SetupIntent is created on submit
+// In handleAddPaymentMethod - PaymentElement can still render immediately in ADD mode
+const SavedInfoActionWindow: React.FC<SavedInfoActionWindowProps> = (props) => {
+  return (
+    <Elements
+      stripe={stripePromise}
+      options={{
+        mode: "setup",
+        currency: "sgd",
+        payment_method_types: ["card"],
+      }}
+    >
+      <SavedInfoActionWindowInner {...props} />
+    </Elements>
   );
 };
 
