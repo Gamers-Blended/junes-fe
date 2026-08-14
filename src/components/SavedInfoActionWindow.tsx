@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
@@ -38,6 +38,12 @@ import dinnersClubIcon from "../assets/acceptedCardsIcons/dinersClubIcon.png";
 import discoverIcon from "../assets/acceptedCardsIcons/discoverIcon.png";
 import jcbIcon from "../assets/acceptedCardsIcons/jcbIcon.png";
 import unionPayIcon from "../assets/acceptedCardsIcons/unionPayIcon.png";
+
+function generateIdempotencyKey(): string {
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substring(2, 10);
+  return `${timestamp}-${random}-${Date.now()}`;
+}
 
 // Loaded once at module scope - recreating this pre-render would tear down and remount Stripe.js on every re-render
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -130,6 +136,16 @@ const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
       : "",
   );
   const [isDefault, setIsDefault] = useState(false);
+
+  // Idempotency key for ADD flow
+  // Generated once per attempt
+  const idempotencyKeyRef = useRef<string | undefined>(undefined);
+  if (!idempotencyKeyRef.current) {
+    idempotencyKeyRef.current = generateIdempotencyKey();
+  }
+  const resetIdempotencyKey = () => {
+    idempotencyKeyRef.current = generateIdempotencyKey();
+  };
 
   // Get current date for default expiration
   const currentDate = new Date();
@@ -782,13 +798,19 @@ const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
       throw submitError;
     }
 
-    // Ask backend for SetupIntent client_secret
+    // Call 1: Create SetupIntent on server, get client_secret
     const { data } = await apiClient.post(
       `${REQUEST_MAPPING}/saved-items/payment-method/setup-intent`,
+      {},
+      {
+        headers: {
+          "Idempotency-Key": `${idempotencyKeyRef.current}-setup-intent`,
+        },
+      },
     );
     const { clientSecret } = data;
 
-    // Confirm directly with Stripe - card data never touches server
+    // Call 2: Confirm SetupIntent with Stripe using client_secret and card details
     const { setupIntent, error } = await stripe.confirmSetup({
       elements,
       clientSecret,
@@ -812,12 +834,21 @@ const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
       throw error;
     }
 
-    // Confirmed with Stripe, persist in own database, send Stripe PaymentMethod ID
-    await apiClient.post(`${REQUEST_MAPPING}/saved-items/payment-method`, {
-      stripePaymentMethodId: setupIntent.payment_method as string,
-      billingAddressId: selectedBillingAddressId,
-      isDefault: isDefault,
-    });
+    // Call 3: Persist SetupIntent's PaymentMethod ID in own database
+    await apiClient.post(
+      `${REQUEST_MAPPING}/saved-items/payment-method`,
+      {
+        stripePaymentMethodID: setupIntent.payment_method,
+        isDefault: isDefault,
+      },
+      {
+        headers: {
+          "Idempotency-Key": idempotencyKeyRef.current,
+        },
+      },
+    );
+
+    resetIdempotencyKey();
   };
 
   return (
