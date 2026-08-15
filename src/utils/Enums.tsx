@@ -70,12 +70,12 @@ export enum SavedItemSelectorCaller {
 }
 
 export enum CardType {
-  VISA = "VISA",
-  MASTERCARD = "MASTERCARD",
-  AMEX = "AMEX",
-  DISCOVER = "DISCOVER",
-  JCB = "JCB",
-  DINERS_CLUB = "DINERS_CLUB",
-  UNIONPAY = "UNIONPAY",
-  UNKNOWN = "UNKNOWN",
+  VISA = "visa",
+  MASTERCARD = "mastercard",
+  AMEX = "amex",
+  DISCOVER = "discover",
+  JCB = "jcb",
+  DINERS_CLUB = "diners_club",
+  UNIONPAY = "unionpay",
+  UNKNOWN = "unknown",
 }
