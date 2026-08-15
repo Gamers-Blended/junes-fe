@@ -73,9 +73,7 @@ export enum CardType {
   VISA = "visa",
   MASTERCARD = "mastercard",
   AMEX = "amex",
-  DISCOVER = "discover",
   JCB = "jcb",
-  DINERS_CLUB = "diners_club",
   UNIONPAY = "unionpay",
   UNKNOWN = "unknown",
 }

@@ -34,8 +34,6 @@ import { mockAddressList } from "../mocks/data/address.ts";
 import visaIcon from "../assets/acceptedCardsIcons/visaIcon.png";
 import masterCardIcon from "../assets/acceptedCardsIcons/masterCardIcon.png";
 import americanExpressIcon from "../assets/acceptedCardsIcons/americanExpressIcon.png";
-import dinnersClubIcon from "../assets/acceptedCardsIcons/dinersClubIcon.png";
-import discoverIcon from "../assets/acceptedCardsIcons/discoverIcon.png";
 import jcbIcon from "../assets/acceptedCardsIcons/jcbIcon.png";
 import unionPayIcon from "../assets/acceptedCardsIcons/unionPayIcon.png";
 
@@ -652,15 +650,9 @@ const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
                 alt="American Express"
                 className="card-logo"
               />
-              <img
-                src={dinnersClubIcon}
-                alt="Dinner's Club"
-                className="card-logo"
-              />
             </div>
 
             <div className="card-logo-row">
-              <img src={discoverIcon} alt="Discover" className="card-logo" />
               <img src={jcbIcon} alt="JCB" className="card-logo" />
               <img src={unionPayIcon} alt="UnionPay" className="card-logo" />
             </div>

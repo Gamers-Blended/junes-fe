@@ -5,8 +5,6 @@ import { CardType } from "../utils/Enums";
 import visaIcon from "../assets/acceptedCardsIcons/visaIcon.png";
 import masterCardIcon from "../assets/acceptedCardsIcons/masterCardIcon.png";
 import americanExpressIcon from "../assets/acceptedCardsIcons/americanExpressIcon.png";
-import dinnersClubIcon from "../assets/acceptedCardsIcons/dinersClubIcon.png";
-import discoverIcon from "../assets/acceptedCardsIcons/discoverIcon.png";
 import jcbIcon from "../assets/acceptedCardsIcons/jcbIcon.png";
 import unionPayIcon from "../assets/acceptedCardsIcons/unionPayIcon.png";
 
@@ -14,8 +12,6 @@ const CARD_ICONS: Record<CardType, string> = {
   [CardType.VISA]: visaIcon,
   [CardType.MASTERCARD]: masterCardIcon,
   [CardType.AMEX]: americanExpressIcon,
-  [CardType.DINERS_CLUB]: dinnersClubIcon,
-  [CardType.DISCOVER]: discoverIcon,
   [CardType.JCB]: jcbIcon,
   [CardType.UNIONPAY]: unionPayIcon,
   [CardType.UNKNOWN]: "", // Fallback for unknown card types
