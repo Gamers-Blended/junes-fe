@@ -15,6 +15,7 @@ import { PaymentMethod } from "../types/paymentMethod";
 import { mockAddressList } from "../mocks/data/address.ts";
 import { mockPaymentMethodList } from "../mocks/data/paymentMethod.ts";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
+import { useIdempotencyKey } from "../hooks/useIdempotencyKey.ts";
 import {
   REQUEST_MAPPING,
   apiClient,
@@ -51,6 +52,7 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
   const { fieldToChange } = location.state || {};
   const navigate = useNavigate();
   const MAX_NUMBER_OF_ITEMS = 5;
+  const { idempotencyKey, resetIdempotencyKey } = useIdempotencyKey();
 
   const isAddressMode = fieldToChange === SavedInfoType.ADDRESS;
   const isPaymentMode = fieldToChange === SavedInfoType.PAYMENT;
@@ -285,12 +287,21 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
 
     console.log("Calling API to set default payment method with id:", id);
 
-    await apiClient.post(`${REQUEST_MAPPING}/saved-items/set-default`, {
-      mode: "payment_method",
-      savedItemID: id,
-    });
+    await apiClient.post(
+      `${REQUEST_MAPPING}/saved-items/set-default`,
+      {
+        mode: "payment_method",
+        savedItemID: id,
+      },
+      {
+        headers: {
+          "Idempotency-Key": idempotencyKey,
+        },
+      },
+    );
 
     console.log("Default payment method set");
+    resetIdempotencyKey();
   };
 
   const clearPaymentMethodCacheAndRefetch = async () => {

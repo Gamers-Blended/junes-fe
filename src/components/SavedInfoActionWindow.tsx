@@ -36,12 +36,7 @@ import masterCardIcon from "../assets/acceptedCardsIcons/masterCardIcon.png";
 import americanExpressIcon from "../assets/acceptedCardsIcons/americanExpressIcon.png";
 import jcbIcon from "../assets/acceptedCardsIcons/jcbIcon.png";
 import unionPayIcon from "../assets/acceptedCardsIcons/unionPayIcon.png";
-
-function generateIdempotencyKey(): string {
-  const timestamp = Date.now().toString(36);
-  const random = Math.random().toString(36).substring(2, 10);
-  return `${timestamp}-${random}-${Date.now()}`;
-}
+import { useIdempotencyKey } from "../hooks/useIdempotencyKey.ts";
 
 // Loaded once at module scope - recreating this pre-render would tear down and remount Stripe.js on every re-render
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -135,15 +130,7 @@ const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
   );
   const [isDefault, setIsDefault] = useState(false);
 
-  // Idempotency key for ADD flow
-  // Generated once per attempt
-  const idempotencyKeyRef = useRef<string | undefined>(undefined);
-  if (!idempotencyKeyRef.current) {
-    idempotencyKeyRef.current = generateIdempotencyKey();
-  }
-  const resetIdempotencyKey = () => {
-    idempotencyKeyRef.current = generateIdempotencyKey();
-  };
+  const { idempotencyKey, resetIdempotencyKey } = useIdempotencyKey();
 
   // Get current date for default expiration
   const currentDate = new Date();
@@ -257,7 +244,7 @@ const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
       },
       {
         headers: {
-          "Idempotency-Key": idempotencyKeyRef.current,
+          "Idempotency-Key": idempotencyKey,
         },
       },
     );
@@ -781,7 +768,7 @@ const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
       {},
       {
         headers: {
-          "Idempotency-Key": `${idempotencyKeyRef.current}-setup-intent`,
+          "Idempotency-Key": `${idempotencyKey}-setup-intent`,
         },
       },
     );
@@ -820,7 +807,7 @@ const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
       },
       {
         headers: {
-          "Idempotency-Key": idempotencyKeyRef.current,
+          "Idempotency-Key": idempotencyKey,
         },
       },
     );
@@ -849,7 +836,7 @@ const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
       },
       {
         headers: {
-          "Idempotency-Key": idempotencyKeyRef.current,
+          "Idempotency-Key": idempotencyKey,
         },
       },
     );
