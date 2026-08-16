@@ -237,30 +237,6 @@ const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
     return addressList;
   };
 
-  const editPaymentMethod = async () => {
-    if (offlineMode) {
-      console.log("Offline mode: Skipping edit payment method API call");
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      return;
-    }
-
-    console.log("Making API to edit payment method...");
-
-    const response = await apiClient.put(
-      `${REQUEST_MAPPING}/saved-items/payment-method/${savedItemData?.id}`,
-      {
-        cardHolderName,
-        expirationMonth,
-        expirationYear,
-        billingAddressId: selectedBillingAddressId,
-      },
-    );
-
-    console.log("Payment method edited successfully:", response.data);
-  };
-
   const attachAddressToPaymentMethod = async () => {
     if (offlineMode) {
       console.log(
@@ -323,7 +299,7 @@ const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
           await attachAddressToPaymentMethod();
         } else {
           // Page 1: edit card details
-          await editPaymentMethod();
+          await handleUpdatePaymentMethod();
         }
 
         props.onEdit?.();
@@ -840,6 +816,44 @@ const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
       },
     );
 
+    resetIdempotencyKey();
+  };
+
+  const handleUpdatePaymentMethod = async () => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping update payment method API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return;
+    }
+
+    if (!stripe || !elements) {
+      setErrorMessage?.(
+        "Payment form is still loading. Please wait a moment and try again.",
+      );
+      console.error("Stripe.js has not loaded yet.");
+      return;
+    }
+
+    console.log("Calling API to edit payment method...");
+
+    const response = await apiClient.put(
+      `${REQUEST_MAPPING}/saved-items/payment-method/${savedItemData?.id}`,
+      {
+        cardHolderName: cardHolderName,
+        expirationMonth: expirationMonth,
+        expirationYear: expirationYear,
+        billingAddressId: selectedBillingAddressId,
+      },
+      {
+        headers: {
+          "Idempotency-Key": idempotencyKeyRef.current,
+        },
+      },
+    );
+
+    console.log("Payment method edited successfully:", response.data);
     resetIdempotencyKey();
   };
 
