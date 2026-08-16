@@ -828,14 +828,6 @@ const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
       return;
     }
 
-    if (!stripe || !elements) {
-      setErrorMessage?.(
-        "Payment form is still loading. Please wait a moment and try again.",
-      );
-      console.error("Stripe.js has not loaded yet.");
-      return;
-    }
-
     console.log("Calling API to edit payment method...");
 
     const response = await apiClient.put(
