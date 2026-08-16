@@ -249,12 +249,21 @@ const SavedInfoActionWindowInner: React.FC<SavedInfoActionWindowProps> = (
     }
     console.log("Making API call to attach address to payment method...");
 
-    await apiClient.post(`${REQUEST_MAPPING}/saved-items/attach`, {
-      addressID: selectedBillingAddressId,
-      paymentMethodID: savedItemData?.id,
-    });
+    await apiClient.post(
+      `${REQUEST_MAPPING}/saved-items/attach`,
+      {
+        addressID: selectedBillingAddressId,
+        paymentMethodID: savedItemData?.id,
+      },
+      {
+        headers: {
+          "Idempotency-Key": idempotencyKeyRef.current,
+        },
+      },
+    );
 
     console.log("Address attached to payment method successfully");
+    resetIdempotencyKey();
   };
 
   // Handler for buttons
