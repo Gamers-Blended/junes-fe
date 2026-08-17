@@ -271,9 +271,15 @@ const SavedInfoPage: React.FC<SavedInfoPageProps> = ({
 
     await apiClient.delete(
       `${REQUEST_MAPPING}/saved-items/payment-method/${actionWindowState.item?.id}`,
+      {
+        headers: {
+          "Idempotency-Key": idempotencyKey,
+        },
+      },
     );
 
     console.log("Payment method deleted");
+    resetIdempotencyKey();
   };
 
   const setDefaultPaymentMethod = async (id: string) => {
