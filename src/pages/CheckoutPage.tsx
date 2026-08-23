@@ -4,6 +4,7 @@ import { mockAddressList } from "../mocks/data/address";
 import { mockPaymentMethodList } from "../mocks/data/paymentMethod";
 import { mockCartItemList } from "../mocks/data/productInCartDTO.ts";
 import { useAuthRedirect } from "../hooks/useAuthRedirect";
+import { useIdempotencyKey } from "../hooks/useIdempotencyKey.ts";
 import { NavigationState } from "../types/navigationState";
 import {
   SavedInfoType,
@@ -73,6 +74,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
   const [isLoadingCartItems, setIsLoadingCartItems] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const navigate = useNavigate();
+  const { idempotencyKey, resetIdempotencyKey } = useIdempotencyKey();
 
   useAuthRedirect(isLoggedIn);
 
@@ -289,7 +291,13 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     const response = await apiClient.post<ResponseMessage>(
       `${REQUEST_MAPPING}/order/place`,
       orderRequest,
+      {
+        headers: {
+          "Idempotency-Key": idempotencyKey,
+        },
+      },
     );
+    resetIdempotencyKey();
     return response.data;
   };
 
