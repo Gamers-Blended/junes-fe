@@ -190,6 +190,40 @@ const WishListPage: React.FC<WishListPageProps> = ({
     }
   };
 
+  const callClearWishlistAPI = async () => {
+    if (offlineMode) {
+      console.log("Offline mode: simulating wish list clearance");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      return;
+    } else {
+      console.log("Clearing wish list via API");
+      const response = await apiClient.delete(
+        `${REQUEST_MAPPING}/wishlist/items`,
+      );
+
+      console.log("Clear wish list response:", response.data);
+    }
+  };
+
+  const handleClearWishlist = async () => {
+    setErrorMessage("");
+    setIsLoading(true);
+
+    try {
+      await callClearWishlistAPI();
+      setWishlistItems([]);
+      setPageInfo({ totalElements: 0, totalPages: 0 });
+      setCurrentPage(0);
+    } catch (error) {
+      setErrorMessage(getApiErrorMessage(error, "Failed to clear wish list"));
+      console.error("Error clearing wish list:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleCloseNotification = () => {
     setShowNotification(false);
   };
@@ -210,6 +244,17 @@ const WishListPage: React.FC<WishListPageProps> = ({
     <div className="wishlist-page-container">
       <div className="common-header">
         <h1>MY WISHLIST</h1>
+      </div>
+
+      <div className="sub-header">
+        {wishlistItems.length === 0 ? null : (
+          <button
+            className="form-button clear-button"
+            onClick={handleClearWishlist}
+          >
+            Clear Wishlist
+          </button>
+        )}
       </div>
 
       {errorMessage && <div className="error-message">{errorMessage}</div>}
