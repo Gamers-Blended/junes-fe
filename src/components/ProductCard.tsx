@@ -92,6 +92,28 @@ const ProductCard: React.FC<ProductCardProps> = ({
     return message;
   };
 
+  const removeFromWishList = async (item: Item): Promise<string> => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping remove from wish list API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } else {
+      console.log(
+        "Calling API to remove from wish list with id:",
+        item.productID,
+      );
+
+      await apiClient.delete(
+        `${REQUEST_MAPPING}/wishlist/remove/${item.productID}`,
+      );
+    }
+
+    const message = `${item.name} removed from Wish List!`;
+    console.log(`${item.name} removed from wish list`);
+
+    return message;
+  };
+
   const handleNavigateToProduct = () => {
     const url = `/games/${item.slug}`;
     dispatch(setSelectedItem(item)); // Set the selected item in the Redux store
@@ -105,35 +127,30 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
     const newLikedState = !isLiked;
     setIsLiked(newLikedState);
-
-    if (!newLikedState) {
-      // Removing from wish list is not yet wired up to the backend (MFLP-223)
-      const message = `${item.name} removed from Wish List!`;
-      console.log(`${item.name} removed from wish list`);
-
-      setNotificationMessage(message);
-      setMessageMode("success");
-      setShowNotification(true);
-      return;
-    }
-
     setNotificationMessage("");
     setIsAddingToWishList(true);
 
     try {
-      const message = await addToWishList(item);
+      const message = newLikedState
+        ? await addToWishList(item)
+        : await removeFromWishList(item);
       setNotificationMessage(message);
       setMessageMode("success");
     } catch (error) {
-      setIsLiked(false);
+      setIsLiked(!newLikedState);
       setNotificationMessage(
         getApiErrorMessage(
           error,
-          "Failed to add item to wish list. Please try again.",
+          newLikedState
+            ? "Failed to add item to wish list. Please try again."
+            : "Failed to remove item from wish list. Please try again.",
         ),
       );
       setMessageMode("error");
-      console.error("Error adding item to wish list:", error);
+      console.error(
+        `Error ${newLikedState ? "adding item to" : "removing item from"} wish list:`,
+        error,
+      );
     } finally {
       setIsAddingToWishList(false);
       setShowNotification(true);
