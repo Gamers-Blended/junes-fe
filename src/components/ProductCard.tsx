@@ -19,6 +19,7 @@ interface ProductCardProps {
   isLoading: boolean;
   isLiked?: boolean;
   offlineMode?: boolean;
+  onRemovedFromWishList?: (productID: string) => void;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -26,6 +27,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   isLoading,
   isLiked: initialIsLiked = false,
   offlineMode = import.meta.env.VITE_OFFLINE_MODE === "true",
+  onRemovedFromWishList,
 }) => {
   const [isLiked, setIsLiked] = useState<boolean>(initialIsLiked);
   const [showNotification, setShowNotification] = useState<boolean>(false);
@@ -136,6 +138,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
         : await removeFromWishList(item);
       setNotificationMessage(message);
       setMessageMode("success");
+
+      if (!newLikedState) {
+        onRemovedFromWishList?.(item.productID);
+      }
     } catch (error) {
       setIsLiked(!newLikedState);
       setNotificationMessage(

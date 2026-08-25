@@ -2,6 +2,7 @@ import { ProductDisplayItem } from "../types/productDisplay";
 import { Item } from "../store/productSlice";
 import { ProductInCartDTO } from "../types/productInCartDTO";
 import { OrderItemDTO } from "../types/orderItemDTO";
+import { ProductInWishlistDTO } from "../types/productInWishlistDTO";
 
 export const mapItemToDisplay = (item: Item): ProductDisplayItem => item;
 
@@ -39,3 +40,16 @@ export const mapProductInCartDTOToItemList = (
     quantity: dto.quantity,
   },
 ];
+
+export const mapProductInWishlistDTOToItem = (
+  dto: ProductInWishlistDTO,
+): Item => ({
+  productID: dto.id,
+  name: dto.name,
+  slug: dto.slug,
+  price: dto.price,
+  platform: dto.platform,
+  region: dto.region,
+  edition: dto.edition,
+  productImageUrl: dto.productImageUrl,
+});

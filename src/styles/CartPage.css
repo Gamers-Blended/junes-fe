@@ -64,6 +64,10 @@
   width: 10rem;
 }
 
+.cart-item-container .add-to-cart-button {
+  align-self: center;
+}
+
 /* FOOTER */
 .cart-footer {
   border-top: 1px solid #000000;
