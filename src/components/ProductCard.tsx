@@ -32,6 +32,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const [notificationMessage, setNotificationMessage] = useState<string>("");
   const [showQuickShop, setShowQuickShop] = useState<boolean>(false);
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
+  const [isAddingToWishList, setIsAddingToWishList] =
+    useState<boolean>(false);
   const [messageMode, setMessageMode] = useState<string>("success");
   const wordLimit = 40;
   // Title will only show up to wordLimit characters
@@ -68,6 +70,28 @@ const ProductCard: React.FC<ProductCardProps> = ({
     return message;
   };
 
+  const addToWishList = async (item: Item): Promise<string> => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping add to wish list API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } else {
+      console.log("Calling API to add to wish list with id:", item.productID);
+
+      const requestBody = {
+        productID: item.productID,
+        createdOn: new Date().toISOString(),
+      };
+
+      await apiClient.post(`${REQUEST_MAPPING}/wishlist/add`, requestBody);
+    }
+
+    const message = `${item.name} added to Wish List!`;
+    console.log(`${item.name} added to wish list`);
+
+    return message;
+  };
+
   const handleNavigateToProduct = () => {
     const url = `/games/${item.slug}`;
     dispatch(setSelectedItem(item)); // Set the selected item in the Redux store
@@ -76,19 +100,44 @@ const ProductCard: React.FC<ProductCardProps> = ({
     navigate(url);
   };
 
-  const handleAddToWishList = () => {
+  const handleAddToWishList = async () => {
+    if (isAddingToWishList) return;
+
     const newLikedState = !isLiked;
     setIsLiked(newLikedState);
 
-    const message = newLikedState
-      ? `${item.name} added to Wish List!`
-      : `${item.name} removed from Wish List!`;
-    console.log(
-      `${item.name} ${newLikedState ? "added to" : "removed from"} wish list`,
-    );
+    if (!newLikedState) {
+      // Removing from wish list is not yet wired up to the backend (MFLP-223)
+      const message = `${item.name} removed from Wish List!`;
+      console.log(`${item.name} removed from wish list`);
 
-    setNotificationMessage(message);
-    setShowNotification(true);
+      setNotificationMessage(message);
+      setMessageMode("success");
+      setShowNotification(true);
+      return;
+    }
+
+    setNotificationMessage("");
+    setIsAddingToWishList(true);
+
+    try {
+      const message = await addToWishList(item);
+      setNotificationMessage(message);
+      setMessageMode("success");
+    } catch (error) {
+      setIsLiked(false);
+      setNotificationMessage(
+        getApiErrorMessage(
+          error,
+          "Failed to add item to wish list. Please try again.",
+        ),
+      );
+      setMessageMode("error");
+      console.error("Error adding item to wish list:", error);
+    } finally {
+      setIsAddingToWishList(false);
+      setShowNotification(true);
+    }
   };
 
   const handleCloseNotification = () => {

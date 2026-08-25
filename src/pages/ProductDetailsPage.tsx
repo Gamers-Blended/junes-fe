@@ -54,6 +54,8 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
   const [currentLanguages, setCurrentLanguages] = useState<string[]>([]);
 
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
+  const [isAddingToWishList, setIsAddingToWishList] =
+    useState<boolean>(false);
   const [showNotification, setShowNotification] = useState<boolean>(false);
   const [notificationMessage, setNotificationMessage] = useState<string>("");
 
@@ -194,6 +196,30 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
 
     const message = `${productDTO.name} added to cart!`;
     console.log(`${productDTO.name} added to cart! Quantity: ${quantity}`);
+
+    return message;
+  };
+
+  const addToWishList = async (productDTO: ProductDTO): Promise<string> => {
+    if (offlineMode) {
+      console.log("Offline mode: Skipping add to wish list API call");
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } else {
+      console.log("Calling API to add to wish list with id:", productDTO.id);
+
+      const requestBody = {
+        productID: productDTO.id,
+        createdOn: new Date().toISOString(),
+      };
+
+      await apiClient.post(`${REQUEST_MAPPING}/wishlist/add`, requestBody);
+    }
+
+    const message = `${productDTO.name}, ${formatPlatformName(
+      selectedPlatform,
+    )} added to Wish List!`;
+    console.log(`${productDTO.name} added to wish list`);
 
     return message;
   };
@@ -342,14 +368,27 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
   };
 
   // Button functions
-  const handleAddToWishList = (productDTO: ProductDTO) => {
-    const message = `${productDTO.name}, ${formatPlatformName(
-      selectedPlatform,
-    )} added to Wish List!`;
-    console.log(`${productDTO.name} added to wish list`);
+  const handleAddToWishList = async (productDTO: ProductDTO) => {
+    setNotificationMessage("");
+    setIsAddingToWishList(true);
 
-    setNotificationMessage(message);
-    setShowNotification(true);
+    try {
+      const message = await addToWishList(productDTO);
+      setNotificationMessage(message);
+      setMessageMode("success");
+    } catch (error) {
+      setNotificationMessage(
+        getApiErrorMessage(
+          error,
+          "Failed to add item to wish list. Please try again.",
+        ),
+      );
+      setMessageMode("error");
+      console.error("Error adding item to wish list:", error);
+    } finally {
+      setIsAddingToWishList(false);
+      setShowNotification(true);
+    }
   };
 
   const handleAddToCart = async (
@@ -571,6 +610,7 @@ const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({
                     <button
                       className="common-button product-details-wishlist-button"
                       onClick={() => handleAddToWishList(productDTO)}
+                      disabled={isAddingToWishList}
                     >
                       Add to Wishlist
                     </button>
