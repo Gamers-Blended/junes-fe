@@ -18,6 +18,7 @@
 @import "./styles/ProductImageAndDescription.css";
 @import "./styles/QuantitySelector.css";
 @import "./styles/SavedItemSelector.css";
+@import "./styles/SearchBar.css";
 
 html,
 body {

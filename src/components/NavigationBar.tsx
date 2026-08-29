@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import DebugWindow from "./DebugWindow";
+import SearchBar from "./SearchBar";
 
 import loginIcon from "../assets/loginIcon.png";
 import myAccountIcon from "../assets/accountCircleIcon.png";
@@ -37,13 +38,7 @@ const NavigationBar = () => {
         <div className="logo" onClick={handleLogoClick}>
           Junes
         </div>
-        <div className="nav-search-bar-container">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="nav-search-bar"
-          />
-        </div>
+        <SearchBar />
 
         <div className="nav-options-container">
           <img

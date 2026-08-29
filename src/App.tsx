@@ -44,41 +44,39 @@ function AppLayout() {
   const hideNavBar = location.pathname.startsWith("/invoice/");
 
   return (
-    <>
-      <Provider store={store}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/products/:id" element={<ProductsPage />} />
-          <Route
-            path="/products/listings/:platform"
-            element={<ProductListingPage />}
-          />
-          <Route path="/order/:orderNumber" element={<OrderDetailsPage />} />
-          <Route path="/invoice/:orderNumber" element={<InvoicePage />} />
-          <Route path="/games/:slug" element={<ProductDetailsPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/createaccount" element={<CreateNewUserPage />} />
-          <Route path="/forgotpassword" element={<ForgetPasswordPage />} />
-          <Route path="/resetpassword/:token" element={<ResetPasswordPage />} />
-          <Route path="/emailsent" element={<EmailSentPage />} />
-          <Route path="/verify" element={<VerifyPage />} />
-          <Route path="/usercredentialschanged" element={<UserCredentialsChangedPage />} />
-          <Route path="/myaccount" element={<MyAccountPage />} />
-          <Route
-            path="/changecredentials"
-            element={<ChangeCredentialsPage />}
-          />
-          <Route path="/savedinfo" element={<SavedInfoPage />} />
-          <Route path="/modifyaddress" element={<ModifyAddressPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/wishlist" element={<WishListPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/orderplaced" element={<OrderPlacedPage />} />
-        </Routes>
-      </Provider>
-
+    <Provider store={store}>
       {!hideNavBar && <NavigationBar />}
-    </>
+
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/products/:id" element={<ProductsPage />} />
+        <Route
+          path="/products/listings/:platform"
+          element={<ProductListingPage />}
+        />
+        <Route path="/order/:orderNumber" element={<OrderDetailsPage />} />
+        <Route path="/invoice/:orderNumber" element={<InvoicePage />} />
+        <Route path="/games/:slug" element={<ProductDetailsPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/createaccount" element={<CreateNewUserPage />} />
+        <Route path="/forgotpassword" element={<ForgetPasswordPage />} />
+        <Route path="/resetpassword/:token" element={<ResetPasswordPage />} />
+        <Route path="/emailsent" element={<EmailSentPage />} />
+        <Route path="/verify" element={<VerifyPage />} />
+        <Route
+          path="/usercredentialschanged"
+          element={<UserCredentialsChangedPage />}
+        />
+        <Route path="/myaccount" element={<MyAccountPage />} />
+        <Route path="/changecredentials" element={<ChangeCredentialsPage />} />
+        <Route path="/savedinfo" element={<SavedInfoPage />} />
+        <Route path="/modifyaddress" element={<ModifyAddressPage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/wishlist" element={<WishListPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/orderplaced" element={<OrderPlacedPage />} />
+      </Routes>
+    </Provider>
   );
 }
 

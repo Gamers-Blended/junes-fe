@@ -1,0 +1,99 @@
+.nav-search-bar-container {
+  position: relative;
+}
+
+.search-results-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  z-index: 101;
+  color: black;
+  text-align: left;
+}
+
+.search-results-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.search-result-item.highlighted,
+.search-result-item:hover {
+  background-color: #f0f0f0;
+}
+
+.search-result-thumbnail {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.search-result-details {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.search-result-name {
+  font-size: 0.9em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-result-price {
+  font-size: 0.85em;
+  color: #00776b;
+  font-weight: bold;
+}
+
+.search-results-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.search-results-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(0, 198, 152, 0.3);
+  border-radius: 50%;
+  border-top: 3px solid #00c698;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.search-results-empty,
+.search-results-error {
+  padding: 15px;
+  text-align: center;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.search-results-error {
+  color: #b00020;
+}
