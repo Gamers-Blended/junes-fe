@@ -23,6 +23,7 @@ import {
   getApiErrorMessage,
 } from "../utils/api.ts";
 import { calculateSubtotal } from "../utils/cartUtils.ts";
+import { clearTransactionCache } from "../utils/cacheUtils.ts";
 import SavedItemSelector from "../components/SavedItemSelector";
 import OrderTable from "../components/OrderTable";
 import { useAuth } from "../components/AuthContext.tsx";
@@ -392,6 +393,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
       if (errorMessage === "" && response.message !== "") {
         console.log("Place order response:", response);
+        clearTransactionCache();
         const state: NavigationState = {
           from: "checkout",
           orderNumber: response.message,
